@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMİKA — Kadınlara Özel Gamer Setleri</title>
+<meta name="description" content="Gamika: kadın oyuncular için mousepad, figür, klavye bilek desteği ve klavye switch'leri. Tek tek ya da set halinde.">
+<link rel="icon" href="logo.png">
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=08zzROkrJTUdL3bdVO_8-DBcNNcuvJdJoALG0slJ0tvZZeQxRa0vTyucBIq4pXmP" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      cream:'#FFF9FB', rose:'#F9D5E5', petal:'#FDEBF3', lilac:'#E8DDFB',
+      berry:'#E0709A', ink:'#2A1B2E', mauve:'#A67B9B', logo:'#F296B6'
+    },
+    fontFamily: { serif:['Fraunces','serif'], sans:['Inter','sans-serif'] }
+  }}
+}
+</script>
+<style>
+  body{font-family:'Inter',sans-serif;background:#FFF9FB;color:#2A1B2E;overflow-x:hidden}
+  h1,h2,h3,.font-serif{font-family:'Fraunces',serif}
+  section[id]{scroll-margin-top:120px}
+  .glass{background:rgba(255,255,255,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(249,213,229,.6)}
+  .imgbg{background:linear-gradient(135deg,#E8DDFB,#F9D5E5)}
+  ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#E0709A;border-radius:4px}
+  @keyframes glow{0%,100%{box-shadow:0 0 25px rgba(249,213,229,.7)}50%{box-shadow:0 0 50px rgba(224,112,154,.4)}}
+  .glow{animation:glow 4s infinite}
+  /* Logo yazısı (logo.png yoksa görünür) */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  .logo-text{font-family:'Fredoka',sans-serif;font-weight:700;letter-spacing:.03em;color:#F296B6;line-height:1 !important;
+    white-space:nowrap;vertical-align:baseline;
+    text-shadow:0 3px 0 #e27fa0,0 8px 16px rgba(226,127,160,.35)}
+  .logo-i{position:relative;display:inline;line-height:inherit;vertical-align:baseline}
+  .logo-i::before{content:'';position:absolute;top:-.17em;left:50%;transform:translateX(-50%);width:.27em;height:.27em;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fcc9da,#F296B6)}
+</style>
+</head>
+<body class="antialiased selection:bg-rose">
+
+<!-- DUYURU -->
+<div class="bg-ink text-cream text-xs tracking-[.3em] py-2.5 px-4 text-center font-semibold">
+  ✨ SETLERDE ÜCRETSİZ KARGO ✨
+</div>
+
+<!-- NAV -->
+<header class="sticky top-0 z-40 glass border-b border-rose shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 pb-2 grid grid-cols-3 items-center">
+    <div class="flex items-center gap-1">
+      <button id="menu-btn" class="lg:hidden p-2" aria-label="Menü"><i class="fa-solid fa-bars text-xl"></i></button>
+      <button id="search-btn" class="hover:text-berry p-2" title="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
+    </div>
+    <a href="#" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
+      <img src="logo.png" alt="Gamika" class="block h-12 sm:h-16 w-auto max-w-full object-contain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+      <span class="logo-text text-4xl sm:text-5xl" style="display:none">GAM<span class="logo-i">I</span>KA</span>
+    </a>
+    <div class="flex items-center justify-end gap-1">
+      <button id="account-btn" class="hidden sm:block hover:text-berry p-2" title="Hesap"><i class="fa-regular fa-user text-lg"></i></button>
+      <button id="cart-btn" class="hover:text-berry p-2 relative" title="Sepet">
+        <i class="fa-solid fa-bag-shopping text-lg"></i>
+        <span id="cart-badge" class="absolute -top-0 -right-0 bg-berry text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+      </button>
+    </div>
+  </div>
+  <nav class="hidden lg:flex justify-center gap-8 text-sm font-medium pb-3">
+    <a href="#hero" class="hover:text-berry transition">Ana Sayfa</a>
+    <a href="#setler" class="hover:text-berry transition">Hazır Setler</a>
+    <a href="#olustur" class="hover:text-berry transition">Kendi Setini Yarat</a>
+    <a href="#urunler" class="hover:text-berry transition">Ürünler</a>
+    <a href="#ozel" class="hover:text-berry transition">Özel Tasarım</a>
+    <a href="#yakinda" class="hover:text-berry transition">Çok Yakında</a>
+  </nav>
+  <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
+    <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
+    <a href="#setler" class="block text-lg font-medium">Hazır Setler</a>
+    <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat</a>
+    <a href="#urunler" class="block text-lg font-medium">Ürünler</a>
+    <a href="#ozel" class="block text-lg font-medium">Özel Tasarım</a>
+    <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
+    <button id="mobile-account" class="w-full py-2.5 bg-petal rounded-xl font-medium text-sm"><i class="fa-regular fa-user mr-2"></i>Hesabım</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero" class="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden bg-gradient-to-b from-petal via-cream to-cream">
+  <div class="absolute top-1/4 left-1/3 w-[500px] h-[400px] bg-rose/40 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute top-1/3 right-10 w-[300px] h-[300px] bg-lilac/50 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
+    <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-rose text-xs font-semibold tracking-widest uppercase shadow-sm">
+        <i class="fa-solid fa-heart text-berry text-[10px]"></i> Kadın oyuncular için
+      </div>
+      <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05]">
+        SENİN KADAR<br><span class="italic text-berry font-normal">TATLI BİR SETUP</span>
+      </h1>
+      <p class="text-base sm:text-lg text-ink/75 max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+        Mousepad, Figür, Bilek Desteği ve Klavye Switchleri<br><span class="font-semibold text-ink">Kendi Tarzını Kendi Seçimlerinle Yarat</span>
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+        <a href="#urunler" class="px-8 py-4 bg-ink text-cream rounded-2xl font-medium shadow-lg hover:scale-[1.02] hover:bg-berry transition-all flex items-center justify-center gap-3">
+          ÜRÜNLERİ GÖR <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="#setler" class="px-8 py-4 glass rounded-2xl font-medium hover:bg-petal hover:scale-[1.02] transition-all text-center">SETLERE BAK</a>
+      </div>
+      <div class="pt-8 border-t border-rose grid grid-cols-3 gap-4">
+        <div><i class="fa-solid fa-truck-fast text-berry text-xl mb-1"></i><p class="text-xs font-semibold">Ücretsiz Kargo</p></div>
+        <div><i class="fa-solid fa-rotate-left text-berry text-xl mb-1"></i><p class="text-xs font-semibold">14 Gün Kolay İade</p></div>
+        <div><i class="fa-solid fa-palette text-berry text-xl mb-1"></i><p class="text-xs font-semibold">İstediğin Tasarımda</p></div>
+      </div>
+    </div>
+    <div class="lg:col-span-6 relative">
+      <div class="absolute -inset-2 bg-gradient-to-r from-rose via-lilac to-petal rounded-3xl blur-xl opacity-80 glow"></div>
+      <div class="relative glass p-5 sm:p-8 rounded-3xl shadow-2xl">
+        <div class="flex items-center justify-center gap-2 mb-5 font-serif text-2xl font-bold"><i class="fa-solid fa-heart text-berry"></i> Gamika</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="imgbg rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-cat text-4xl text-berry"></i><span class="text-sm font-semibold">Figür</span></div>
+          <div class="imgbg rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-computer-mouse text-4xl text-berry"></i><span class="text-sm font-semibold">Mousepad</span></div>
+          <div class="imgbg rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-hand text-4xl text-berry"></i><span class="text-sm font-semibold">Bilek Desteği</span></div>
+          <div class="imgbg rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-keyboard text-4xl text-berry"></i><span class="text-sm font-semibold">Klavye Switch'i</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KUTUNUN İÇİNDE -->
+<section id="icerik" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Gamika'da</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">NELER VAR?</h2>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="content-grid"></div>
+  </div>
+</section>
+
+<!-- HAZIR SETLER -->
+<section id="setler" class="py-20 bg-petal/50 border-y border-rose/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">SETLER</h2>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8" id="set-grid"></div>
+  </div>
+</section>
+
+<!-- KENDİ SETİNİ YARAT -->
+<section id="olustur" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Senin Seçimin</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">KENDİ SETİNİ YARAT</h2>
+      <p class="text-ink/70 mt-3 font-light">Her parçayı sen seç, setin sana özel hazırlansın.</p>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid lg:grid-cols-5 gap-8 items-start">
+      <div id="builder-opts" class="lg:col-span-3 glass rounded-3xl p-6 sm:p-8 space-y-7"></div>
+      <div class="lg:col-span-2 lg:sticky lg:top-40 rounded-3xl p-6 sm:p-8 bg-ink text-cream shadow-2xl">
+        <h3 class="font-serif text-2xl font-bold mb-4"><i class="fa-solid fa-gift text-rose mr-2"></i>Senin Setin</h3>
+        <div id="builder-summary" class="space-y-3 text-sm"></div>
+        <div class="mt-6 pt-5 border-t border-white/15 flex items-center justify-between gap-3">
+          <span class="text-cream/70 text-sm">Toplam</span>
+          <div class="text-right">
+            <span id="builder-old" class="block text-sm text-cream/50 line-through"></span>
+            <span id="builder-total" class="font-serif text-3xl font-bold"></span>
+            <span class="block text-xs text-rose mt-1"><i class="fa-solid fa-truck-fast mr-1"></i>Ücretsiz Kargo</span>
+          </div>
+        </div>
+        <button onclick="addBuilt()" class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider hover:bg-white transition"><i class="fa-solid fa-bag-shopping mr-2"></i>SETİ SEPETE EKLE</button>
+        <p class="text-[11px] text-cream/60 mt-3 text-center">Kendi tasarımınla istiyorsan aşağıdaki <a href="#ozel" class="underline">Özel Tasarım</a> bölümüne bak.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEK TEK ÜRÜNLER -->
+<section id="urunler" class="py-20 bg-petal/50 border-y border-rose/60">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div>
+        <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
+        <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" id="filters">
+        <button data-f="all" class="fbtn px-5 py-2 rounded-xl text-sm font-medium bg-ink text-cream">Tümü</button>
+        <button data-f="mousepad" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Mousepad</button>
+        <button data-f="figur" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Figür</button>
+        <button data-f="bilek" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Bilek Desteği</button>
+        <button data-f="switch" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Switch</button>
+      </div>
+    </div>
+    <div id="product-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </div>
+</section>
+
+<!-- ÖZEL TASARIM -->
+<section id="ozel" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-start">
+    <div class="space-y-6">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Sana Özel</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">İSTEDİĞİN TASARIMDA <span class="italic text-berry font-normal">ÜRETELİM.</span></h2>
+      <p class="text-ink/75 leading-relaxed font-light text-lg">Mousepad'ini, setini ya da hayalindeki tasarımı bize anlat. Senin için üretelim.</p>
+      <div class="space-y-4 pt-2">
+        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">1</div><p class="pt-2 text-sm"><b>Fikrini anlat.</b> Ne istediğini formdan yaz.</p></div>
+        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">2</div><p class="pt-2 text-sm"><b>Tasarımı birlikte netleştirelim.</b> Görselini bize gönderebilirsin.</p></div>
+        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">3</div><p class="pt-2 text-sm"><b>Üretilsin, kapına gelsin.</b> Kargo ücretsiz.</p></div>
+      </div>
+    </div>
+    <form onsubmit="customSubmit(event)" class="glass rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
+      <h3 class="font-serif text-2xl font-bold">Özel Tasarım Talebi</h3>
+      <div><label class="block text-xs font-semibold mb-1">Adın</label><input name="ad" required class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Telefon veya e-posta</label><input name="iletisim" required class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Ne istiyorsun?</label>
+        <select name="urun" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry">
+          <option>Mousepad</option><option>Figür</option><option>Klavye bilek desteği</option><option>Komple set</option>
+        </select></div>
+      <div><label class="block text-xs font-semibold mb-1">Tasarım fikrin</label><textarea name="fikir" rows="4" required placeholder="Renkler, tema, yazı, karakter... Aklındakini yaz." class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
+      <button class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition">TALEBİ GÖNDER <i class="fa-solid fa-paper-plane ml-2"></i></button>
+    </form>
+  </div>
+</section>
+
+<!-- ÇOK YAKINDA -->
+<section id="yakinda" class="py-20 bg-petal/50 border-y border-rose/60">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+    <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Yolda</span>
+    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÇOK YAKINDA</h2>
+    <div class="w-16 h-0.5 bg-berry mx-auto mt-4 mb-12"></div>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-computer-mouse text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Gaming Mouse</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-keyboard text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Mekanik Klavye</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-headphones text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Kulaklık</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+    </div>
+    <form onsubmit="notify(event)" class="mt-10 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input type="email" required placeholder="E-posta adresin" class="flex-1 px-4 py-3 rounded-xl bg-white border border-rose text-sm focus:outline-none focus:border-berry">
+      <button class="px-6 py-3 bg-berry text-white rounded-xl font-semibold text-xs tracking-wider hover:bg-ink transition">HABER VER</button>
+    </form>
+  </div>
+</section>
+
+<!-- HAKKIMIZDA -->
+<section id="hikaye" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="space-y-6">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Biz Kimiz</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">SENİN İÇİN, <span class="italic text-berry font-normal">SENİN GİBİ.</span></h2>
+      <p class="text-ink/75 leading-relaxed font-light text-lg">
+        Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik mousepad, figür, klavye bilek desteği ve switch'leri tek tek ya da set halinde sunuyoruz. Yenileri yolda.
+      </p>
+      <div class="grid grid-cols-2 gap-6 pt-2">
+        <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-palette text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Sana Özel</h4><p class="text-xs text-ink/70">İstediğin tasarımda üretim yapılabilir.</p></div>
+        <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-gift text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Set Halinde</h4><p class="text-xs text-ink/70">Her şey uyumlu renklerde, tek seferde.</p></div>
+      </div>
+    </div>
+    <div class="aspect-[4/3] rounded-3xl imgbg shadow-2xl flex items-center justify-center">
+      <i class="fa-solid fa-heart text-8xl text-white/80"></i>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-ink text-cream pt-16 pb-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+      <div class="md:col-span-2 space-y-4">
+        <div class="logo-text text-4xl">GAM<span class="logo-i">I</span>KA</div>
+        <p class="text-xs text-cream/70 max-w-sm leading-relaxed">Kadın oyuncular için gamer ürünleri.</p>
+        <div class="flex gap-3 pt-2">
+          <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-berry transition"><i class="fa-brands fa-instagram text-sm"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-berry transition"><i class="fa-brands fa-tiktok text-sm"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-serif font-bold text-lg mb-4 text-rose">Alışveriş</h4>
+        <ul class="space-y-2.5 text-xs text-cream/70">
+          <li><a href="#setler" class="hover:text-white">Hazır Setler</a></li>
+          <li><a href="#olustur" class="hover:text-white">Kendi Setini Yarat</a></li>
+          <li><a href="#urunler" class="hover:text-white">Ürünler</a></li>
+          <li><a href="#ozel" class="hover:text-white">Özel Tasarım</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-serif font-bold text-lg mb-4 text-rose">Destek</h4>
+        <ul class="space-y-2.5 text-xs text-cream/70">
+          <li><a href="#" onclick="info('Müşteri Hizmetleri','Sorularınız için bize ulaşın. (İletişim bilgilerini buraya ekleyin.)');return false" class="hover:text-white">İletişim</a></li>
+          <li><a href="#" onclick="info('Kargo ve İade','Kargo ücretsiz. Teslimattan sonra 14 gün içinde kolay iade.');return false" class="hover:text-white">Kargo ve İade</a></li>
+          <li><a href="#" onclick="info('Gizlilik Politikası','Kişisel verileriniz KVKK kapsamında korunur.');return false" class="hover:text-white">Gizlilik</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="pt-8 text-xs text-cream/60 text-center">&copy; 2026 GAMİKA. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<!-- SEPET -->
+<div id="cart-drawer" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-ink/60 backdrop-blur-sm" onclick="toggleCart()"></div>
+  <div class="absolute inset-y-0 right-0 w-full max-w-md bg-cream shadow-2xl flex flex-col">
+    <div class="p-6 border-b border-rose flex items-center justify-between bg-petal/50">
+      <h3 class="font-serif text-2xl font-bold"><i class="fa-solid fa-bag-shopping mr-2"></i>Sepetim</h3>
+      <button onclick="toggleCart()" class="p-2 hover:text-berry"><i class="fa-solid fa-xmark text-xl"></i></button>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+    <div class="p-6 border-t border-rose bg-petal/30 space-y-4">
+      <div class="flex justify-between"><span>Ara Toplam</span><span id="subtotal" class="font-serif text-xl font-bold">0 ₺</span></div>
+      <p id="ship-note" class="text-[11px] text-berry"></p>
+      <button onclick="checkout()" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition">ÖDEMEYE GEÇ <i class="fa-solid fa-arrow-right ml-2"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ARAMA -->
+<div id="search-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-start justify-center pt-20 px-4">
+  <div class="glass w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative">
+    <button onclick="closeModal('search-modal')" class="absolute top-6 right-6 text-xl hover:text-berry"><i class="fa-solid fa-xmark"></i></button>
+    <h3 class="font-serif text-2xl font-bold mb-4">Gamika'da Ara</h3>
+    <input id="search-input" oninput="doSearch(this.value)" placeholder="Mousepad, figür, set..." class="w-full px-4 py-3.5 bg-cream rounded-2xl border border-rose text-sm focus:outline-none focus:border-berry">
+    <div id="search-results" class="mt-4 max-h-60 overflow-y-auto space-y-2"></div>
+  </div>
+</div>
+
+<!-- HESAP -->
+<div id="account-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
+  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
+    <button onclick="closeModal('account-modal')" class="absolute top-6 right-6 text-xl hover:text-berry"><i class="fa-solid fa-xmark"></i></button>
+    <div class="w-12 h-12 rounded-full bg-petal mx-auto flex items-center justify-center mb-4"><i class="fa-regular fa-user text-xl"></i></div>
+    <h3 class="font-serif text-2xl font-bold mb-1">Gamika'ya Hoş Geldin</h3>
+    <p class="text-xs text-mauve mb-6">Siparişlerini takip et.</p>
+    <form onsubmit="login(event)" class="space-y-4 text-left">
+      <div><label class="block text-xs font-semibold mb-1">E-posta</label><input type="email" required placeholder="ornek@mail.com" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-xs focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Şifre</label><input type="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-xs focus:outline-none focus:border-berry"></div>
+      <button class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition">GİRİŞ YAP</button>
+    </form>
+  </div>
+</div>
+
+<!-- BİLGİ -->
+<div id="info-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
+  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
+    <div class="w-12 h-12 rounded-full bg-petal mx-auto flex items-center justify-center mb-4"><i class="fa-solid fa-circle-info text-xl"></i></div>
+    <h3 id="info-title" class="font-serif text-2xl font-bold mb-2"></h3>
+    <p id="info-text" class="text-xs text-ink/80 leading-relaxed mb-6"></p>
+    <button onclick="closeModal('info-modal')" class="w-full py-3 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider">TAMAM</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 right-6 z-[60] translate-y-24 opacity-0 transition-all duration-300 bg-ink text-cream px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+  <i class="fa-solid fa-check text-emerald-400"></i><span id="toast-msg" class="text-xs font-medium"></span>
+</div>
+
+<script>
+/* ====== AYARLAR ======
+   WHATSAPP_NO: özel tasarım formu bu numaraya mesaj olarak gider. Örn: '905xxxxxxxxx'
+   Fiyatlar örnektir, kendi fiyatlarınla değiştir. */
+const WHATSAPP_NO = '';
+
+const PRODUCTS = [
+  {id:1,name:'Bulut Mousepad (90x40 cm)',cat:'mousepad',type:'Mousepad',price:690,icon:'fa-computer-mouse'},
+  {id:2,name:'Tavşan Figür',cat:'figur',type:'Figür',price:159,icon:'fa-cat'},
+  {id:3,name:'Ayıcık Figür',cat:'figur',type:'Figür',price:159,icon:'fa-paw'},
+  {id:4,name:'Pembe Klavye Bilek Desteği',cat:'bilek',type:'Bilek Desteği',price:399,icon:'fa-hand'},
+  {id:5,name:'Lila Klavye Bilek Desteği',cat:'bilek',type:'Bilek Desteği',price:399,icon:'fa-hand'},
+  {id:6,name:'Linear Switch Seti',cat:'switch',type:'Klavye Switch',price:99,icon:'fa-keyboard'},
+  {id:7,name:'Tactile Switch Seti',cat:'switch',type:'Klavye Switch',price:99,icon:'fa-keyboard'}
+];
+const SETS = [
+  {id:101,name:'Pembe Bulut Seti',price:1099,grad:'from-rose to-petal',items:['Tavşan figür','Pembe mousepad','Pembe bilek desteği','Linear switch seti']},
+  {id:102,name:'Lila Rüya Seti',price:1099,grad:'from-lilac to-petal',items:['Ayıcık figür','Lila mousepad','Lila bilek desteği','Tactile switch seti']},
+  {id:103,name:'Pastel Karışık Seti',price:1099,grad:'from-rose via-lilac to-petal',items:['Kedi figür','Pastel mousepad','Beyaz bilek desteği','Linear switch seti']}
+];
+const CONTENTS = [
+  {t:'Figür',d:'Masana sevimli bir dokunuş.',icon:'fa-cat',f:'figur'},
+  {t:'Mousepad',d:'İstediğin tasarımda, geniş boy.',icon:'fa-computer-mouse',f:'mousepad'},
+  {t:'Klavye Bilek Desteği',d:'Yazarken ve oynarken rahat duruş.',icon:'fa-hand',f:'bilek'},
+  {t:"Klavye Switch'leri",d:'Klavyene yeni bir his.',icon:'fa-keyboard',f:'switch'}
+];
+const BUILD = {
+  pad:{title:'1. Mousepad',opts:[{n:'90x40 cm',p:690},{n:'Diğer ölçüler',p:690,out:true}]},
+  fig:{title:'2. Figür',opts:[{n:'Tavşan',p:159},{n:'Ayıcık',p:159},{n:'Kedi',p:159}]},
+  wrist:{title:'3. Bilek Desteği',opts:[{n:'Pembe',p:399},{n:'Lila',p:399},{n:'Beyaz',p:399}]},
+  sw:{title:"4. Klavye Switch'leri",opts:[{n:'Linear (yumuşak)',p:99},{n:'Tactile (tok his)',p:99},{n:'Clicky (tıklama sesi)',p:99}]}
+};
+const LABELS = {pad:'Mousepad',fig:'Figür',wrist:'Bilek desteği',sw:'Switch'};
+const sel = {pad:0,fig:0,wrist:0,sw:0};
+const SET_PRICE = 1099; // "Kendi Setini Yarat" indirimli set fiyatı
+
+const $ = id => document.getElementById(id);
+const TL = n => n.toLocaleString('tr-TR') + ' ₺';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let cart = [];
+
+/* Kutunun içinde */
+$('content-grid').innerHTML = CONTENTS.map(c => `
+  <a href="#urunler" onclick="filterProducts('${c.f}')" class="group glass rounded-3xl p-7 text-center hover:shadow-xl hover:-translate-y-1 transition">
+    <div class="w-16 h-16 mx-auto rounded-2xl imgbg flex items-center justify-center mb-4"><i class="fa-solid ${c.icon} text-2xl text-berry"></i></div>
+    <h3 class="font-serif text-xl font-bold mb-1">${c.t}</h3>
+    <p class="text-xs text-ink/70">${c.d}</p>
+  </a>`).join('');
+
+/* Setler */
+$('set-grid').innerHTML = SETS.map(s => `
+  <div class="glass rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col">
+    <div class="bg-gradient-to-br ${s.grad} p-8 flex items-center justify-center gap-4 text-berry text-2xl">
+      <i class="fa-solid fa-cat"></i><i class="fa-solid fa-computer-mouse"></i><i class="fa-solid fa-hand"></i><i class="fa-solid fa-keyboard"></i>
+    </div>
+    <div class="p-6 flex-1 flex flex-col justify-between">
+      <div>
+        <h3 class="font-serif text-2xl font-bold mb-3">${s.name}</h3>
+        <ul class="space-y-1.5 text-sm text-ink/80">${s.items.map(i=>`<li><i class="fa-solid fa-check text-berry text-xs mr-2"></i>${i}</li>`).join('')}</ul>
+      </div>
+      <div class="pt-5 mt-5 border-t border-rose/60 flex items-center justify-between">
+        <p class="font-serif text-2xl font-bold">${TL(s.price)}</p>
+        <button onclick="addSet(${s.id})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>
+      </div>
+    </div>
+  </div>`).join('');
+
+/* Ürünler */
+$('product-grid').innerHTML = PRODUCTS.map(p => `
+  <div class="product-card glass rounded-3xl p-5 shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${p.cat}">
+    <div>
+      <div class="rounded-2xl aspect-square imgbg mb-4 flex items-center justify-center overflow-hidden">
+        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${p.icon} text-6xl text-berry/80"></i>`}
+      </div>
+      <span class="text-xs text-berry">${p.type}</span>
+      <h3 class="font-serif text-xl font-bold">${p.name}</h3>
+    </div>
+    <div class="pt-4 mt-4 border-t border-rose/60 flex items-center justify-between">
+      <p class="font-serif text-xl font-bold">${TL(p.price)}</p>
+      <button onclick="addProduct(${p.id})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>
+    </div>
+  </div>`).join('');
+
+function filterProducts(f){
+  document.querySelectorAll('.fbtn').forEach(b => {
+    b.className = 'fbtn px-5 py-2 rounded-xl text-sm font-medium ' + (b.dataset.f===f ? 'bg-ink text-cream' : 'glass');
+  });
+  document.querySelectorAll('.product-card').forEach(c => {
+    c.style.display = (f==='all' || c.dataset.cat===f) ? 'flex' : 'none';
+  });
+}
+document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => filterProducts(b.dataset.f)));
+
+/* Kendi setini yarat */
+function renderBuilder(){
+  $('builder-opts').innerHTML = Object.entries(BUILD).map(([k,g]) => `
+    <div>
+      <h4 class="font-serif font-bold text-lg mb-3">${g.title}</h4>
+      <div class="flex flex-wrap gap-2">
+        ${g.opts.map((o,i)=> o.out
+          ? `<button disabled class="px-4 py-2.5 rounded-xl text-sm font-medium border border-rose bg-petal/60 text-mauve cursor-not-allowed">${o.n} <span class="text-xs">· Stokta yok</span></button>`
+          : `<button onclick="pick('${k}',${i})" class="px-4 py-2.5 rounded-xl text-sm font-medium border transition ${sel[k]===i?'bg-ink text-cream border-ink':'bg-white border-rose hover:bg-petal'}">${o.n} <span class="text-xs opacity-70">${TL(o.p)}</span></button>`).join('')}
+      </div>
+    </div>`).join('');
+  let total = 0;
+  $('builder-summary').innerHTML = Object.keys(BUILD).map(k => {
+    const o = BUILD[k].opts[sel[k]]; total += o.p;
+    return `<div class="flex justify-between gap-3"><span class="text-cream/80">${LABELS[k]}: <b class="text-cream">${o.n}</b></span><span>${TL(o.p)}</span></div>`;
+  }).join('');
+  $('builder-old').innerText = total > SET_PRICE ? TL(total) : '';
+  $('builder-total').innerText = TL(SET_PRICE);
+}
+function pick(k,i){ sel[k]=i; renderBuilder(); }
+function builtTotal(){ return Object.keys(BUILD).reduce((s,k)=>s+BUILD[k].opts[sel[k]].p,0); }
+function addBuilt(){
+  const name = 'Kendi Setim: ' + Object.keys(BUILD).map(k=>BUILD[k].opts[sel[k]].n).join(' • ');
+  const key = 'built-' + Object.keys(sel).map(k=>sel[k]).join('');
+  addItem({id:key,name,price:SET_PRICE,icon:'fa-gift'});
+}
+renderBuilder();
+
+/* Sepet */
+function addItem(it){
+  const ex = cart.find(i=>i.id===it.id);
+  if(ex) ex.qty++; else cart.push({...it,qty:1});
+  renderCart(); toast('Sepete eklendi!');
+}
+function addProduct(id){ const p=PRODUCTS.find(x=>x.id===id); addItem({id:p.id,name:p.name,price:p.price,icon:p.icon}); }
+function addSet(id){ const s=SETS.find(x=>x.id===id); addItem({id:s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
+function qty(i,d){ cart[i].qty += d; if(cart[i].qty<=0) cart.splice(i,1); renderCart(); }
+function renderCart(){
+  const count = cart.reduce((s,i)=>s+i.qty,0);
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  $('cart-badge').innerText = count;
+  $('subtotal').innerText = TL(sub);
+  $('ship-note').innerText = sub>0 ? 'Kargo ücretsiz 🎉' : '';
+  $('cart-items').innerHTML = cart.length===0
+    ? `<div class="text-center py-20 text-mauve"><i class="fa-solid fa-bag-shopping text-5xl mb-4 text-rose"></i><p class="font-serif text-xl text-ink font-semibold">Sepetin boş</p><p class="text-xs mt-1">Bir set seç ya da kendi setini yarat.</p></div>`
+    : cart.map((it,i)=>`
+      <div class="flex items-center gap-4 p-3 bg-white rounded-2xl shadow-sm border border-rose/50">
+        <div class="w-16 h-16 shrink-0 rounded-xl imgbg flex items-center justify-center text-berry text-2xl"><i class="fa-solid ${it.icon}"></i></div>
+        <div class="flex-1 min-w-0"><h4 class="font-serif font-bold text-sm">${esc(it.name)}</h4><p class="text-xs font-semibold mt-0.5">${TL(it.price)}</p>
+          <div class="flex items-center gap-2 mt-2"><button onclick="qty(${i},-1)" class="w-6 h-6 rounded-md bg-petal font-bold text-xs">-</button><span class="text-xs font-medium">${it.qty}</span><button onclick="qty(${i},1)" class="w-6 h-6 rounded-md bg-petal font-bold text-xs">+</button></div></div>
+        <button onclick="qty(${i},-999)" class="text-mauve hover:text-berry p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+      </div>`).join('');
+}
+function checkout(){
+  if(!cart.length){ toast('Sepetin boş.'); return; }
+  toggleCart();
+  info('Ödeme (Demo)','Ödeme sistemi henüz bağlı değil. Yayına almadan önce iyzico, PayTR gibi bir altyapı bağlanacak.');
+}
+renderCart();
+
+/* Arama */
+function doSearch(q){
+  const box = $('search-results'); q = q.trim().toLocaleLowerCase('tr-TR');
+  if(!q){ box.innerHTML=''; return; }
+  const all = [...SETS.map(s=>({...s,type:'Set'})), ...PRODUCTS];
+  const m = all.filter(p => (p.name+' '+p.type).toLocaleLowerCase('tr-TR').includes(q));
+  box.innerHTML = m.length ? m.map(p=>`
+    <div class="p-3 bg-white rounded-xl flex items-center justify-between border border-rose/50">
+      <div><p class="font-serif font-bold text-sm">${p.name}</p><span class="text-[10px] bg-petal px-2 py-0.5 rounded-full">${p.type}</span></div>
+      <div class="flex items-center gap-3"><span class="font-serif font-bold">${TL(p.price)}</span>
+      <button onclick="${p.id>=100?'addSet':'addProduct'}(${p.id})" class="w-8 h-8 rounded-lg bg-ink text-cream text-xs hover:bg-berry"><i class="fa-solid fa-plus"></i></button></div>
+    </div>`).join('') : `<p class="text-xs text-mauve text-center py-4">Ürün bulunamadı.</p>`;
+}
+
+/* Özel tasarım formu */
+function customSubmit(e){
+  e.preventDefault();
+  const d = new FormData(e.target);
+  const text = `Merhaba Gamika! Özel tasarım istiyorum.\nİsim: ${d.get('ad')}\nİletişim: ${d.get('iletisim')}\nÜrün: ${d.get('urun')}\nFikrim: ${d.get('fikir')}`;
+  if(WHATSAPP_NO){
+    window.open('https://wa.me/' + WHATSAPP_NO + '?text=' + encodeURIComponent(text), '_blank');
+    e.target.reset();
+  } else {
+    info('Form henüz bağlı değil','Yayına almadan önce kodun başındaki WHATSAPP_NO alanına numaranı ekle.');
+  }
+}
+
+/* Genel */
+function openModal(id){ const m=$(id); m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeModal(id){ const m=$(id); m.classList.add('hidden'); m.classList.remove('flex'); }
+function info(t,x){ $('info-title').innerText=t; $('info-text').innerText=x; openModal('info-modal'); }
+function toast(msg){ $('toast-msg').innerText=msg; const t=$('toast'); t.classList.remove('translate-y-24','opacity-0'); setTimeout(()=>t.classList.add('translate-y-24','opacity-0'),3000); }
+function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
+function notify(e){ e.preventDefault(); toast('Kaydın alındı, yeni ürünlerde haber vereceğiz!'); e.target.reset(); }
+function login(e){ e.preventDefault(); closeModal('account-modal'); toast('Giriş yapıldı (demo).'); }
+
+$('cart-btn').onclick = toggleCart;
+$('search-btn').onclick = () => { openModal('search-modal'); $('search-input').focus(); };
+$('account-btn').onclick = () => openModal('account-modal');
+$('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); openModal('account-modal'); };
+$('menu-btn').onclick = () => $('mobile-menu').classList.toggle('hidden');
+document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('mobile-menu').classList.add('hidden')));
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
+</script>
+</body>
+</html>
