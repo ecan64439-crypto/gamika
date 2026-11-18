@@ -306,6 +306,25 @@ tailwind.config = {
   </div>
 </div>
 
+<!-- SİPARİŞ -->
+<div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-start sm:items-center justify-center px-4 py-6 overflow-y-auto">
+  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative">
+    <button onclick="closeModal('checkout-modal')" class="absolute top-6 right-6 text-xl hover:text-berry" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <h3 class="font-serif text-2xl font-bold mb-1">Teslimat Bilgileri</h3>
+    <p id="co-total" class="text-xs text-mauve mb-5"></p>
+    <form onsubmit="submitOrder(event)" class="space-y-3 text-left">
+      <div><label class="block text-xs font-semibold mb-1">Ad Soyad</label><input name="ad" required minlength="3" maxlength="100" autocomplete="name" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Telefon</label><input name="telefon" type="tel" required minlength="10" maxlength="20" autocomplete="tel" placeholder="05xx xxx xx xx" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">E-posta</label><input name="eposta" type="email" required maxlength="150" autocomplete="email" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">İl / İlçe</label><input name="sehir" required minlength="2" maxlength="60" autocomplete="address-level2" placeholder="Örn: İzmir / Karşıyaka" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Açık Adres</label><textarea name="adres" rows="3" required minlength="10" maxlength="300" autocomplete="street-address" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
+      <div><label class="block text-xs font-semibold mb-1">Sipariş Notu <span class="font-normal text-mauve">(isteğe bağlı)</span></label><textarea name="not" rows="2" maxlength="300" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
+      <p id="co-error" class="hidden text-xs text-red-600"></p>
+      <button id="co-btn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">SİPARİŞİ TAMAMLA</button>
+    </form>
+  </div>
+</div>
+
 <!-- BİLGİ -->
 <div id="info-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
   <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
@@ -503,10 +522,54 @@ function renderCart(){
         <button onclick="qty(${i},-999)" class="text-mauve hover:text-berry p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
       </div>`).join('');
 }
+/* Sipariş formu: ödeme (PayTR) bağlanana kadar herkese kapalı. Test için adresin sonuna ?test=1 ekle. */
+const ORDERS_OPEN = new URLSearchParams(location.search).has('test');
 function checkout(){
   if(!cart.length){ toast('Sepetin boş.'); return; }
   toggleCart();
-  info('Ödeme (Demo)','Ödeme sistemi henüz bağlı değil. Yayına almadan önce iyzico, PayTR gibi bir altyapı bağlanacak.');
+  if(!ORDERS_OPEN){
+    info('Ödeme (Demo)','Ödeme sistemi henüz bağlı değil. Yayına almadan önce iyzico, PayTR gibi bir altyapı bağlanacak.');
+    return;
+  }
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  $('co-total').innerText = 'Toplam: ' + TL(sub) + ' • Kargo ücretsiz';
+  $('co-error').classList.add('hidden');
+  openModal('checkout-modal');
+}
+async function submitOrder(e){
+  e.preventDefault();
+  const f = e.target, d = new FormData(f), btn = $('co-btn'), err = $('co-error');
+  err.classList.add('hidden');
+  /* Fiyat göndermiyoruz: sunucu fiyatları kendi tablosundan hesaplar. */
+  const items = cart.map(it => {
+    const id = String(it.id);
+    if(id.startsWith('built-')) return {id:'built', qty:it.qty, name:String(it.name).replace(/^Kendi Setim: /,'').slice(0,200)};
+    return {id, qty:it.qty};
+  });
+  btn.disabled = true; btn.innerText = 'Gönderiliyor...';
+  try{
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/create_order', {
+      method:'POST',
+      headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        p_name:d.get('ad'), p_phone:d.get('telefon'), p_email:d.get('eposta'),
+        p_city:d.get('sehir'), p_address:d.get('adres'), p_note:d.get('not') || null, p_items:items
+      }),
+      signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    const data = await res.json().catch(() => null);
+    if(!res.ok) throw new Error((data && data.message) || ('HTTP ' + res.status));
+    cart = []; renderCart(); f.reset(); closeModal('checkout-modal');
+    info('Siparişin alındı 🎉','Sipariş numaran: ' + data.order_no + ' • Toplam: ' + TL(Number(data.total)) + '. Ödeme adımı için seninle iletişime geçeceğiz.');
+  }catch(ex){
+    err.innerText = ex.name === 'AbortError' ? 'Bağlantı zaman aşımına uğradı, tekrar dene.' : 'Sipariş gönderilemedi: ' + ex.message;
+    err.classList.remove('hidden');
+  }finally{
+    btn.disabled = false; btn.innerText = 'SİPARİŞİ TAMAMLA';
+  }
 }
 renderCart();
 
@@ -538,7 +601,7 @@ $('account-btn').onclick = () => openModal('account-modal');
 $('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); openModal('account-modal'); };
 $('menu-btn').onclick = () => $('mobile-menu').classList.toggle('hidden');
 document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('mobile-menu').classList.add('hidden')));
-document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal','checkout-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
 </script>
 </body>
 </html>
