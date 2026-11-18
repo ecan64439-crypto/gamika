@@ -364,6 +364,11 @@ tailwind.config = {
    Fiyatlar örnektir, kendi fiyatlarınla değiştir. */
 const WHATSAPP_NO = '';
 
+/* Supabase: herkese açık (publishable) okuma anahtarı. Güvenliği veritabanındaki RLS kuralları sağlar.
+   Gizli (secret) anahtarlar asla bu dosyaya konmaz. */
+const SUPABASE_URL = 'https://yhgdnpomcfosobqluafi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GvrjJ4s2GB1wF7e8IYKM1Q_7gLslFhY';
+
 const PRODUCTS = [
   {id:1,name:'Bulut Mousepad (90x40 cm)',cat:'mousepad',type:'Mousepad',price:690,icon:'fa-computer-mouse'},
   {id:2,name:'Tavşan Figür',cat:'figur',type:'Figür',price:159,icon:'fa-cat'},
@@ -426,22 +431,53 @@ $('set-grid').innerHTML = SETS.map(s => `
   </div>`).join('');
 
 /* Ürünler */
-$('product-grid').innerHTML = PRODUCTS.map(p => `
-  <div class="product-card glass rounded-3xl p-5 shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${p.cat}">
+let currentFilter = 'all';
+function renderProducts(){
+  $('product-grid').innerHTML = PRODUCTS.length === 0
+    ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
+    : PRODUCTS.map(p => `
+  <div class="product-card glass rounded-3xl p-5 shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${esc(p.cat)}">
     <div>
       <div class="rounded-2xl aspect-square imgbg mb-4 flex items-center justify-center overflow-hidden">
-        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${p.icon} text-6xl text-berry/80"></i>`}
+        ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(p.icon || 'fa-gift')} text-6xl text-berry/80"></i>`}
       </div>
-      <span class="text-xs text-berry">${p.type}</span>
-      <h3 class="font-serif text-xl font-bold">${p.name}</h3>
+      <span class="text-xs text-berry">${esc(p.type)}</span>
+      <h3 class="font-serif text-xl font-bold">${esc(p.name)}</h3>
     </div>
     <div class="pt-4 mt-4 border-t border-rose/60 flex items-center justify-between">
       <p class="font-serif text-xl font-bold">${TL(p.price)}</p>
-      <button onclick="addProduct(${p.id})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>
+      <button onclick="addProduct(${Number(p.id)})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>
     </div>
   </div>`).join('');
+  filterProducts(currentFilter);
+}
+
+/* Ürünleri Supabase'den yükle. Başarısız olursa yukarıdaki yerel liste kullanılmaya devam eder. */
+async function loadProducts(){
+  try{
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const res = await fetch(
+      SUPABASE_URL + '/rest/v1/products?select=id,name,category,type_label,price,image_url,icon&is_active=eq.true&order=id.asc',
+      { headers: { apikey: SUPABASE_KEY }, signal: ctrl.signal }
+    );
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if(!Array.isArray(rows)) throw new Error('Beklenmeyen yanıt');
+    PRODUCTS.splice(0, PRODUCTS.length, ...rows.map(r => ({
+      id: Number(r.id), name: r.name, cat: r.category, type: r.type_label,
+      price: Number(r.price), icon: r.icon || 'fa-gift',
+      img: (typeof r.image_url === 'string' && r.image_url.startsWith('https://')) ? r.image_url : ''
+    })));
+    renderProducts();
+  }catch(err){
+    console.warn('Ürünler yüklenemedi, yerel liste kullanılıyor:', err);
+  }
+}
 
 function filterProducts(f){
+  currentFilter = f;
   document.querySelectorAll('.fbtn').forEach(b => {
     b.className = 'fbtn px-5 py-2 rounded-xl text-sm font-medium ' + (b.dataset.f===f ? 'bg-ink text-cream' : 'glass');
   });
@@ -450,6 +486,8 @@ function filterProducts(f){
   });
 }
 document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => filterProducts(b.dataset.f)));
+renderProducts();
+loadProducts();
 
 /* Kendi setini yarat */
 function renderBuilder(){
@@ -485,8 +523,8 @@ function addItem(it){
   if(ex) ex.qty++; else cart.push({...it,qty:1});
   renderCart(); toast('Sepete eklendi!');
 }
-function addProduct(id){ const p=PRODUCTS.find(x=>x.id===id); addItem({id:p.id,name:p.name,price:p.price,icon:p.icon}); }
-function addSet(id){ const s=SETS.find(x=>x.id===id); addItem({id:s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
+function addProduct(id){ const p=PRODUCTS.find(x=>x.id===id); if(!p) return; addItem({id:'p'+p.id,name:p.name,price:p.price,icon:p.icon||'fa-gift'}); }
+function addSet(id){ const s=SETS.find(x=>x.id===id); if(!s) return; addItem({id:'s'+s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
 function qty(i,d){ cart[i].qty += d; if(cart[i].qty<=0) cart.splice(i,1); renderCart(); }
 function renderCart(){
   const count = cart.reduce((s,i)=>s+i.qty,0);
@@ -515,13 +553,13 @@ renderCart();
 function doSearch(q){
   const box = $('search-results'); q = q.trim().toLocaleLowerCase('tr-TR');
   if(!q){ box.innerHTML=''; return; }
-  const all = [...SETS.map(s=>({...s,type:'Set'})), ...PRODUCTS];
+  const all = [...SETS.map(s=>({...s,type:'Set',isSet:true})), ...PRODUCTS];
   const m = all.filter(p => (p.name+' '+p.type).toLocaleLowerCase('tr-TR').includes(q));
   box.innerHTML = m.length ? m.map(p=>`
     <div class="p-3 bg-white rounded-xl flex items-center justify-between border border-rose/50">
-      <div><p class="font-serif font-bold text-sm">${p.name}</p><span class="text-[10px] bg-petal px-2 py-0.5 rounded-full">${p.type}</span></div>
+      <div><p class="font-serif font-bold text-sm">${esc(p.name)}</p><span class="text-[10px] bg-petal px-2 py-0.5 rounded-full">${esc(p.type)}</span></div>
       <div class="flex items-center gap-3"><span class="font-serif font-bold">${TL(p.price)}</span>
-      <button onclick="${p.id>=100?'addSet':'addProduct'}(${p.id})" class="w-8 h-8 rounded-lg bg-ink text-cream text-xs hover:bg-berry"><i class="fa-solid fa-plus"></i></button></div>
+      <button onclick="${p.isSet?'addSet':'addProduct'}(${Number(p.id)})" class="w-8 h-8 rounded-lg bg-ink text-cream text-xs hover:bg-berry"><i class="fa-solid fa-plus"></i></button></div>
     </div>`).join('') : `<p class="text-xs text-mauve text-center py-4">Ürün bulunamadı.</p>`;
 }
 
