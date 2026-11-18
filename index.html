@@ -209,10 +209,6 @@ tailwind.config = {
       <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-keyboard text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Mekanik Klavye</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
       <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-headphones text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Kulaklık</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
     </div>
-    <form onsubmit="notify(event)" class="mt-10 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-      <input type="email" required placeholder="E-posta adresin" class="flex-1 px-4 py-3 rounded-xl bg-white border border-rose text-sm focus:outline-none focus:border-berry">
-      <button class="px-6 py-3 bg-berry text-white rounded-xl font-semibold text-xs tracking-wider hover:bg-ink transition">HABER VER</button>
-    </form>
   </div>
 </section>
 
@@ -534,7 +530,6 @@ function closeModal(id){ const m=$(id); m.classList.add('hidden'); m.classList.r
 function info(t,x){ $('info-title').innerText=t; $('info-text').innerText=x; openModal('info-modal'); }
 function toast(msg){ $('toast-msg').innerText=msg; const t=$('toast'); t.classList.remove('translate-y-24','opacity-0'); setTimeout(()=>t.classList.add('translate-y-24','opacity-0'),3000); }
 function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
-function notify(e){ e.preventDefault(); toast('Kaydın alındı, yeni ürünlerde haber vereceğiz!'); e.target.reset(); }
 function login(e){ e.preventDefault(); closeModal('account-modal'); toast('Giriş yapıldı (demo).'); }
 
 $('cart-btn').onclick = toggleCart;
