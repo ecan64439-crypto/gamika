@@ -73,7 +73,6 @@ tailwind.config = {
     <a href="#setler" class="hover:text-berry transition">Hazır Setler</a>
     <a href="#olustur" class="hover:text-berry transition">Kendi Setini Yarat</a>
     <a href="#urunler" class="hover:text-berry transition">Ürünler</a>
-    <a href="#ozel" class="hover:text-berry transition">Özel Tasarım</a>
     <a href="#yakinda" class="hover:text-berry transition">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
@@ -81,7 +80,6 @@ tailwind.config = {
     <a href="#setler" class="block text-lg font-medium">Hazır Setler</a>
     <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat</a>
     <a href="#urunler" class="block text-lg font-medium">Ürünler</a>
-    <a href="#ozel" class="block text-lg font-medium">Özel Tasarım</a>
     <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
     <button id="mobile-account" class="w-full py-2.5 bg-petal rounded-xl font-medium text-sm"><i class="fa-regular fa-user mr-2"></i>Hesabım</button>
   </div>
@@ -108,10 +106,9 @@ tailwind.config = {
         </a>
         <a href="#setler" class="px-8 py-4 glass rounded-2xl font-medium hover:bg-petal hover:scale-[1.02] transition-all text-center">SETLERE BAK</a>
       </div>
-      <div class="pt-8 border-t border-rose grid grid-cols-3 gap-4">
+      <div class="pt-8 border-t border-rose grid grid-cols-2 gap-4">
         <div><i class="fa-solid fa-truck-fast text-berry text-xl mb-1"></i><p class="text-xs font-semibold">Ücretsiz Kargo</p></div>
         <div><i class="fa-solid fa-rotate-left text-berry text-xl mb-1"></i><p class="text-xs font-semibold">14 Gün Kolay İade</p></div>
-        <div><i class="fa-solid fa-palette text-berry text-xl mb-1"></i><p class="text-xs font-semibold">İstediğin Tasarımda</p></div>
       </div>
     </div>
     <div class="lg:col-span-6 relative">
@@ -176,7 +173,6 @@ tailwind.config = {
           </div>
         </div>
         <button onclick="addBuilt()" class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider hover:bg-white transition"><i class="fa-solid fa-bag-shopping mr-2"></i>SETİ SEPETE EKLE</button>
-        <p class="text-[11px] text-cream/60 mt-3 text-center">Kendi tasarımınla istiyorsan aşağıdaki <a href="#ozel" class="underline">Özel Tasarım</a> bölümüne bak.</p>
       </div>
     </div>
   </div>
@@ -199,33 +195,6 @@ tailwind.config = {
       </div>
     </div>
     <div id="product-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-  </div>
-</section>
-
-<!-- ÖZEL TASARIM -->
-<section id="ozel" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-start">
-    <div class="space-y-6">
-      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Sana Özel</span>
-      <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">İSTEDİĞİN TASARIMDA <span class="italic text-berry font-normal">ÜRETELİM.</span></h2>
-      <p class="text-ink/75 leading-relaxed font-light text-lg">Mousepad'ini, setini ya da hayalindeki tasarımı bize anlat. Senin için üretelim.</p>
-      <div class="space-y-4 pt-2">
-        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">1</div><p class="pt-2 text-sm"><b>Fikrini anlat.</b> Ne istediğini formdan yaz.</p></div>
-        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">2</div><p class="pt-2 text-sm"><b>Tasarımı birlikte netleştirelim.</b> Görselini bize gönderebilirsin.</p></div>
-        <div class="flex items-start gap-4"><div class="w-10 h-10 shrink-0 rounded-full bg-rose flex items-center justify-center font-bold">3</div><p class="pt-2 text-sm"><b>Üretilsin, kapına gelsin.</b> Kargo ücretsiz.</p></div>
-      </div>
-    </div>
-    <form onsubmit="customSubmit(event)" class="glass rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-      <h3 class="font-serif text-2xl font-bold">Özel Tasarım Talebi</h3>
-      <div><label class="block text-xs font-semibold mb-1">Adın</label><input name="ad" required class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
-      <div><label class="block text-xs font-semibold mb-1">Telefon veya e-posta</label><input name="iletisim" required class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
-      <div><label class="block text-xs font-semibold mb-1">Ne istiyorsun?</label>
-        <select name="urun" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry">
-          <option>Mousepad</option><option>Figür</option><option>Klavye bilek desteği</option><option>Komple set</option>
-        </select></div>
-      <div><label class="block text-xs font-semibold mb-1">Tasarım fikrin</label><textarea name="fikir" rows="4" required placeholder="Renkler, tema, yazı, karakter... Aklındakini yaz." class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
-      <button class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition">TALEBİ GÖNDER <i class="fa-solid fa-paper-plane ml-2"></i></button>
-    </form>
   </div>
 </section>
 
@@ -256,8 +225,7 @@ tailwind.config = {
       <p class="text-ink/75 leading-relaxed font-light text-lg">
         Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik mousepad, figür, klavye bilek desteği ve switch'leri tek tek ya da set halinde sunuyoruz. Yenileri yolda.
       </p>
-      <div class="grid grid-cols-2 gap-6 pt-2">
-        <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-palette text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Sana Özel</h4><p class="text-xs text-ink/70">İstediğin tasarımda üretim yapılabilir.</p></div>
+      <div class="grid grid-cols-1 gap-6 pt-2">
         <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-gift text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Set Halinde</h4><p class="text-xs text-ink/70">Her şey uyumlu renklerde, tek seferde.</p></div>
       </div>
     </div>
@@ -285,7 +253,6 @@ tailwind.config = {
           <li><a href="#setler" class="hover:text-white">Hazır Setler</a></li>
           <li><a href="#olustur" class="hover:text-white">Kendi Setini Yarat</a></li>
           <li><a href="#urunler" class="hover:text-white">Ürünler</a></li>
-          <li><a href="#ozel" class="hover:text-white">Özel Tasarım</a></li>
         </ul>
       </div>
       <div>
@@ -360,9 +327,7 @@ tailwind.config = {
 
 <script>
 /* ====== AYARLAR ======
-   WHATSAPP_NO: özel tasarım formu bu numaraya mesaj olarak gider. Örn: '905xxxxxxxxx'
    Fiyatlar örnektir, kendi fiyatlarınla değiştir. */
-const WHATSAPP_NO = '905442844781';
 
 /* Supabase: herkese açık (publishable) okuma anahtarı. Güvenliği veritabanındaki RLS kuralları sağlar.
    Gizli (secret) anahtarlar asla bu dosyaya konmaz. */
@@ -385,7 +350,7 @@ const SETS = [
 ];
 const CONTENTS = [
   {t:'Figür',d:'Masana sevimli bir dokunuş.',icon:'fa-cat',f:'figur'},
-  {t:'Mousepad',d:'İstediğin tasarımda, geniş boy.',icon:'fa-computer-mouse',f:'mousepad'},
+  {t:'Mousepad',d:'Geniş boy.',icon:'fa-computer-mouse',f:'mousepad'},
   {t:'Klavye Bilek Desteği',d:'Yazarken ve oynarken rahat duruş.',icon:'fa-hand',f:'bilek'},
   {t:"Klavye Switch'leri",d:'Klavyene yeni bir his.',icon:'fa-keyboard',f:'switch'}
 ];
@@ -561,19 +526,6 @@ function doSearch(q){
       <div class="flex items-center gap-3"><span class="font-serif font-bold">${TL(p.price)}</span>
       <button onclick="${p.isSet?'addSet':'addProduct'}(${Number(p.id)})" class="w-8 h-8 rounded-lg bg-ink text-cream text-xs hover:bg-berry"><i class="fa-solid fa-plus"></i></button></div>
     </div>`).join('') : `<p class="text-xs text-mauve text-center py-4">Ürün bulunamadı.</p>`;
-}
-
-/* Özel tasarım formu */
-function customSubmit(e){
-  e.preventDefault();
-  const d = new FormData(e.target);
-  const text = `Merhaba Gamika! Özel tasarım istiyorum.\nİsim: ${d.get('ad')}\nİletişim: ${d.get('iletisim')}\nÜrün: ${d.get('urun')}\nFikrim: ${d.get('fikir')}`;
-  if(WHATSAPP_NO){
-    window.open('https://wa.me/' + WHATSAPP_NO + '?text=' + encodeURIComponent(text), '_blank');
-    e.target.reset();
-  } else {
-    info('Form henüz bağlı değil','Yayına almadan önce kodun başındaki WHATSAPP_NO alanına numaranı ekle.');
-  }
 }
 
 /* Genel */
