@@ -548,7 +548,7 @@ function openCheckoutForm(){
     const md = user.user_metadata || {};
     const fill = (n, v) => { const el = document.querySelector('#checkout-modal [name=' + n + ']'); if(el && !el.value && v) el.value = v; };
     fill('eposta', user.email);
-    fill('ad', [md.first_name, md.last_name].filter(Boolean).join(' '));
+    fill('ad', userName(user));
     fill('telefon', md.phone);
   }
   openModal('checkout-modal');
@@ -667,20 +667,7 @@ function legalLink(title, label){
 }
 function renderAccount(){
   const box = $('account-body'); if(!box) return;
-  if(user){
-    const md = user.user_metadata || {};
-    const who = [md.first_name, md.last_name].filter(Boolean).join(' ');
-    box.innerHTML = `
-      <h3 class="font-serif text-2xl font-bold mb-1">${who ? 'Merhaba, ' + esc(who) : 'Hesabım'}</h3>
-      <p class="text-xs text-mauve mb-5 break-all">${esc(user.email || '')}</p>
-      <div class="text-left">
-        <h4 class="font-serif font-bold text-lg mb-2">Siparişlerim</h4>
-        <div id="my-orders" class="space-y-2 text-xs"><p class="text-mauve">Yükleniyor...</p></div>
-      </div>
-      <button onclick="signOut()" class="mt-6 w-full py-3 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition">ÇIKIŞ YAP</button>`;
-    loadMyOrders();
-    return;
-  }
+  if(user){ renderMember(); return; }
   if(authMode === 'register'){
     box.innerHTML = `
       <h3 class="font-serif text-2xl font-bold mb-5">Yeni Üyelik</h3>
@@ -734,6 +721,83 @@ function renderAccount(){
       ${socialButtons()}
     </div>`;
   renderCaptcha();
+}
+let accountView = 'menu';   // 'menu' | 'info' | 'orders' | 'edit'
+const GENDER_TR = { erkek:'Erkek', kadin:'Kadın', belirtmek_istemiyorum:'Belirtmek istemiyorum' };
+function userName(u){
+  const md = (u && u.user_metadata) || {};
+  const n = [md.first_name, md.last_name].filter(Boolean).join(' ');
+  return n || md.full_name || md.name || '';
+}
+function setAccountView(v){ accountView = v; renderAccount(); }
+function backBtn(){ return `<button type="button" onclick="setAccountView('menu')" class="mb-4 text-xs underline text-mauve">← Hesabım</button>`; }
+function renderMember(){
+  const box = $('account-body'), md = user.user_metadata || {};
+  const btn = 'w-full text-left px-5 py-4 bg-white border border-rose/60 rounded-2xl font-semibold text-sm hover:bg-petal transition';
+  if(accountView === 'orders'){
+    box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Siparişlerim</h3>
+      <div id="my-orders" class="space-y-2 text-xs"><p class="text-mauve">Yükleniyor...</p></div></div>`;
+    loadMyOrders(); return;
+  }
+  if(accountView === 'info'){
+    const row = (k, v) => `<div class="flex justify-between gap-4 py-2.5 border-b border-rose/40 text-sm"><span class="text-mauve">${k}</span><span class="font-medium text-right break-all">${v ? esc(v) : '-'}</span></div>`;
+    box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Hesap Bilgileri</h3>
+      ${row('Ad Soyad', userName(user))}${row('E-posta', user.email)}${row('Cep Telefonu', md.phone)}
+      ${row('Doğum Tarihi', md.birth_date ? new Date(md.birth_date + 'T00:00:00').toLocaleDateString('tr-TR') : '')}
+      ${row('Cinsiyet', GENDER_TR[md.gender])}${row('E-ticaret iletisi', md.email_consent ? 'Evet' : 'Hayır')}</div>`;
+    return;
+  }
+  if(accountView === 'edit'){
+    const g = v => md.gender === v ? 'checked' : '';
+    box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Üye Bilgisi Güncelleme</h3>
+      <form onsubmit="saveProfile(event)" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs font-semibold mb-1">Adı ${STAR}</label><input name="first" required maxlength="60" value="${esc(md.first_name || (userName(user).split(' ')[0] || ''))}" class="${INPUT_CLS}"></div>
+          <div><label class="block text-xs font-semibold mb-1">Soyadı ${STAR}</label><input name="last" required maxlength="60" value="${esc(md.last_name || (userName(user).split(' ').slice(1).join(' ')))}" class="${INPUT_CLS}"></div>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1">Email</label><input value="${esc(user.email || '')}" disabled class="${INPUT_CLS} opacity-60"></div>
+        <div><label class="block text-xs font-semibold mb-2">Cinsiyet</label>
+          <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="erkek" ${g('erkek')} class="accent-berry"> Erkek</label>
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="kadin" ${g('kadin')} class="accent-berry"> Kadın</label>
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="belirtmek_istemiyorum" ${g('belirtmek_istemiyorum')} class="accent-berry"> Belirtmek istemiyorum</label>
+          </div></div>
+        <div><label class="block text-xs font-semibold mb-1">Cep Telefonu ${STAR}</label><input name="phone" type="tel" required maxlength="20" value="${esc(md.phone || '')}" placeholder="(5XX) XXX XX XX" class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">Doğum Tarihi ${STAR}</label><input name="birth" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0,10)}" value="${esc(md.birth_date || '')}" class="${INPUT_CLS}"></div>
+        <label class="flex items-start gap-2 text-xs leading-snug"><input type="checkbox" name="consent" ${md.email_consent ? 'checked' : ''} class="mt-0.5 accent-berry"><span>Elektronik Ticaret İletisi almak istiyorum.</span></label>
+        <p id="auth-msg" class="hidden text-xs"></p>
+        <button id="auth-btn" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">KAYDET</button>
+      </form></div>`;
+    return;
+  }
+  const nm = userName(user);
+  box.innerHTML = `
+    <h3 class="font-serif text-2xl font-bold mb-1 text-left">Hoş Geldiniz</h3>
+    <p class="text-sm text-ink/80 mb-5 text-left break-all">Sn. ${esc(nm || user.email || '')}</p>
+    <div class="space-y-3">
+      <button onclick="setAccountView('info')" class="${btn}">Hesap Bilgileri</button>
+      <button onclick="setAccountView('orders')" class="${btn}">Siparişlerim</button>
+      <button onclick="setAccountView('edit')" class="${btn}">Üye Bilgisi Güncelleme</button>
+    </div>
+    <button onclick="signOut()" class="mt-6 w-full py-3.5 bg-ink text-cream rounded-full font-semibold text-sm hover:bg-berry transition">Çıkış Yap</button>`;
+}
+async function saveProfile(e){
+  e.preventDefault();
+  if(!sb) return;
+  const d = new FormData(e.target), btn = $('auth-btn');
+  const phone = normalizePhone(d.get('phone'));
+  if(!phone){ authMsg('Cep telefonu (5XX) XXX XX XX biçiminde olmalı.', false); return; }
+  const birth = String(d.get('birth') || '');
+  if(!birth || birth > new Date().toISOString().slice(0,10)){ authMsg('Doğum tarihi geçersiz.', false); return; }
+  btn.disabled = true;
+  try{
+    const { data, error } = await sb.auth.updateUser({ data:{
+      first_name:String(d.get('first')).trim().slice(0,60), last_name:String(d.get('last')).trim().slice(0,60),
+      phone, gender:d.get('gender') || '', birth_date:birth, email_consent:d.get('consent') === 'on' } });
+    if(error){ authMsg(authErrorTR(error), false); return; }
+    user = data.user; toast('Bilgilerin güncellendi.'); setAccountView('info');
+  }catch(_){ authMsg('Bağlantı hatası, tekrar dene.', false); }
+  finally{ btn.disabled = false; }
 }
 function forgotPassword(){
   authMsg('Şifre sıfırlama e-postası yakında aktif olacak. Şimdilik gamikatr@hotmail.com adresine yazabilirsin.', null);
@@ -833,7 +897,7 @@ async function socialLogin(provider){
 async function signOut(){
   if(!sb) return;
   await sb.auth.signOut();
-  user = null; closeModal('account-modal'); renderAccount(); toast('Çıkış yapıldı.');
+  user = null; accountView = 'menu'; closeModal('account-modal'); renderAccount(); toast('Çıkış yapıldı.');
 }
 async function loadMyOrders(){
   const box = $('my-orders'); if(!box || !sb) return;
@@ -856,8 +920,8 @@ function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
 
 $('cart-btn').onclick = toggleCart;
 $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').focus(); };
-$('account-btn').onclick = () => { afterAuth = null; renderAccount(); openModal('account-modal'); };
-$('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); afterAuth = null; renderAccount(); openModal('account-modal'); };
+$('account-btn').onclick = () => { afterAuth = null; accountView = 'menu'; renderAccount(); openModal('account-modal'); };
+$('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); afterAuth = null; accountView = 'menu'; renderAccount(); openModal('account-modal'); };
 $('menu-btn').onclick = () => $('mobile-menu').classList.toggle('hidden');
 document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('mobile-menu').classList.add('hidden')));
 document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal','checkout-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
