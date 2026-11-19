@@ -106,12 +106,15 @@
   @media (prefers-reduced-motion:reduce){.hz-blob,.hz-fl,.hz-tw,.hz-pad{animation:none}.hz-fl{display:none}}
   .duyuru{letter-spacing:.3em;white-space:nowrap}
   #mbar{display:none}
+  .only-mob{display:none !important}
   @media (max-width:767px){
     .duyuru{letter-spacing:.12em;font-size:11px}
     header .grid-cols-\[1fr_auto_1fr\]{display:flex;justify-content:space-between}
     header .grid-cols-\[1fr_auto_1fr\]>div:first-child{display:none}
     #account-btn,#cart-btn{display:none}
     #fav-btn>span:last-child{display:none}
+    .only-mob{display:flex !important}
+    .hdr-logo{height:34px !important;width:auto !important}
     .hz-h1{font-size:2.4rem}
     #mbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:45;background:#fff;border-top:3px dashed #D9C2F7;padding:8px 0 calc(10px + env(safe-area-inset-bottom))}
     #mbar button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:500;color:#2A1B2E}
@@ -147,7 +150,7 @@
       <button id="search-btn" class="hover:text-berry p-2" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
     </div>
     <a href="#" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
-      <img src="logo.png" alt="Gamika" class="block h-7 sm:h-12 w-auto object-contain"
+      <img src="logo.png" alt="Gamika" class="hdr-logo block h-9 sm:h-12 w-auto object-contain"
            onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
       <span class="logo-text text-4xl sm:text-5xl" style="display:none">GAM<span class="logo-i">I</span>KA</span>
     </a>
@@ -163,6 +166,7 @@
         <span id="cart-badge" class="absolute bg-berry text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center" style="top:-8px;right:-12px">0</span></span>
         <span>Sepetim</span>
       </button>
+      <button id="hdr-menu" class="hdr-btn only-mob" type="button" title="Menü" aria-label="Menü"><span class="hdr-ico"><svg width="22" height="22" viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="8" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="9" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="9" width="1" height="1" fill="#9B4DE0"/></svg></span></button>
     </div>
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
@@ -1286,6 +1290,7 @@ $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').f
 })();
 // Telefon alt menüsü
 $('mb-menu').onclick = () => { $('mobile-menu').classList.toggle('hidden'); window.scrollTo({top:0,behavior:'smooth'}); };
+$('hdr-menu').onclick = () => $('mobile-menu').classList.toggle('hidden');
 $('mb-search').onclick = () => $('search-btn').click();
 $('mb-account').onclick = () => $('account-btn').click();
 $('mb-cart').onclick = () => $('cart-btn').click();
