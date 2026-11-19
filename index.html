@@ -41,6 +41,16 @@
   .logo-i{position:relative;display:inline;line-height:inherit;vertical-align:baseline}
   .logo-i::before{content:'';position:absolute;top:-.17em;left:50%;transform:translateX(-50%);width:.27em;height:.27em;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#fcc9da,#F296B6)}
+  /* Kayan bilgi şeridi */
+  .marquee{overflow:hidden;background:#fff;border-top:1px solid rgba(249,213,229,.8);border-bottom:1px solid rgba(249,213,229,.8)}
+  .marquee-track{display:flex;width:max-content;animation:marquee 35s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee-group{display:flex;flex-shrink:0}
+  .marquee-item{display:flex;align-items:center;gap:10px;padding:16px 32px;white-space:nowrap;font-size:15px;color:#2A1B2E}
+  .marquee-item i{color:#E0709A;font-size:18px}
+  .marquee-item b{font-weight:700}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.marquee-track{animation:none}}
 </style>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -129,6 +139,14 @@
     </div>
   </div>
 </section>
+
+<!-- KAYAN BİLGİ ŞERİDİ -->
+<div class="marquee" aria-label="Mağaza avantajları">
+  <div class="marquee-track">
+    <div class="marquee-group"><span class="marquee-item"><i class="fa-solid fa-truck-fast"></i>Tüm siparişlerde <b>ücretsiz kargo</b></span><span class="marquee-item"><i class="fa-solid fa-ruler-combined"></i><b>90×40 cm</b> geniş mousepad</span><span class="marquee-item"><i class="fa-solid fa-rotate-left"></i><b>14 gün</b> kolay iade</span><span class="marquee-item"><i class="fa-solid fa-box"></i><b>3 iş günü</b> içinde kargoda</span><span class="marquee-item"><i class="fa-solid fa-palette"></i><b>Set halinde</b> uyumlu renkler</span><span class="marquee-item"><i class="fa-solid fa-heart"></i><b>Kadın oyuncular</b> için tasarlandı</span><span class="marquee-item"><i class="fa-brands fa-whatsapp"></i>WhatsApp'tan <b>hızlı destek</b></span></div>
+    <div class="marquee-group" aria-hidden="true"><span class="marquee-item"><i class="fa-solid fa-truck-fast"></i>Tüm siparişlerde <b>ücretsiz kargo</b></span><span class="marquee-item"><i class="fa-solid fa-ruler-combined"></i><b>90×40 cm</b> geniş mousepad</span><span class="marquee-item"><i class="fa-solid fa-rotate-left"></i><b>14 gün</b> kolay iade</span><span class="marquee-item"><i class="fa-solid fa-box"></i><b>3 iş günü</b> içinde kargoda</span><span class="marquee-item"><i class="fa-solid fa-palette"></i><b>Set halinde</b> uyumlu renkler</span><span class="marquee-item"><i class="fa-solid fa-heart"></i><b>Kadın oyuncular</b> için tasarlandı</span><span class="marquee-item"><i class="fa-brands fa-whatsapp"></i>WhatsApp'tan <b>hızlı destek</b></span></div>
+  </div>
+</div>
 
 <!-- KUTUNUN İÇİNDE -->
 <section id="icerik" class="py-20">
