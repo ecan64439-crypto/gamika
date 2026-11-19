@@ -57,12 +57,22 @@ function loginView(err){
   $('#app').innerHTML=`<div class="card login"><h1>Gamika Yönetim</h1>
   <label>E-posta</label><input id="em" type="email" autocomplete="username">
   <label>Şifre</label><input id="pw" type="password" autocomplete="current-password">
+  <div id="cf" style="margin-top:12px"></div>
   <p class="er">${esc(err||'')}</p>
   <button class="pri" style="width:100%" onclick="login()">Giriş yap</button></div>`;
   $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+  renderTs();
+}
+const TS_KEY='0x4AAAAAAGIC8Lut-K4TDwKW';let tsToken='';
+function onTs(){renderTs()}
+function renderTs(){
+  if(!window.turnstile||!$('#cf'))return;
+  tsToken='';
+  turnstile.render('#cf',{sitekey:TS_KEY,callback:t=>{tsToken=t},'expired-callback':()=>{tsToken=''},'error-callback':()=>{tsToken=''}});
 }
 async function login(){
-  const {error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});
+  if(!tsToken)return toast('Önce doğrulama kutusunu tamamla');
+  const {error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value,options:{captchaToken:tsToken}});
   if(error)return loginView('Giriş başarısız: '+error.message);
   boot();
 }
@@ -124,7 +134,7 @@ function vOrders(){
   }).join('')||'<p class="mu">Sipariş yok.</p>');
 }
 async function setStatus(id,v){
-  const {error}=await sb.from('orders').update({status:v}).eq('id',id);
+  const {error}=await sb.rpc('admin_set_order_status',{p_order_id:id,p_status:v});
   if(error){toast('Hata: '+error.message);return load()}
   D.orders.find(o=>o.id===id).status=v;toast('Durum güncellendi');render();
 }
@@ -190,5 +200,6 @@ async function togS(id){
 }
 boot();
 </script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTs&render=explicit" async defer></script>
 </body>
 </html>
