@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Yönetim — GAMİKA</title>
+<link rel="icon" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FFF9FB;--rose:#F9D5E5;--petal:#FDEBF3;--berry:#E0709A;--ink:#2A1B2E;--mauve:#A67B9B;--ok:#2f7d57;--bad:#c0392b}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.5}
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0}
+  header{background:#fff;border-bottom:1px solid var(--rose);position:sticky;top:0;z-index:10}
+  .bar{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .bar img{height:34px;width:auto;display:block}
+  .who{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mauve)}
+  main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+  .card{background:#fff;border:1px solid var(--rose);border-radius:18px;padding:18px}
+  .center{max-width:420px;margin:60px auto;text-align:center}
+  .center h1{font-size:26px;margin-bottom:8px}
+  .muted{color:var(--mauve)}
+  button,.btn{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:9px 16px;font-weight:600;font-size:13px;background:var(--ink);color:var(--cream);text-decoration:none;display:inline-block}
+  button:hover,.btn:hover{background:var(--berry)}
+  button.ghost{background:var(--petal);color:var(--ink)}
+  button.ghost:hover{background:var(--rose)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .tabs button{background:#fff;color:var(--ink);border:1px solid var(--rose)}
+  .tabs button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+  label{display:block;font-size:12px;font-weight:600;margin:10px 0 4px}
+  input,select{font:inherit;width:100%;padding:9px 11px;border:1px solid var(--rose);border-radius:10px;background:var(--cream);color:var(--ink)}
+  input:focus,select:focus{outline:none;border-color:var(--berry)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:600}
+  .chk input{width:auto}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--petal);color:var(--ink)}
+  .pill.off{background:#eee;color:#777}
+  .pill.zero{background:#fde4e1;color:var(--bad)}
+  .pill.ok{background:#e1f3ea;color:var(--ok)}
+  .actions{margin-top:14px;display:flex;gap:8px;align-items:center}
+  details.card{margin-bottom:16px}
+  summary{cursor:pointer;font-weight:700;font-family:'Fraunces',serif;font-size:17px}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .toolbar select{width:auto}
+  .order{margin-bottom:14px}
+  .order .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .lines{margin:10px 0;padding:10px 12px;background:var(--cream);border-radius:12px}
+  .lines div{display:flex;justify-content:space-between;gap:10px}
+  .info{display:grid;gap:2px;margin-top:8px}
+  .statusrow{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .statusrow select{width:auto;min-width:180px}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:50;max-width:90vw}
+  #toast.show{transform:translateX(-50%);opacity:1}
+  #toast.err{background:var(--bad)}
+  @media(max-width:520px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div style="display:flex;align-items:center;gap:12px"><img src="logo.png" alt="GAMİKA"><span class="muted" style="font-weight:600">Yönetim</span></div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+<main id="app"><div class="center muted">Yükleniyor...</div></main>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* Herkese açık (publishable) anahtar; asıl güvenlik veritabanındaki yönetici kurallarında (RLS). */
+const SUPABASE_URL = 'https://yhgdnpomcfosobqluafi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GvrjJ4s2GB1wF7e8IYKM1Q_7gLslFhY';
+const REMEMBER_KEY = 'gamika_remember';
+/* Ana siteyle aynı oturum deposu: sitede giriş yapıldıysa burada da geçerlidir. */
+const authStorage = {
+  getItem: k => { try{ const v = sessionStorage.getItem(k); return v !== null ? v : localStorage.getItem(k); }catch(_){ return null; } },
+  setItem: (k, v) => { try{ (localStorage.getItem(REMEMBER_KEY) === '0' ? sessionStorage : localStorage).setItem(k, v); }catch(_){} },
+  removeItem: k => { try{ sessionStorage.removeItem(k); localStorage.removeItem(k); }catch(_){} }
+};
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ storage:authStorage } }) : null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TL = n => Number(n).toLocaleString('tr-TR', {minimumFractionDigits:0, maximumFractionDigits:2}) + ' ₺';
+const CATS = {mousepad:'Mousepad', figur:'Figür', bilek:'Bilek Desteği', switch:'Klavye Switch'};
+const STATUS = {odeme_bekleniyor:'Ödeme bekleniyor', odendi:'Ödendi', hazirlaniyor:'Hazırlanıyor', kargoda:'Kargoda', teslim_edildi:'Teslim edildi', iptal:'İptal edildi'};
+
+let products = [], orders = [], tab = 'urunler', orderFilter = 'all';
+
+function toast(msg, bad){
+  const t = $('toast'); t.textContent = msg; t.className = 'show' + (bad ? ' err' : '');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.className = '', 3200);
+}
+
+/* ---------- Açılış ---------- */
+async function init(){
+  if(!sb){ $('app').innerHTML = '<div class="center card">Bağlantı kurulamadı. Sayfayı yenile.</div>'; return; }
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ renderLogin(); return; }
+  const { data:ok, error } = await sb.rpc('is_admin');
+  if(error){ $('app').innerHTML = '<div class="center card">Yetki kontrol edilemedi: ' + esc(error.message) + '</div>'; return; }
+  $('who').innerHTML = '<span>' + esc(session.user.email) + '</span><button class="ghost" onclick="logout()">Çıkış</button>';
+  if(ok !== true){
+    $('app').innerHTML = '<div class="center card"><h1>Yetkin yok</h1><p class="muted">Bu hesap yönetici değil.</p><p><a class="btn" href="/">Siteye dön</a></p></div>';
+    return;
+  }
+  await Promise.all([loadProducts(), loadOrders()]);
+  renderApp();
+}
+function renderLogin(){
+  $('who').innerHTML = '';
+  $('app').innerHTML = `<div class="center card"><h1>Yönetim paneli</h1><p class="muted">Devam etmek için yönetici hesabınla giriş yap.</p>
+    <p><button onclick="loginGoogle()">Google ile giriş yap</button></p>
+    <p class="muted" style="font-size:12px">Giriş sonrası ana sayfaya düşersen bu adrese (gamikatr.com/yonetim) tekrar gir.</p></div>`;
+}
+async function loginGoogle(){
+  try{ localStorage.setItem(REMEMBER_KEY, '1'); }catch(_){}
+  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + '/yonetim' } });
+  if(error) toast('Giriş başlatılamadı: ' + error.message, true);
+}
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+
+/* ---------- Veri ---------- */
+async function loadProducts(){
+  const { data, error } = await sb.from('products').select('id,name,category,type_label,price,stock,image_url,icon,is_active').order('id');
+  if(error){ toast('Ürünler yüklenemedi: ' + error.message, true); return; }
+  products = data || [];
+}
+async function loadOrders(){
+  const { data, error } = await sb.from('orders')
+    .select('id,order_no,created_at,status,customer_name,phone,email,city,address,note,items,total')
+    .order('created_at', { ascending:false }).limit(200);
+  if(error){ toast('Siparişler yüklenemedi: ' + error.message, true); return; }
+  orders = data || [];
+}
+
+/* ---------- Ekran ---------- */
+function renderApp(){
+  const pending = orders.filter(o => o.status === 'odeme_bekleniyor' || o.status === 'odendi' || o.status === 'hazirlaniyor').length;
+  $('app').innerHTML = `
+    <div class="tabs">
+      <button id="t-urunler" class="${tab==='urunler'?'on':''}" onclick="setTab('urunler')">Ürünler (${products.length})</button>
+      <button id="t-siparisler" class="${tab==='siparisler'?'on':''}" onclick="setTab('siparisler')">Siparişler (${orders.length})${pending ? ' • ' + pending + ' açık' : ''}</button>
+    </div>
+    <div id="panel"></div>`;
+  tab === 'urunler' ? renderProducts() : renderOrders();
+}
+function setTab(t){ tab = t; renderApp(); }
+
+function productForm(p){
+  const id = p ? p.id : '';
+  return `
+    <label>Ürün adı</label><input name="name" maxlength="100" value="${esc(p?.name)}">
+    <div class="row">
+      <div><label>Kategori</label><select name="category">${Object.entries(CATS).map(([k,v]) => `<option value="${k}" ${p?.category===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      <div><label>Tür etiketi</label><input name="type_label" maxlength="40" value="${esc(p?.type_label)}" placeholder="Örn. Figür"></div>
+    </div>
+    <div class="row">
+      <div><label>Fiyat (₺)</label><input name="price" type="number" min="0" step="0.01" value="${esc(p?.price)}"></div>
+      <div><label>Stok (adet)</label><input name="stock" type="number" min="0" step="1" value="${esc(p?.stock ?? 10)}"></div>
+    </div>
+    <label>Görsel adresi (https://...)</label><input name="image_url" type="url" value="${esc(p?.image_url)}" placeholder="Boş bırakılırsa ikon gösterilir">
+    <label>İkon (örn. fa-cat)</label><input name="icon" value="${esc(p?.icon)}" placeholder="fa-gift">
+    <label class="chk"><input name="is_active" type="checkbox" ${(p ? p.is_active : true) ? 'checked' : ''}> Sitede görünsün</label>`;
+}
+function renderProducts(){
+  $('panel').innerHTML = `
+    <details class="card"><summary>+ Yeni ürün ekle</summary>
+      <form id="new-product" onsubmit="return false">${productForm(null)}
+        <div class="actions"><button onclick="saveProduct(this, null)">Ürünü ekle</button></div></form>
+    </details>
+    <div class="grid">${products.map(p => `
+      <form class="card" data-id="${Number(p.id)}" onsubmit="return false">
+        <div class="head"><h3>#${Number(p.id)} ${esc(p.name)}</h3>
+          <span>${p.is_active ? '' : '<span class="pill off">Pasif</span> '}<span class="pill ${p.stock <= 0 ? 'zero' : 'ok'}">${p.stock <= 0 ? 'Tükendi' : 'Stok ' + Number(p.stock)}</span></span></div>
+        ${productForm(p)}
+        <div class="actions"><button onclick="saveProduct(this, ${Number(p.id)})">Kaydet</button></div>
+      </form>`).join('')}</div>`;
+}
+
+function readProduct(form){
+  const f = new FormData(form);
+  const name = String(f.get('name') || '').trim();
+  const category = String(f.get('category') || '');
+  const type_label = String(f.get('type_label') || '').trim();
+  const price = Number(String(f.get('price')).replace(',', '.'));
+  const stockRaw = String(f.get('stock') || '').trim();
+  const image_url = String(f.get('image_url') || '').trim();
+  const icon = String(f.get('icon') || '').trim();
+  if(name.length < 2 || name.length > 100) return 'Ürün adı 2-100 karakter olmalı.';
+  if(!CATS[category]) return 'Kategori geçersiz.';
+  if(!type_label) return 'Tür etiketi boş olamaz.';
+  if(!Number.isFinite(price) || price < 0 || String(f.get('price')).trim() === '') return 'Fiyat geçersiz.';
+  if(!/^[0-9]{1,6}$/.test(stockRaw)) return 'Stok 0 veya daha büyük bir tam sayı olmalı.';
+  if(image_url && !image_url.startsWith('https://')) return 'Görsel adresi https:// ile başlamalı.';
+  if(icon && !/^fa-[a-z0-9-]+$/.test(icon)) return 'İkon "fa-" ile başlayan bir ad olmalı (örn. fa-cat).';
+  return { name, category, type_label, price, stock:Number(stockRaw), image_url:image_url || null, icon:icon || null, is_active:f.get('is_active') === 'on' };
+}
+async function saveProduct(btn, id){
+  const row = readProduct(btn.closest('form'));
+  if(typeof row === 'string'){ toast(row, true); return; }
+  btn.disabled = true;
+  try{
+    const res = id === null
+      ? await sb.from('products').insert(row).select('id')
+      : await sb.from('products').update(row).eq('id', id).select('id');
+    if(res.error) throw new Error(res.error.message);
+    if(!res.data || res.data.length !== 1) throw new Error('Kaydedilemedi (yetki ya da kayıt yok).');
+    toast(id === null ? 'Ürün eklendi.' : 'Kaydedildi.');
+    await loadProducts(); renderApp();
+  }catch(ex){ toast('Hata: ' + ex.message, true); btn.disabled = false; }
+}
+
+function renderOrders(){
+  const list = orders.filter(o => orderFilter === 'all' || o.status === orderFilter);
+  $('panel').innerHTML = `
+    <div class="toolbar"><span class="muted">Duruma göre:</span>
+      <select onchange="orderFilter=this.value;renderOrders()"><option value="all">Hepsi</option>${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${orderFilter===k?'selected':''}>${v}</option>`).join('')}</select>
+      <button class="ghost" onclick="refreshOrders()">Yenile</button></div>
+    ${list.length === 0 ? '<div class="card muted">Bu filtrede sipariş yok.</div>' : list.map(o => {
+      const items = Array.isArray(o.items) ? o.items : [];
+      const done = o.status === 'iptal';
+      return `<div class="card order">
+        <div class="top"><h3>${esc(o.order_no)}</h3><span class="muted">${esc(new Date(o.created_at).toLocaleString('tr-TR'))}</span></div>
+        <div class="info"><div><b>${esc(o.customer_name)}</b> • ${esc(o.phone)} • ${esc(o.email)}</div>
+          <div>${esc(o.city)} — ${esc(o.address)}</div>${o.note ? `<div class="muted">Not: ${esc(o.note)}</div>` : ''}</div>
+        <div class="lines">${items.map(i => `<div><span>${esc(i.name)} × ${Number(i.qty)}</span><span>${TL(i.line_total)}</span></div>`).join('')}
+          <div style="margin-top:6px;border-top:1px solid var(--rose);padding-top:6px"><b>Toplam</b><b>${TL(o.total)}</b></div></div>
+        <div class="statusrow">
+          ${done ? '<span class="pill zero">İptal edildi</span><span class="muted">İptal edilen sipariş değiştirilemez.</span>' : `
+          <select id="st-${Number(o.id)}">${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}</select>
+          <button onclick="setStatus(this, ${Number(o.id)})">Durumu kaydet</button>`}
+        </div></div>`;
+    }).join('')}`;
+}
+async function refreshOrders(){ await loadOrders(); renderApp(); toast('Yenilendi.'); }
+async function setStatus(btn, id){
+  const st = $('st-' + id).value;
+  const o = orders.find(x => x.id === id);
+  if(o && o.status === st){ toast('Durum zaten bu.'); return; }
+  if(st === 'iptal' && !confirm('Sipariş iptal edilecek ve ürünlerin stoğu geri verilecek. Bu işlem geri alınamaz. Devam edilsin mi?')) return;
+  btn.disabled = true;
+  const { error } = await sb.rpc('admin_set_order_status', { p_order_id:id, p_status:st });
+  if(error){ toast('Hata: ' + error.message, true); btn.disabled = false; return; }
+  toast('Sipariş durumu güncellendi.');
+  await Promise.all([loadOrders(), loadProducts()]); renderApp();
+}
+
+init();
+</script>
+</body>
+</html>
