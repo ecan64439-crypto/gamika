@@ -104,6 +104,14 @@
   .hz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .hz-tile{background:linear-gradient(135deg,#F3EAFE,#FDEBF3);border-radius:18px;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600}
   @media (prefers-reduced-motion:reduce){.hz-blob,.hz-fl,.hz-tw,.hz-pad{animation:none}.hz-fl{display:none}}
+  .duyuru{letter-spacing:.3em;white-space:nowrap}
+  @media (max-width:639px){
+    .duyuru{letter-spacing:.12em;font-size:11px}
+    .hdr-btn{padding:4px 3px}
+    .hdr-btn>span:last-child{display:none}
+    #search-btn,#menu-btn{padding:6px}
+    .hz-h1{font-size:2.4rem}
+  }
 </style>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -119,7 +127,7 @@
 <noscript><div style="padding:16px;text-align:center;background:#F9D5E5">Bu sayfanın çalışması için JavaScript gerekir. Sorularınız için WhatsApp: 0544 284 4781</div></noscript>
 
 <!-- DUYURU -->
-<div class="bg-ink text-cream text-xs tracking-[.3em] py-2.5 px-4 text-center font-semibold">
+<div class="duyuru bg-ink text-cream text-xs py-2.5 px-4 text-center font-semibold">
   ✨ TÜM SİPARİŞLERDE ÜCRETSİZ KARGO ✨
 </div>
 
@@ -131,7 +139,7 @@
       <button id="search-btn" class="hover:text-berry p-2" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
     </div>
     <a href="#" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
-      <img src="logo.png" alt="Gamika" class="block h-9 sm:h-12 w-auto object-contain"
+      <img src="logo.png" alt="Gamika" class="block h-7 sm:h-12 w-auto object-contain"
            onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
       <span class="logo-text text-4xl sm:text-5xl" style="display:none">GAM<span class="logo-i">I</span>KA</span>
     </a>
