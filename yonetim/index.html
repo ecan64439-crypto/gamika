@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gamika Yönetim</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 :root{--bg:#0d0b14;--side:#100d19;--card:#15121f;--bd:#262234;--tx:#ece9f5;--mu:#8e89a3;--ac:#c084fc;--pk:#f472b6;--ok:#4ade80;--er:#f87171;--wa:#fbbf24;--bl:#818cf8}
 *{box-sizing:border-box}
@@ -17,11 +18,14 @@ button.sm{padding:4px 9px;font-size:13px}
 input,select{background:#0f0c18;border:1px solid var(--bd);border-radius:8px;padding:8px 10px;width:100%}
 input:focus,select:focus{outline:0;border-color:var(--ac)}
 .shell{display:flex;min-height:100vh}
-aside{width:190px;flex:none;background:var(--side);border-right:1px solid var(--bd);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside{width:190px;flex:none;background:var(--side);border-right:1px solid var(--bd);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
 .brand{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--pk),var(--ac));-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand small{display:block;font-size:12px;font-weight:400;color:var(--mu);-webkit-text-fill-color:var(--mu)}
 nav{margin-top:22px;display:flex;flex-direction:column;gap:4px;flex:none}
-.sideimg{flex:1;min-height:100px;margin:14px 0;background-repeat:no-repeat;background-position:center;background-size:contain;opacity:.9}
+.sideimg{position:absolute;inset:0;z-index:0;background-repeat:no-repeat;background-position:center;background-size:cover}
+aside>*:not(.sideimg){position:relative;z-index:1}
+aside .out{margin-top:auto}
+nav button,.brand{text-shadow:0 1px 6px #000}
 .bgimg{position:fixed;top:0;right:0;bottom:0;width:58%;background-size:cover;background-position:center top;opacity:.55;z-index:0;pointer-events:none;
  -webkit-mask-image:linear-gradient(to right,transparent,#000 55%);mask-image:linear-gradient(to right,transparent,#000 55%)}
 main,aside{position:relative;z-index:1}
@@ -84,6 +88,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const ST={odeme_bekleniyor:'Ödeme bekleniyor',odendi:'Ödendi',hazirlaniyor:'Hazırlanıyor',kargoda:'Kargoda',teslim_edildi:'Teslim edildi',iptal:'İptal'};
 const CAT=['mousepad','figur','bilek','switch'];
 const TITLE={orders:'Siparişler',products:'Ürünler',sets:'Setler'};
+const ico=i=>{i=String(i||'').trim();if(!i)return '📦';if(i.includes('fa-'))return `<i class="${i.includes(' ')?esc(i):'fa-solid '+esc(i)}"></i>`;return esc(i)};
 const tl=n=>Number(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY'});
 const dt=d=>new Date(d).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 let tab='orders',fil='',D={orders:[],products:[],sets:[]};
@@ -145,9 +150,9 @@ function render(){
   const low=D.products.filter(x=>x.is_active&&x.stock<=3).length;
   const N=(k)=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()"><span>${TITLE[k]}</span>${k==='orders'&&(wait+open)?`<span class="bd">${wait+open}</span>`:''}</button>`;
   $('#app').innerHTML=`<div class="shell"><div class="bgimg" style="background-image:url(img/bg-${tab}.jpg)"></div>
-    <aside><div class="brand">Gamika<small>Yönetim</small></div>
+    <aside><div class="sideimg" style="background-image:linear-gradient(#100d1966,#100d1999),url(img/side-${tab}.jpg)"></div>
+      <div class="brand">Gamika<small>Yönetim</small></div>
       <nav>${N('orders')}${N('products')}${N('sets')}</nav>
-      <div class="sideimg" style="background-image:url(img/side-${tab}.jpg)"></div>
       <button class="out" onclick="logout()">Çıkış</button></aside>
     <main><div class="top"><h2>${TITLE[tab]}</h2>
       <div class="kpi"><div><div class="l">Ciro (iptal hariç, ödenen)</div><div class="v">${tl(rev)}</div></div>
@@ -190,7 +195,7 @@ function vProducts(){
   $('#view').innerHTML=`<div class="row" style="margin-bottom:10px"><span class="mu">${D.products.length} ürün, stoku en az olan üstte</span>
     <button class="pri" onclick="editP()">+ Yeni ürün</button></div>
     <div class="card tbl"><table><tr><th></th><th>Ürün</th><th>Kategori</th><th>Stok</th><th>Fiyat</th><th>Durum</th><th></th></tr>
-    ${sorted.map(p=>`<tr><td>${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:`<span class="thumb">${esc(p.icon||'📦')}</span>`}</td>
+    ${sorted.map(p=>`<tr><td>${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:`<span class="thumb">${ico(p.icon)}</span>`}</td>
     <td><span class="b">${esc(p.name)}</span><div class="mu">${esc(p.type_label)}</div></td><td class="mu">${esc(p.category)}</td>
     <td>${p.stock<=3?`<span class="pill wa">${p.stock} adet kaldı</span>`:`${p.stock} adet`}</td><td>${tl(p.price)}</td>
     <td><button class="sm" onclick="togP(${p.id})"><span class="${p.is_active?'ok':'er'}">${p.is_active?'Aktif':'Pasif'}</span></button></td>
