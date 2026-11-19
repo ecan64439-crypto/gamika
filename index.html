@@ -256,7 +256,7 @@ tailwind.config = {
         <ul class="space-y-2.5 text-xs text-cream/70">
           <li><a href="#" onclick="info('Müşteri Hizmetleri','Sorularınız için bize ulaşın. Telefon / WhatsApp: 0544 284 4781 • E-posta: gamikatr@hotmail.com');return false" class="hover:text-white">İletişim</a></li>
           <li><a href="#" onclick="info('Kargo ve İade','Kargo ücretsiz. Teslimattan sonra 14 gün içinde kolay iade.');return false" class="hover:text-white">Kargo ve İade</a></li>
-          <li><a href="#" onclick="info('Gizlilik Politikası','Kişisel verileriniz KVKK kapsamında korunur.');return false" class="hover:text-white">Gizlilik</a></li>
+          <li><a href="gizlilik.html" class="hover:text-white">Gizlilik</a></li>
         </ul>
       </div>
     </div>
@@ -689,7 +689,7 @@ function renderAccount(){
         <div class="space-y-2.5 pt-1 text-xs leading-snug">
           <label class="flex items-start gap-2"><input type="checkbox" name="consent" class="mt-0.5 accent-berry"><span>Aydınlatma Metninde belirtilen ilkeler nezdinde Elektronik Ticaret İletisi almak istiyorum.</span></label>
           <label class="flex items-start gap-2"><input type="checkbox" name="terms" required class="mt-0.5 accent-berry"><span>${legalLink('Üyelik Sözleşmesi', 'Üyelik sözleşmesini')} kabul ediyorum.</span></label>
-          <label class="flex items-start gap-2"><input type="checkbox" name="privacy" required class="mt-0.5 accent-berry"><span>Kişisel verilerin işlenmesine ilişkin ${legalLink('Aydınlatma Metni', 'Aydınlatma Metnini')} okudum.</span></label>
+          <label class="flex items-start gap-2"><input type="checkbox" name="privacy" required class="mt-0.5 accent-berry"><span>Kişisel verilerin işlenmesine ilişkin <a href="gizlilik.html" target="_blank" rel="noopener" class="underline">Aydınlatma Metnini</a> okudum.</span></label>
         </div>
         <div id="captcha-box"></div>
         <p id="auth-msg" class="hidden text-xs"></p>
