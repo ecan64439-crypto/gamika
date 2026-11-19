@@ -25,7 +25,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Pixelify+Sans:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  body{font-family:'Inter',sans-serif;background:#FFF9FB;color:#2A1B2E;overflow-x:hidden}
+  html{background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%) fixed;background-color:#FDEBF3}
+  body{font-family:'Inter',sans-serif;background:transparent;color:#2A1B2E;overflow-x:hidden}
+  #site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
   h1,h2,h3,.font-serif{font-family:'Fraunces',serif}
   section[id]{scroll-margin-top:120px}
   .glass{background:rgba(255,255,255,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(249,213,229,.6)}
@@ -42,7 +44,7 @@
   .logo-i::before{content:'';position:absolute;top:-.17em;left:50%;transform:translateX(-50%);width:.27em;height:.27em;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#fcc9da,#F296B6)}
   /* Kayan şerit: açılan mousepad */
-  .gm-wrap{position:relative;height:130px;overflow:hidden;background:#FFF9FB}
+  .gm-wrap{position:relative;height:130px;overflow:hidden}
   .gm-strip{position:absolute;left:40px;right:0;top:25px;height:80px;background:#1d0a30 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='1200' height='80'%3E%3Cfilter id='a' x='0' y='0' width='1' height='1'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.005 0.025' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.62 0 0 0 0 0.3 0 0 0 0 0.95 3 0 0 0 -0.4'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0.35 0.9 0.5 0.15 0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Cg id='t'%3E%3Crect width='600' height='80' fill='%233a1466'/%3E%3Crect width='600' height='80' filter='url(%23a)'/%3E%3C/g%3E%3Cuse xlink:href='%23t' transform='translate(1200 0) scale(-1 1)'/%3E%3C/svg%3E") repeat-x;background-size:1200px 80px;animation:gm-bg 60s linear infinite;overflow:hidden}
   .gm-strip::before,.gm-strip::after{content:'';position:absolute;left:0;right:0;height:0;border-top:2px dashed #c48cff;opacity:.8}
   .gm-strip::before{top:5px}.gm-strip::after{bottom:5px}
@@ -67,13 +69,13 @@
   .nav-pill:hover{color:#9B4DE0}
   .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
   /* Giriş bölümü */
-  .hz{position:relative;overflow:hidden;background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%);padding:72px 0 64px}
+  .hz{position:relative;padding:72px 0 64px}
   .hz-grd{position:absolute;inset:0;background-image:linear-gradient(rgba(155,77,224,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(155,77,224,.06) 1px,transparent 1px);background-size:26px 26px}
   .hz-blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45;animation:hz-drift 14s ease-in-out infinite alternate;pointer-events:none}
   @keyframes hz-drift{to{transform:translate(50px,-30px) scale(1.12)}}
   .hz-fx{position:absolute;inset:0;pointer-events:none}
   .hz-fl{position:absolute;bottom:-30px;opacity:0;animation:hz-up linear infinite}
-  @keyframes hz-up{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.4}88%{opacity:.4}100%{transform:translateY(-560px) rotate(18deg);opacity:0}}
+  @keyframes hz-up{0%{transform:translateY(0) rotate(0);opacity:0}8%{opacity:.4}92%{opacity:.4}100%{transform:translateY(-110vh) rotate(18deg);opacity:0}}
   .hz-tw{position:absolute;width:5px;height:5px;background:#fff;box-shadow:5px 0 #fff,-5px 0 #fff,0 5px #fff,0 -5px #fff;animation:hz-tw 2.6s ease-in-out infinite}
   @keyframes hz-tw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.9;transform:scale(1)}}
   .hz-in{position:relative;z-index:2;display:grid;grid-template-columns:1fr;gap:40px;align-items:center}
@@ -106,6 +108,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="antialiased selection:bg-rose">
+<div id="site-bg" aria-hidden="true">
+  <div class="hz-grd"></div>
+  <div class="hz-blob" style="width:420px;height:320px;background:#F296B6;top:-60px;left:30%"></div>
+  <div class="hz-blob" style="width:360px;height:360px;background:#B98AF0;bottom:-90px;right:4%;animation-delay:-5s"></div>
+  <div class="hz-blob" style="width:260px;height:260px;background:#FFC6E2;top:40%;left:-60px;animation-delay:-8s"></div>
+  <div class="hz-fx" id="hz-fx"></div>
+</div>
+
 <noscript><div style="padding:16px;text-align:center;background:#F9D5E5">Bu sayfanın çalışması için JavaScript gerekir. Sorularınız için WhatsApp: 0544 284 4781</div></noscript>
 
 <!-- DUYURU -->
@@ -159,11 +169,6 @@
 
 <!-- HERO -->
 <section id="hero" class="hz">
-  <div class="hz-grd" aria-hidden="true"></div>
-  <div class="hz-blob" style="width:420px;height:320px;background:#F296B6;top:-60px;left:30%" aria-hidden="true"></div>
-  <div class="hz-blob" style="width:360px;height:360px;background:#B98AF0;bottom:-90px;right:4%;animation-delay:-5s" aria-hidden="true"></div>
-  <div class="hz-blob" style="width:260px;height:260px;background:#FFC6E2;top:40%;left:-60px;animation-delay:-8s" aria-hidden="true"></div>
-  <div class="hz-fx" id="hz-fx" aria-hidden="true"></div>
   <div class="hz-in max-w-7xl mx-auto px-4 sm:px-6">
     <div class="hz-left">
       <span class="hz-badge"><svg width="14" height="11.2" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#fff"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/></svg>KADIN OYUNCULAR İÇİN</span>
@@ -201,7 +206,7 @@
 </section>
 
 <!-- HAZIR SETLER -->
-<section id="setler" class="py-20 bg-petal/50 border-y border-rose/60">
+<section id="setler" class="py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-2xl mx-auto mb-14">
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
@@ -241,7 +246,7 @@
 </section>
 
 <!-- TEK TEK ÜRÜNLER -->
-<section id="urunler" class="py-20 bg-petal/50 border-y border-rose/60">
+<section id="urunler" class="py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
       <div>
@@ -261,7 +266,7 @@
 </section>
 
 <!-- ÇOK YAKINDA -->
-<section id="yakinda" class="py-20 bg-petal/50 border-y border-rose/60">
+<section id="yakinda" class="py-20">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
     <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Yolda</span>
     <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÇOK YAKINDA</h2>
@@ -1242,7 +1247,7 @@ $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').f
   const fx=document.getElementById('hz-fx'); if(!fx) return;
   const H='<svg width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="1" height="1" fill="__C__"/><rect x="2" y="0" width="1" height="1" fill="__C__"/><rect x="6" y="0" width="1" height="1" fill="__C__"/><rect x="7" y="0" width="1" height="1" fill="__C__"/><rect x="0" y="1" width="1" height="1" fill="__C__"/><rect x="1" y="1" width="1" height="1" fill="#fff"/><rect x="2" y="1" width="1" height="1" fill="__C__"/><rect x="3" y="1" width="1" height="1" fill="__C__"/><rect x="5" y="1" width="1" height="1" fill="__C__"/><rect x="6" y="1" width="1" height="1" fill="__C__"/><rect x="7" y="1" width="1" height="1" fill="__C__"/><rect x="8" y="1" width="1" height="1" fill="__C__"/><rect x="0" y="2" width="1" height="1" fill="__C__"/><rect x="1" y="2" width="1" height="1" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="__C__"/><rect x="3" y="2" width="1" height="1" fill="__C__"/><rect x="4" y="2" width="1" height="1" fill="__C__"/><rect x="5" y="2" width="1" height="1" fill="__C__"/><rect x="6" y="2" width="1" height="1" fill="__C__"/><rect x="7" y="2" width="1" height="1" fill="__C__"/><rect x="8" y="2" width="1" height="1" fill="__C__"/><rect x="0" y="3" width="1" height="1" fill="__C__"/><rect x="1" y="3" width="1" height="1" fill="__C__"/><rect x="2" y="3" width="1" height="1" fill="__C__"/><rect x="3" y="3" width="1" height="1" fill="__C__"/><rect x="4" y="3" width="1" height="1" fill="__C__"/><rect x="5" y="3" width="1" height="1" fill="__C__"/><rect x="6" y="3" width="1" height="1" fill="__C__"/><rect x="7" y="3" width="1" height="1" fill="__C__"/><rect x="8" y="3" width="1" height="1" fill="__C__"/><rect x="1" y="4" width="1" height="1" fill="__C__"/><rect x="2" y="4" width="1" height="1" fill="__C__"/><rect x="3" y="4" width="1" height="1" fill="__C__"/><rect x="4" y="4" width="1" height="1" fill="__C__"/><rect x="5" y="4" width="1" height="1" fill="__C__"/><rect x="6" y="4" width="1" height="1" fill="__C__"/><rect x="7" y="4" width="1" height="1" fill="__C__"/><rect x="2" y="5" width="1" height="1" fill="__C__"/><rect x="3" y="5" width="1" height="1" fill="__C__"/><rect x="4" y="5" width="1" height="1" fill="__C__"/><rect x="5" y="5" width="1" height="1" fill="__C__"/><rect x="6" y="5" width="1" height="1" fill="__C__"/><rect x="3" y="6" width="1" height="1" fill="__C__"/><rect x="4" y="6" width="1" height="1" fill="__C__"/><rect x="5" y="6" width="1" height="1" fill="__C__"/><rect x="4" y="7" width="1" height="1" fill="__C__"/></svg>'; const cols=['#F296B6','#B98AF0','#E0709A','#C9A3F0','#F296B6'];
   for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='hz-fl';
-    d.style.left=(8+i*19+Math.random()*8)+'%'; d.style.animationDuration=(12+Math.random()*6)+'s'; d.style.animationDelay=(-Math.random()*14)+'s';
+    d.style.left=(8+i*19+Math.random()*8)+'%'; d.style.animationDuration=(20+Math.random()*10)+'s'; d.style.animationDelay=(-Math.random()*25)+'s';
     const sc=(2+Math.random()*1.2).toFixed(1); d.innerHTML=H.replace(/__C__/g,cols[i]).replace('width="10"','width="'+(10*sc)+'"').replace('height="8"','height="'+(8*sc)+'"'); fx.appendChild(d); }
   for(let i=0;i<8;i++){ const t=document.createElement('div'); t.className='hz-tw';
     t.style.left=(Math.random()*96)+'%'; t.style.top=(Math.random()*90)+'%'; t.style.animationDelay=(-Math.random()*2.6)+'s'; fx.appendChild(t); }
