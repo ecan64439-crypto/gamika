@@ -243,13 +243,15 @@
       <div>
         <h4 class="font-serif font-bold text-lg mb-4 text-rose">Destek</h4>
         <ul class="space-y-2.5 text-xs text-cream/70">
-          <li><a href="#" onclick="info('Müşteri Hizmetleri','Sorularınız için bize ulaşın. Telefon / WhatsApp: 0544 284 4781 • E-posta: gamikatr@hotmail.com');return false" class="hover:text-white">İletişim</a></li>
-          <li><a href="#" onclick="info('Kargo ve İade','Kargo ücretsiz. Teslimattan sonra 14 gün içinde kolay iade.');return false" class="hover:text-white">Kargo ve İade</a></li>
-          <li><a href="gizlilik.html" class="hover:text-white">Gizlilik</a></li>
+          <li><a href="iletisim.html" class="hover:text-white">İletişim</a></li>
+          <li><a href="kargo-iade.html" class="hover:text-white">Kargo ve İade</a></li>
+          <li><a href="mesafeli-satis.html" class="hover:text-white">Mesafeli Satış Sözleşmesi</a></li>
+          <li><a href="on-bilgilendirme.html" class="hover:text-white">Ön Bilgilendirme Formu</a></li>
+          <li><a href="gizlilik.html" class="hover:text-white">Gizlilik ve KVKK</a></li>
         </ul>
       </div>
     </div>
-    <p class="pt-8 text-xs text-cream/60 text-center">&copy; 2026 GAMİKA. Tüm hakları saklıdır.</p>
+    <p class="pt-8 text-xs text-cream/60 text-center">Oğuz Can (GAMİKA) &bull; Cumhuriyet Mah. Akbal Sk. No:8 D:6 Kartal/İstanbul &bull; Yakacık Vergi Dairesi<br>Tel: 0544 284 4781 &bull; E-posta: gamikatr@hotmail.com<br>&copy; 2026 GAMİKA. Tüm hakları saklıdır.</p>
   </div>
 </footer>
 
@@ -303,6 +305,7 @@
       <div id="co-city"></div>
       <div><label class="block text-xs font-semibold mb-1">Açık Adres</label><textarea name="adres" rows="3" required minlength="10" maxlength="300" autocomplete="street-address" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
       <div><label class="block text-xs font-semibold mb-1">Sipariş Notu <span class="font-normal text-mauve">(isteğe bağlı)</span></label><textarea name="not" rows="2" maxlength="300" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
+      <label class="flex items-start gap-2 text-xs leading-snug"><input type="checkbox" name="sozlesme" required class="mt-0.5 accent-berry"><span><a href="on-bilgilendirme.html" target="_blank" rel="noopener" class="underline">Ön Bilgilendirme Formu</a>'nu ve <a href="mesafeli-satis.html" target="_blank" rel="noopener" class="underline">Mesafeli Satış Sözleşmesi</a>'ni okudum, onaylıyorum.</span></label>
       <div id="co-captcha"></div>
       <p id="co-error" class="hidden text-xs text-red-600"></p>
       <button id="co-btn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">SİPARİŞİ TAMAMLA</button>
