@@ -1186,5 +1186,18 @@ document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('cli
 document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal','checkout-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
 initAuth();
 </script>
+<div id="cookie-note" role="region" aria-label="Çerez bilgilendirmesi" style="display:none;position:fixed;right:16px;bottom:16px;z-index:45;max-width:360px;width:calc(100% - 104px);background:#2A1B2E;color:#FFF9FB;border-radius:16px;padding:14px 16px;box-shadow:0 10px 25px rgba(0,0,0,.2);font-size:13px;line-height:1.5">
+  <p style="margin:0 0 10px">🍪 Sitemiz yalnızca çalışması için gerekli çerezleri kullanır (giriş, sepet, güvenlik). Reklam veya takip çerezi kullanmıyoruz. <a href="gizlilik.html#cerezler" style="color:#F9D5E5;text-decoration:underline">Ayrıntılar</a></p>
+  <button type="button" id="cookie-ok" style="background:#E0709A;color:#fff;border-radius:9999px;padding:6px 18px;font-weight:600;font-size:13px">Tamam</button>
+</div>
+<script>
+(function(){
+  var K='gamika_cerez_bilgi';
+  var el=document.getElementById('cookie-note');
+  try{ if(localStorage.getItem(K)==='1') return; }catch(_){}
+  el.style.display='block';
+  document.getElementById('cookie-ok').onclick=function(){ el.style.display='none'; try{ localStorage.setItem(K,'1'); }catch(_){} };
+})();
+</script>
 </body>
 </html>
