@@ -684,9 +684,11 @@ const STAR = '<span class="text-berry">*</span>';
 async function initAuth(){
   renderAccount();
   if(!sb) return;
+  const isRecovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
   try{
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
+    if(isRecovery && user){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); try{ history.replaceState(null,'',location.pathname); }catch(_){} }
     sb.auth.onAuthStateChange((_ev, session) => { user = session ? session.user : null; setTimeout(() => { if(_ev === 'PASSWORD_RECOVERY'){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); } renderAccount(); loadFavorites(); }, 0); });
     renderAccount();
     loadFavorites();
@@ -1186,4 +1188,3 @@ initAuth();
 </script>
 </body>
 </html>
-
