@@ -85,7 +85,7 @@
   .hz-h1{font-family:'Fraunces',serif;font-weight:700;font-size:3rem;line-height:1.05;margin:20px 0 14px}
   .hz-h1 span{font-style:italic;font-weight:400;color:#E0709A}
   @media (min-width:640px){.hz-h1{font-size:3.75rem}}@media (min-width:1024px){.hz-h1{font-size:4.5rem}}
-  .hz-sub{font-size:1.05rem;color:rgba(42,27,46,.75);line-height:1.65;margin:0 auto 26px;max-width:36rem;font-weight:300}
+  .hz-sub{font-size:1.05rem;color:rgba(42,27,46,.75);line-height:1.65;margin:0 auto 26px;max-width:36rem;font-weight:300;text-wrap:balance}
   @media (min-width:1024px){.hz-sub{margin-left:0}}
   .hz-sub b{color:#2A1B2E;font-weight:600}
   .hz-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}@media (min-width:1024px){.hz-btns{justify-content:flex-start}}
@@ -116,6 +116,9 @@
     .only-mob{display:flex !important}
     .hdr-logo{height:34px !important;width:auto !important}
     .hz-h1{font-size:2.4rem}
+    .hz-sub{font-size:.98rem}
+    .hz-sub br{display:none}
+    .hz-sub b{display:block;margin-top:4px}
     #mbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:45;background:#fff;border-top:3px dashed #D9C2F7;padding:8px 0 calc(10px + env(safe-area-inset-bottom))}
     #mbar button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:500;color:#2A1B2E}
     #mbar .ico{height:22px;display:flex;align-items:center;position:relative}
@@ -1273,7 +1276,7 @@ $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').f
   const fx=document.getElementById('hz-fx'); if(!fx) return;
   const H='<svg width="10" height="8" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="1" height="1" fill="__C__"/><rect x="2" y="0" width="1" height="1" fill="__C__"/><rect x="6" y="0" width="1" height="1" fill="__C__"/><rect x="7" y="0" width="1" height="1" fill="__C__"/><rect x="0" y="1" width="1" height="1" fill="__C__"/><rect x="1" y="1" width="1" height="1" fill="#fff"/><rect x="2" y="1" width="1" height="1" fill="__C__"/><rect x="3" y="1" width="1" height="1" fill="__C__"/><rect x="5" y="1" width="1" height="1" fill="__C__"/><rect x="6" y="1" width="1" height="1" fill="__C__"/><rect x="7" y="1" width="1" height="1" fill="__C__"/><rect x="8" y="1" width="1" height="1" fill="__C__"/><rect x="0" y="2" width="1" height="1" fill="__C__"/><rect x="1" y="2" width="1" height="1" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="__C__"/><rect x="3" y="2" width="1" height="1" fill="__C__"/><rect x="4" y="2" width="1" height="1" fill="__C__"/><rect x="5" y="2" width="1" height="1" fill="__C__"/><rect x="6" y="2" width="1" height="1" fill="__C__"/><rect x="7" y="2" width="1" height="1" fill="__C__"/><rect x="8" y="2" width="1" height="1" fill="__C__"/><rect x="0" y="3" width="1" height="1" fill="__C__"/><rect x="1" y="3" width="1" height="1" fill="__C__"/><rect x="2" y="3" width="1" height="1" fill="__C__"/><rect x="3" y="3" width="1" height="1" fill="__C__"/><rect x="4" y="3" width="1" height="1" fill="__C__"/><rect x="5" y="3" width="1" height="1" fill="__C__"/><rect x="6" y="3" width="1" height="1" fill="__C__"/><rect x="7" y="3" width="1" height="1" fill="__C__"/><rect x="8" y="3" width="1" height="1" fill="__C__"/><rect x="1" y="4" width="1" height="1" fill="__C__"/><rect x="2" y="4" width="1" height="1" fill="__C__"/><rect x="3" y="4" width="1" height="1" fill="__C__"/><rect x="4" y="4" width="1" height="1" fill="__C__"/><rect x="5" y="4" width="1" height="1" fill="__C__"/><rect x="6" y="4" width="1" height="1" fill="__C__"/><rect x="7" y="4" width="1" height="1" fill="__C__"/><rect x="2" y="5" width="1" height="1" fill="__C__"/><rect x="3" y="5" width="1" height="1" fill="__C__"/><rect x="4" y="5" width="1" height="1" fill="__C__"/><rect x="5" y="5" width="1" height="1" fill="__C__"/><rect x="6" y="5" width="1" height="1" fill="__C__"/><rect x="3" y="6" width="1" height="1" fill="__C__"/><rect x="4" y="6" width="1" height="1" fill="__C__"/><rect x="5" y="6" width="1" height="1" fill="__C__"/><rect x="4" y="7" width="1" height="1" fill="__C__"/></svg>'; const cols=['#F296B6','#B98AF0','#E0709A','#C9A3F0','#F296B6'];
   for(let i=0;i<5;i++){ const d=document.createElement('div'); d.className='hz-fl';
-    d.style.left=(8+i*19+Math.random()*8)+'%'; d.style.animationDuration=(20+Math.random()*10)+'s'; d.style.animationDelay=(-Math.random()*25)+'s';
+    d.style.left=(i%2 ? 88+Math.random()*8 : 1+Math.random()*8)+'%'; d.style.animationDuration=(20+Math.random()*10)+'s'; d.style.animationDelay=(-Math.random()*25)+'s';
     const sc=(2+Math.random()*1.2).toFixed(1); d.innerHTML=H.replace(/__C__/g,cols[i]).replace('width="10"','width="'+(10*sc)+'"').replace('height="8"','height="'+(8*sc)+'"'); fx.appendChild(d); }
   for(let i=0;i<8;i++){ const t=document.createElement('div'); t.className='hz-tw';
     t.style.left=(Math.random()*96)+'%'; t.style.top=(Math.random()*90)+'%'; t.style.animationDelay=(-Math.random()*2.6)+'s'; fx.appendChild(t); }
