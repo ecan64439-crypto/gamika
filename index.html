@@ -303,6 +303,7 @@
       <div id="co-city"></div>
       <div><label class="block text-xs font-semibold mb-1">Açık Adres</label><textarea name="adres" rows="3" required minlength="10" maxlength="300" autocomplete="street-address" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
       <div><label class="block text-xs font-semibold mb-1">Sipariş Notu <span class="font-normal text-mauve">(isteğe bağlı)</span></label><textarea name="not" rows="2" maxlength="300" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></textarea></div>
+      <div id="co-captcha"></div>
       <p id="co-error" class="hidden text-xs text-red-600"></p>
       <button id="co-btn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">SİPARİŞİ TAMAMLA</button>
     </form>
@@ -558,14 +559,28 @@ function openCheckoutForm(){
   }
   $('co-city').innerHTML = cityPicker();
   initCityPicker($('co-city'), '');
+  renderCheckoutCaptcha();
   openModal('checkout-modal');
   fillSavedAddresses();
 }
 function guestCheckout(){ closeModal('account-modal'); afterAuth = null; openCheckoutForm(); }
+let coToken = '';
+async function renderCheckoutCaptcha(){
+  coToken = '';
+  const b = $('co-captcha');
+  if(!TURNSTILE_SITE_KEY || !b) return;
+  try{
+    await loadTurnstile();
+    b.innerHTML = '';
+    window.turnstile.render(b, { sitekey:TURNSTILE_SITE_KEY,
+      callback: t => { coToken = t; }, 'expired-callback': () => { coToken = ''; }, 'error-callback': () => { coToken = ''; } });
+  }catch(_){ /* yüklenemezse gönderirken uyarılır */ }
+}
 async function submitOrder(e){
   e.preventDefault();
   const f = e.target, d = new FormData(f), btn = $('co-btn'), err = $('co-error');
   err.classList.add('hidden');
+  if(!coToken){ err.innerText = 'Lütfen "Ben robot değilim" doğrulamasını tamamla.'; err.classList.remove('hidden'); return; }
   /* Fiyat göndermiyoruz: sunucu fiyatları kendi tablosundan hesaplar. */
   const items = cart.map(it => {
     const id = String(it.id);
@@ -581,18 +596,18 @@ async function submitOrder(e){
       const { data:ses } = await sb.auth.getSession();
       if(ses && ses.session) headers.Authorization = 'Bearer ' + ses.session.access_token;
     }
-    const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/create_order', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/create-order-guarded', {
       method:'POST',
       headers,
       body: JSON.stringify({
-        p_name:d.get('ad'), p_phone:d.get('telefon'), p_email:d.get('eposta'),
-        p_city:cityValue(d), p_address:d.get('adres'), p_note:d.get('not') || null, p_items:items
+        token:coToken, name:d.get('ad'), phone:d.get('telefon'), email:d.get('eposta'),
+        city:cityValue(d), address:d.get('adres'), note:d.get('not') || null, items
       }),
       signal: ctrl.signal
     });
     clearTimeout(timer);
     const data = await res.json().catch(() => null);
-    if(!res.ok) throw new Error((data && data.message) || ('HTTP ' + res.status));
+    if(!res.ok) throw new Error((data && (data.error || data.message)) || ('HTTP ' + res.status));
     cart = []; renderCart(); f.reset(); closeModal('checkout-modal');
     info('Siparişin alındı 🎉','Sipariş numaran: ' + data.order_no + ' • Toplam: ' + TL(Number(data.total)) + '. Ödeme adımı için seninle iletişime geçeceğiz.');
   }catch(ex){
@@ -600,6 +615,7 @@ async function submitOrder(e){
     err.classList.remove('hidden');
   }finally{
     btn.disabled = false; btn.innerText = 'SİPARİŞİ TAMAMLA';
+    renderCheckoutCaptcha();
   }
 }
 renderCart();
