@@ -61,6 +61,10 @@
   .hdr-btn:hover{color:#E0709A}
   .hdr-ico{height:24px;display:flex;align-items:center;justify-content:center}
   .hdr-btn>span:last-child{font-size:11px;font-weight:500;line-height:1}
+  .hdr-b{background:linear-gradient(90deg,#FDEBF3,#F3EAFE);border-bottom:3px dashed #C9A3F0}
+  .nav-pill{padding:6px 14px;border-radius:9999px;transition:all .15s}
+  .nav-pill:hover{color:#9B4DE0}
+  .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
 </style>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -73,7 +77,7 @@
 </div>
 
 <!-- NAV -->
-<header class="sticky top-0 z-40 glass border-b border-rose shadow-sm">
+<header class="sticky top-0 z-40 hdr-b">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 pb-2 grid grid-cols-[1fr_auto_1fr] items-center">
     <div class="flex items-center gap-1">
       <button id="menu-btn" class="lg:hidden p-2" aria-label="Menü"><i class="fa-solid fa-bars text-xl"></i></button>
@@ -98,12 +102,12 @@
       </button>
     </div>
   </div>
-  <nav class="hidden lg:flex justify-center gap-8 text-sm font-medium pb-3">
-    <a href="#hero" class="hover:text-berry transition">Ana Sayfa</a>
-    <a href="#setler" class="hover:text-berry transition">Hazır Setler</a>
-    <a href="#olustur" class="hover:text-berry transition">Kendi Setini Yarat</a>
-    <a href="#urunler" class="hover:text-berry transition">Ürünler</a>
-    <a href="#yakinda" class="hover:text-berry transition">Çok Yakında</a>
+  <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
+    <a href="#hero" class="nav-pill">Ana Sayfa</a>
+    <a href="#setler" class="nav-pill">Hazır Setler</a>
+    <a href="#olustur" class="nav-pill">Kendi Setini Yarat</a>
+    <a href="#urunler" class="nav-pill">Ürünler</a>
+    <a href="#yakinda" class="nav-pill">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
     <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
@@ -1214,6 +1218,16 @@ function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
 
 $('cart-btn').onclick = toggleCart;
 $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').focus(); };
+// Menüde bulunulan bölümü işaretle
+(function(){
+  const links=[...document.querySelectorAll('#main-nav .nav-pill')];
+  const map={}; links.forEach(l=>map[l.getAttribute('href').slice(1)]=l);
+  const set=id=>links.forEach(l=>l.classList.toggle('on',l===map[id]));
+  set('hero');
+  if(!('IntersectionObserver' in window)) return;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting && map[e.target.id]) set(e.target.id); }),{rootMargin:'-45% 0px -50% 0px'});
+  Object.keys(map).forEach(id=>{ const el=document.getElementById(id); if(el) io.observe(el); });
+})();
 $('fav-btn').onclick = () => { afterAuth = null; if(user){ accountView = 'favorites'; } else { accountView = 'menu'; toast('Favorilerini görmek için giriş yap.'); } renderAccount(); openModal('account-modal'); };
 $('account-btn').onclick = () => { afterAuth = null; accountView = 'menu'; renderAccount(); openModal('account-modal'); };
 $('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); afterAuth = null; accountView = 'menu'; renderAccount(); openModal('account-modal'); };
