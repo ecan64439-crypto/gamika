@@ -149,8 +149,8 @@ function render(){
   const rev=D.orders.filter(x=>!['iptal','odeme_bekleniyor'].includes(x.status)).reduce((a,x)=>a+Number(x.total||0),0);
   const low=D.products.filter(x=>x.is_active&&x.stock<=3).length;
   const N=(k)=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()"><span>${TITLE[k]}</span>${k==='orders'&&(wait+open)?`<span class="bd">${wait+open}</span>`:''}</button>`;
-  $('#app').innerHTML=`<div class="shell"><div class="bgimg" style="background-image:url(img/bg-${tab}.jpg)"></div>
-    <aside><div class="sideimg" style="background-image:linear-gradient(#100d1966,#100d1999),url(img/side-${tab}.jpg)"></div>
+  $('#app').innerHTML=`<div class="shell"><div class="bgimg" style="background-image:url(img/bg-${tab}.jpg);background-position:center ${({orders:'20%',products:'20%',sets:'85%'})[tab]}"></div>
+    <aside><div class="sideimg" style="background-image:linear-gradient(#100d19e6 0,#100d1980 45%,#100d1999 100%),url(img/side-${tab}.jpg)"></div>
       <div class="brand">Gamika<small>Yönetim</small></div>
       <nav>${N('orders')}${N('products')}${N('sets')}</nav>
       <button class="out" onclick="logout()">Çıkış</button></aside>
