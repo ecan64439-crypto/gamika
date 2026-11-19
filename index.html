@@ -307,6 +307,7 @@ tailwind.config = {
     <h3 class="font-serif text-2xl font-bold mb-1">Teslimat Bilgileri</h3>
     <p id="co-total" class="text-xs text-mauve mb-5"></p>
     <form onsubmit="submitOrder(event)" class="space-y-3 text-left">
+      <div id="co-saved"></div>
       <div><label class="block text-xs font-semibold mb-1">Ad Soyad</label><input name="ad" required minlength="3" maxlength="100" autocomplete="name" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
       <div><label class="block text-xs font-semibold mb-1">Telefon</label><input name="telefon" type="tel" required minlength="10" maxlength="20" autocomplete="tel" placeholder="05xx xxx xx xx" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
       <div><label class="block text-xs font-semibold mb-1">E-posta</label><input name="eposta" type="email" required maxlength="150" autocomplete="email" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
@@ -377,6 +378,7 @@ const SET_PRICE = 1099; // "Kendi Setini Yarat" indirimli set fiyatı
 const $ = id => document.getElementById(id);
 const TL = n => n.toLocaleString('tr-TR') + ' ₺';
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
 function loadCart(){
   try{
@@ -422,7 +424,8 @@ function renderProducts(){
     ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
     : PRODUCTS.map(p => `
   <div class="product-card glass rounded-3xl p-5 shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${esc(p.cat)}">
-    <div>
+    <div class="relative">
+      <button onclick="toggleFav(${Number(p.id)})" data-fav="${Number(p.id)}" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 shadow flex items-center justify-center hover:scale-110 transition" aria-label="Favorilere ekle / çıkar"><i class="${favIds.has(Number(p.id)) ? 'fa-solid text-berry' : 'fa-regular text-ink/60'} fa-heart"></i></button>
       <div class="rounded-2xl aspect-square imgbg mb-4 flex items-center justify-center overflow-hidden">
         ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(p.icon || 'fa-gift')} text-6xl text-berry/80"></i>`}
       </div>
@@ -552,6 +555,7 @@ function openCheckoutForm(){
     fill('telefon', md.phone);
   }
   openModal('checkout-modal');
+  fillSavedAddresses();
 }
 function guestCheckout(){ closeModal('account-modal'); afterAuth = null; openCheckoutForm(); }
 async function submitOrder(e){
@@ -638,8 +642,9 @@ async function initAuth(){
   try{
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
-    sb.auth.onAuthStateChange((_ev, session) => { user = session ? session.user : null; setTimeout(renderAccount, 0); });
+    sb.auth.onAuthStateChange((_ev, session) => { user = session ? session.user : null; setTimeout(() => { renderAccount(); loadFavorites(); }, 0); });
     renderAccount();
+    loadFavorites();
   }catch(err){ console.warn('Oturum okunamadı:', err); }
 }
 function setAuthMode(m){ authMode = m; renderAccount(); }
@@ -734,6 +739,39 @@ function backBtn(){ return `<button type="button" onclick="setAccountView('menu'
 function renderMember(){
   const box = $('account-body'), md = user.user_metadata || {};
   const btn = 'w-full text-left px-5 py-4 bg-white border border-rose/60 rounded-2xl font-semibold text-sm hover:bg-petal transition';
+  if(accountView === 'favorites'){
+    const items = PRODUCTS.filter(p => favIds.has(Number(p.id)));
+    box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Favori Ürünlerim</h3>` + (items.length ? items.map(p => `
+      <div class="p-3 bg-white rounded-xl border border-rose/50 flex items-center justify-between gap-2 mb-2">
+        <div class="min-w-0"><p class="font-semibold text-sm truncate">${esc(p.name)}</p><p class="text-xs text-mauve">${TL(p.price)}</p></div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button onclick="addProduct(${Number(p.id)})" class="px-3 py-2 bg-ink text-cream rounded-lg text-xs font-semibold hover:bg-berry transition">SEPETE EKLE</button>
+          <button onclick="removeFav(${Number(p.id)})" class="text-berry p-2" aria-label="Favorilerden çıkar"><i class="fa-solid fa-heart"></i></button>
+        </div>
+      </div>`).join('') : '<p class="text-xs text-mauve">Henüz favori ürünün yok. Ürünlerdeki kalp ikonuna basarak ekleyebilirsin.</p>') + '</div>';
+    return;
+  }
+  if(accountView === 'addresses'){
+    box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Adres Defteri</h3>
+      <div id="addr-list" class="space-y-2 text-xs"><p class="text-mauve">Yükleniyor...</p></div></div>`;
+    renderAddressList(); return;
+  }
+  if(accountView === 'addr-form'){
+    const a = myAddresses.find(x => x.id === editingAddrId) || {};
+    const ph = a.phone ? '0' + a.phone : '';
+    box.innerHTML = `<div class="text-left"><button type="button" onclick="setAccountView('addresses')" class="mb-4 text-xs underline text-mauve">← Adres Defteri</button>
+      <h3 class="font-serif text-2xl font-bold mb-4">${a.id ? 'Adresi Düzenle' : 'Yeni Adres'}</h3>
+      <form onsubmit="saveAddress(event)" class="space-y-3">
+        <div><label class="block text-xs font-semibold mb-1">Adres Başlığı ${STAR}</label><input name="title" required maxlength="40" value="${esc(a.title || '')}" placeholder="Ev, İş..." class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">Ad Soyad ${STAR}</label><input name="full_name" required minlength="3" maxlength="100" value="${esc(a.full_name || userName(user))}" class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">Telefon ${STAR}</label><input name="phone" type="tel" required maxlength="20" value="${esc(ph || (user.user_metadata && user.user_metadata.phone ? '0' + user.user_metadata.phone : ''))}" placeholder="05xx xxx xx xx" class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">İl / İlçe ${STAR}</label><input name="city" required minlength="2" maxlength="60" value="${esc(a.city || '')}" placeholder="Örn: İzmir / Karşıyaka" class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">Açık Adres ${STAR}</label><textarea name="address" rows="3" required minlength="10" maxlength="300" class="${INPUT_CLS}">${esc(a.address || '')}</textarea></div>
+        <p id="auth-msg" class="hidden text-xs"></p>
+        <button id="auth-btn" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">KAYDET</button>
+      </form></div>`;
+    return;
+  }
   if(accountView === 'orders'){
     box.innerHTML = `<div class="text-left">${backBtn()}<h3 class="font-serif text-2xl font-bold mb-4">Siparişlerim</h3>
       <div id="my-orders" class="space-y-2 text-xs"><p class="text-mauve">Yükleniyor...</p></div></div>`;
@@ -777,7 +815,9 @@ function renderMember(){
     <div class="space-y-3">
       <button onclick="setAccountView('info')" class="${btn}">Hesap Bilgileri</button>
       <button onclick="setAccountView('orders')" class="${btn}">Siparişlerim</button>
+      <button onclick="setAccountView('addresses')" class="${btn}">Adres Defteri</button>
       <button onclick="setAccountView('edit')" class="${btn}">Üye Bilgisi Güncelleme</button>
+      <button onclick="setAccountView('favorites')" class="${btn}">Favori Ürünleri Listele</button>
     </div>
     <button onclick="signOut()" class="mt-6 w-full py-3.5 bg-ink text-cream rounded-full font-semibold text-sm hover:bg-berry transition">Çıkış Yap</button>`;
 }
@@ -799,6 +839,99 @@ async function saveProfile(e){
   }catch(_){ authMsg('Bağlantı hatası, tekrar dene.', false); }
   finally{ btn.disabled = false; }
 }
+/* ====== FAVORİLER ====== */
+function updateHearts(){
+  document.querySelectorAll('[data-fav]').forEach(b => {
+    const on = favIds.has(Number(b.dataset.fav));
+    b.firstElementChild.className = (on ? 'fa-solid text-berry' : 'fa-regular text-ink/60') + ' fa-heart';
+  });
+}
+async function loadFavorites(){
+  if(!sb || !user){ favIds.clear(); updateHearts(); return; }
+  const { data, error } = await sb.from('favorites').select('product_id');
+  if(!error && Array.isArray(data)){ favIds.clear(); data.forEach(r => favIds.add(Number(r.product_id))); }
+  updateHearts();
+}
+async function toggleFav(id){
+  id = Number(id);
+  if(!user){ afterAuth = null; authMode = 'login'; accountView = 'menu'; renderAccount(); openModal('account-modal'); toast('Favorilere eklemek için giriş yap.'); return; }
+  if(!sb) return;
+  const on = favIds.has(id);
+  if(on) favIds.delete(id); else favIds.add(id);
+  updateHearts();
+  const res = on ? await sb.from('favorites').delete().eq('product_id', id) : await sb.from('favorites').insert({ product_id:id });
+  if(res.error){ if(on) favIds.add(id); else favIds.delete(id); updateHearts(); toast('İşlem yapılamadı, tekrar dene.'); }
+}
+async function removeFav(id){ await toggleFav(id); if(accountView === 'favorites') renderAccount(); }
+
+/* ====== ADRES DEFTERİ ====== */
+let myAddresses = [], editingAddrId = null;
+async function loadAddresses(){
+  if(!sb || !user) return { error:true };
+  const { data, error } = await sb.from('addresses').select('id,title,full_name,phone,city,address').order('created_at', { ascending:true });
+  if(!error && Array.isArray(data)) myAddresses = data;
+  return { error };
+}
+async function renderAddressList(){
+  const { error } = await loadAddresses();
+  const box = $('addr-list'); if(!box) return;
+  if(error){ box.innerHTML = '<p class="text-red-600">Adresler yüklenemedi.</p>'; return; }
+  box.innerHTML = (myAddresses.length ? myAddresses.map(a => `
+    <div class="p-3 bg-white rounded-xl border border-rose/50">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0"><p class="font-semibold text-sm">${esc(a.title)}</p>
+          <p class="text-ink/80 mt-0.5">${esc(a.full_name)} • 0${esc(a.phone)}</p>
+          <p class="text-mauve mt-0.5 break-words">${esc(a.city)} — ${esc(a.address)}</p></div>
+        <div class="flex gap-1 shrink-0">
+          <button onclick="editAddress(${Number(a.id)})" class="p-2 hover:text-berry" aria-label="Düzenle"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteAddress(${Number(a.id)})" class="p-2 hover:text-berry" aria-label="Sil"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : '<p class="text-mauve">Henüz kayıtlı adresin yok.</p>')
+    + (myAddresses.length >= 10 ? '<p class="text-mauve pt-1">En fazla 10 adres kaydedebilirsin.</p>'
+       : '<button onclick="editAddress(null)" class="mt-2 w-full py-3 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition">YENİ ADRES EKLE</button>');
+}
+function editAddress(id){ editingAddrId = id; setAccountView('addr-form'); }
+async function saveAddress(e){
+  e.preventDefault();
+  if(!sb || !user) return;
+  const d = new FormData(e.target), btn = $('auth-btn');
+  const phone = normalizePhone(d.get('phone'));
+  if(!phone){ authMsg('Telefon (5XX) XXX XX XX biçiminde olmalı.', false); return; }
+  const row = { title:String(d.get('title')).trim(), full_name:String(d.get('full_name')).trim(), phone,
+    city:String(d.get('city')).trim(), address:String(d.get('address')).trim() };
+  btn.disabled = true;
+  try{
+    const res = editingAddrId
+      ? await sb.from('addresses').update(row).eq('id', editingAddrId)
+      : await sb.from('addresses').insert(row);
+    if(res.error){ authMsg('Kaydedilemedi: ' + res.error.message, false); return; }
+    toast('Adres kaydedildi.'); editingAddrId = null; setAccountView('addresses');
+  }catch(_){ authMsg('Bağlantı hatası, tekrar dene.', false); }
+  finally{ btn.disabled = false; }
+}
+async function deleteAddress(id){
+  if(!sb || !confirm('Bu adres silinsin mi?')) return;
+  const { error } = await sb.from('addresses').delete().eq('id', id);
+  if(error){ toast('Silinemedi, tekrar dene.'); return; }
+  renderAddressList();
+}
+async function fillSavedAddresses(){
+  const box = $('co-saved'); if(!box) return;
+  box.innerHTML = '';
+  if(!user) return;
+  const { error } = await loadAddresses();
+  if(error || !myAddresses.length || !$('co-saved')) return;
+  $('co-saved').innerHTML = `<label class="block text-xs font-semibold mb-1">Kayıtlı Adreslerim</label>
+    <select onchange="useSavedAddress(this.value)" class="${INPUT_CLS}"><option value="">Adres seç...</option>
+    ${myAddresses.map(a => `<option value="${Number(a.id)}">${esc(a.title)} — ${esc(a.city)}</option>`).join('')}</select>`;
+}
+function useSavedAddress(id){
+  const a = myAddresses.find(x => String(x.id) === String(id)); if(!a) return;
+  const set = (n, v) => { const el = document.querySelector('#checkout-modal [name=' + n + ']'); if(el) el.value = v; };
+  set('ad', a.full_name); set('telefon', '0' + a.phone); set('sehir', a.city); set('adres', a.address);
+}
+
 function forgotPassword(){
   authMsg('Şifre sıfırlama e-postası yakında aktif olacak. Şimdilik gamikatr@hotmail.com adresine yazabilirsin.', null);
 }
