@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gamika Yönetim</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--tx:#1b1f27;--mu:#6b7280;--bd:#e3e6eb;--ac:#4f46e5;--ok:#16a34a;--er:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#181b22;--tx:#e8eaee;--mu:#9aa1ad;--bd:#2a2f3a;--ac:#818cf8;--ok:#4ade80;--er:#f87171}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--tx)}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:16px}
+h1{font-size:20px;margin:0}
+.tabs{display:flex;gap:6px}
+button,select,input{font:inherit;color:var(--tx)}
+button{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.on,button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.sm{padding:4px 9px;font-size:13px}
+input,select{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;width:100%}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.mu{color:var(--mu);font-size:13px}.b{font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stats .card{margin:0}.stats .n{font-size:22px;font-weight:700}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+th{font-size:12px;color:var(--mu);text-transform:uppercase}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;border:1px solid var(--bd)}
+.ok{color:var(--ok)}.er{color:var(--er)}
+.thumb{width:36px;height:36px;border-radius:8px;object-fit:cover;background:var(--bd);display:inline-flex;align-items:center;justify-content:center;font-size:20px}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(440px,92vw);padding:18px}
+dialog::backdrop{background:#0008}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 3px}
+details summary{cursor:pointer;color:var(--ac);font-size:13px;margin-top:6px}
+#msg{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:99px;display:none;font-size:14px}
+.login{max-width:340px;margin:12vh auto}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="msg"></div>
+<dialog id="dlg"></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const sb=supabase.createClient('https://yhgdnpomcfosobqluafi.supabase.co','sb_publishable_GvrjJ4s2GB1wF7e8IYKM1Q_7gLslFhY');
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST={odeme_bekleniyor:'Ödeme bekleniyor',odendi:'Ödendi',hazirlaniyor:'Hazırlanıyor',kargoda:'Kargoda',teslim_edildi:'Teslim edildi',iptal:'İptal'};
+const CAT=['mousepad','figur','bilek','switch'];
+const tl=n=>Number(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY'});
+let tab='orders',fil='',D={orders:[],products:[],sets:[]};
+
+function toast(t){const m=$('#msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',2200)}
+
+function loginView(err){
+  $('#app').innerHTML=`<div class="card login"><h1>Gamika Yönetim</h1>
+  <label>E-posta</label><input id="em" type="email" autocomplete="username">
+  <label>Şifre</label><input id="pw" type="password" autocomplete="current-password">
+  <p class="er">${esc(err||'')}</p>
+  <button class="pri" style="width:100%" onclick="login()">Giriş yap</button></div>`;
+  $('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+}
+async function login(){
+  const {error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});
+  if(error)return loginView('Giriş başarısız: '+error.message);
+  boot();
+}
+async function logout(){await sb.auth.signOut();loginView()}
+
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return loginView();
+  const {data:ok}=await sb.rpc('is_admin');
+  if(!ok){
+    $('#app').innerHTML=`<div class="card login"><p class="er b">Bu hesabın yönetici yetkisi yok.</p><button onclick="logout()">Çıkış</button></div>`;
+    return;
+  }
+  await load();
+}
+async function load(){
+  const [o,p,s]=await Promise.all([
+    sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200),
+    sb.from('products').select('*').order('id'),
+    sb.from('sets').select('*').order('id')]);
+  const e=o.error||p.error||s.error;
+  if(e)toast('Hata: '+e.message);
+  D.orders=o.data||[];D.products=p.data||[];D.sets=s.data||[];
+  render();
+}
+
+function render(){
+  const open=D.orders.filter(x=>['odendi','hazirlaniyor'].includes(x.status)).length;
+  const wait=D.orders.filter(x=>x.status==='odeme_bekleniyor').length;
+  const rev=D.orders.filter(x=>!['iptal','odeme_bekleniyor'].includes(x.status)).reduce((a,x)=>a+Number(x.total||0),0);
+  const low=D.products.filter(x=>x.is_active&&x.stock<=3).length;
+  const T=(k,l)=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()">${l}</button>`;
+  $('#app').innerHTML=`<header><h1>Gamika Yönetim</h1>
+    <div class="tabs">${T('orders','Siparişler')}${T('products','Ürünler')}${T('sets','Setler')}<button onclick="logout()">Çıkış</button></div></header>
+    <div class="stats">
+      <div class="card"><div class="mu">Ödeme bekleyen</div><div class="n">${wait}</div></div>
+      <div class="card"><div class="mu">Hazırlanacak</div><div class="n">${open}</div></div>
+      <div class="card"><div class="mu">Ciro (iptal hariç, ödenen)</div><div class="n">${tl(rev)}</div></div>
+      <div class="card"><div class="mu">Düşük stok (≤3)</div><div class="n ${low?'er':''}">${low}</div></div>
+    </div><div id="view"></div>`;
+  ({orders:vOrders,products:vProducts,sets:vSets})[tab]();
+}
+
+function vOrders(){
+  const list=D.orders.filter(x=>!fil||x.status===fil);
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:10px"><span class="b">${list.length} sipariş</span>
+    <select style="width:auto" onchange="fil=this.value;vOrders()"><option value="">Tüm durumlar</option>
+    ${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${fil===k?'selected':''}>${v}</option>`).join('')}</select></div>`+
+  (list.map(o=>{
+    const items=Array.isArray(o.items)?o.items:[];
+    return `<div class="card"><div class="row"><div><span class="b">${esc(o.order_no)}</span>
+      <div class="mu">${new Date(o.created_at).toLocaleString('tr-TR')} · ${esc(o.customer_name)} · ${esc(o.city)}</div></div>
+      <div class="row"><span class="b">${tl(o.total)}</span>
+      <select style="width:auto" onchange="setStatus(${o.id},this.value)">
+      ${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
+      <details><summary>Detay</summary>
+      <p class="mu">Tel: ${esc(o.phone)} · ${esc(o.email)}<br>Adres: ${esc(o.address)}, ${esc(o.city)}${o.note?`<br>Not: ${esc(o.note)}`:''}</p>
+      <ul>${items.map(i=>`<li>${esc(i.name||i.title||i.product_name||'Ürün')} × ${esc(i.qty||i.quantity||1)}${i.price?' · '+tl(i.price):''}</li>`).join('')||`<li class="mu">${esc(JSON.stringify(o.items))}</li>`}</ul></details></div>`;
+  }).join('')||'<p class="mu">Sipariş yok.</p>');
+}
+async function setStatus(id,v){
+  const {error}=await sb.from('orders').update({status:v}).eq('id',id);
+  if(error){toast('Hata: '+error.message);return load()}
+  D.orders.find(o=>o.id===id).status=v;toast('Durum güncellendi');render();
+}
+
+function vProducts(){
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:10px"><span class="b">${D.products.length} ürün</span>
+    <button class="pri" onclick="editP()">+ Yeni ürün</button></div>
+    <div class="card tbl"><table><tr><th></th><th>Ürün</th><th>Kategori</th><th>Fiyat</th><th>Stok</th><th>Durum</th><th></th></tr>
+    ${D.products.map(p=>`<tr><td>${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:`<span class="thumb">${esc(p.icon||'📦')}</span>`}</td>
+    <td><span class="b">${esc(p.name)}</span><div class="mu">${esc(p.type_label)}</div></td><td>${esc(p.category)}</td><td>${tl(p.price)}</td>
+    <td class="${p.stock<=3?'er b':''}">${p.stock}</td>
+    <td><button class="sm" onclick="togP(${p.id})"><span class="${p.is_active?'ok':'er'}">${p.is_active?'Aktif':'Pasif'}</span></button></td>
+    <td><button class="sm" onclick="editP(${p.id})">Düzenle</button></td></tr>`).join('')}</table></div>`;
+}
+async function togP(id){
+  const p=D.products.find(x=>x.id===id);
+  const {error}=await sb.from('products').update({is_active:!p.is_active}).eq('id',id);
+  if(error)return toast('Hata: '+error.message);
+  p.is_active=!p.is_active;render();
+}
+function editP(id){
+  const p=D.products.find(x=>x.id===id)||{category:'mousepad',stock:10,is_active:true,price:0};
+  $('#dlg').innerHTML=`<h3 style="margin-top:0">${id?'Ürünü düzenle':'Yeni ürün'}</h3>
+  <label>Ad</label><input id="f_name" value="${esc(p.name)}">
+  <label>Kategori</label><select id="f_cat">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
+  <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
+  <div class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
+  <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
+  <label>Görsel adresi (URL)</label><input id="f_img" value="${esc(p.image_url)}">
+  <label>İkon (emoji)</label><input id="f_icon" value="${esc(p.icon)}">
+  <label><input id="f_act" type="checkbox" style="width:auto" ${p.is_active?'checked':''}> Aktif (mağazada görünsün)</label>
+  <div class="row" style="margin-top:16px"><button onclick="$('#dlg').close()">Vazgeç</button><button class="pri" onclick="saveP(${id||0})">Kaydet</button></div>`;
+  $('#dlg').showModal();
+}
+async function saveP(id){
+  const r={name:$('#f_name').value.trim(),category:$('#f_cat').value,type_label:$('#f_type').value.trim(),
+    price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
+    image_url:$('#f_img').value.trim()||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
+  if(!r.name||!r.type_label||isNaN(r.price)||isNaN(r.stock))return toast('Ad, tür, fiyat ve stok zorunlu');
+  const q=id?sb.from('products').update(r).eq('id',id):sb.from('products').insert(r);
+  const {error}=await q;
+  if(error)return toast('Hata: '+error.message);
+  $('#dlg').close();toast('Kaydedildi');load();
+}
+
+function vSets(){
+  $('#view').innerHTML=D.sets.map(s=>`<div class="card row"><div class="b">${esc(s.name)}</div>
+    <div class="row"><input id="sp${s.id}" type="number" min="0" step="0.01" value="${s.price}" style="width:120px">
+    <button class="sm" onclick="saveS(${s.id})">Fiyatı kaydet</button>
+    <button class="sm" onclick="togS(${s.id})"><span class="${s.is_active?'ok':'er'}">${s.is_active?'Aktif':'Pasif'}</span></button></div></div>`).join('')||'<p class="mu">Set yok.</p>';
+}
+async function saveS(id){
+  const v=parseFloat($('#sp'+id).value);if(isNaN(v)||v<0)return toast('Geçersiz fiyat');
+  const {error}=await sb.from('sets').update({price:v}).eq('id',id);
+  if(error)return toast('Hata: '+error.message);
+  D.sets.find(x=>x.id===id).price=v;toast('Kaydedildi');
+}
+async function togS(id){
+  const s=D.sets.find(x=>x.id===id);
+  const {error}=await sb.from('sets').update({is_active:!s.is_active}).eq('id',id);
+  if(error)return toast('Hata: '+error.message);
+  s.is_active=!s.is_active;vSets();
+}
+boot();
+</script>
+</body>
+</html>
