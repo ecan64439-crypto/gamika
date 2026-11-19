@@ -300,20 +300,6 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- GİRİŞ / ÜYE OL / ÜYE OLMADAN DEVAM -->
-<div id="auth-choice-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
-  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
-    <button onclick="closeModal('auth-choice-modal')" class="absolute top-6 right-6 text-xl hover:text-berry" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
-    <h3 class="font-serif text-2xl font-bold mb-1">Devam Et</h3>
-    <p class="text-xs text-mauve mb-6">Üye olursan siparişlerini takip edebilirsin.</p>
-    <div class="space-y-3">
-      <button onclick="chooseAuth('login')" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition">GİRİŞ YAP</button>
-      <button onclick="chooseAuth('register')" class="w-full py-3.5 bg-rose text-ink rounded-xl font-semibold text-xs tracking-wider hover:bg-petal transition">ÜYE OL</button>
-      <button onclick="guestCheckout()" class="w-full py-3.5 bg-white border border-rose rounded-xl font-semibold text-xs tracking-wider hover:bg-petal transition">ÜYE OLMADAN DEVAM ET</button>
-    </div>
-  </div>
-</div>
-
 <!-- SİPARİŞ -->
 <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-start sm:items-center justify-center px-4 py-6 overflow-y-auto">
   <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative">
@@ -391,7 +377,17 @@ const SET_PRICE = 1099; // "Kendi Setini Yarat" indirimli set fiyatı
 const $ = id => document.getElementById(id);
 const TL = n => n.toLocaleString('tr-TR') + ' ₺';
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let cart = [];
+const CART_KEY = 'gamika_cart';
+function loadCart(){
+  try{
+    const c = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+    if(!Array.isArray(c)) return [];
+    return c.filter(i => i && typeof i.id === 'string' && Number(i.qty) > 0 && Number.isFinite(Number(i.price)))
+      .map(i => ({ id:i.id, name:String(i.name || ''), price:Number(i.price), qty:Math.min(20, Math.floor(Number(i.qty))),
+        icon:/^fa-[a-z0-9-]+$/.test(String(i.icon)) ? String(i.icon) : 'fa-gift' }));
+  }catch(_){ return []; }
+}
+let cart = loadCart();
 
 /* Kutunun içinde */
 $('content-grid').innerHTML = CONTENTS.map(c => `
@@ -516,6 +512,7 @@ function addProduct(id){ const p=PRODUCTS.find(x=>x.id===id); if(!p) return; add
 function addSet(id){ const s=SETS.find(x=>x.id===id); if(!s) return; addItem({id:'s'+s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
 function qty(i,d){ cart[i].qty += d; if(cart[i].qty<=0) cart.splice(i,1); renderCart(); }
 function renderCart(){
+  try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(_){}
   const count = cart.reduce((s,i)=>s+i.qty,0);
   const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
   $('cart-badge').innerText = count;
@@ -540,18 +537,23 @@ function checkout(){
     info('Ödeme (Demo)','Ödeme sistemi henüz bağlı değil. Yayına almadan önce iyzico, PayTR gibi bir altyapı bağlanacak.');
     return;
   }
-  if(user) openCheckoutForm(); else openModal('auth-choice-modal');
+  if(user) openCheckoutForm();
+  else { afterAuth = 'checkout'; authMode = 'login'; renderAccount(); openModal('account-modal'); }
 }
 function openCheckoutForm(){
   const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
   $('co-total').innerText = 'Toplam: ' + TL(sub) + ' • Kargo ücretsiz';
   $('co-error').classList.add('hidden');
-  const em = document.querySelector('#checkout-modal [name=eposta]');
-  if(user && em && !em.value) em.value = user.email || '';
+  if(user){
+    const md = user.user_metadata || {};
+    const fill = (n, v) => { const el = document.querySelector('#checkout-modal [name=' + n + ']'); if(el && !el.value && v) el.value = v; };
+    fill('eposta', user.email);
+    fill('ad', [md.first_name, md.last_name].filter(Boolean).join(' '));
+    fill('telefon', md.phone);
+  }
   openModal('checkout-modal');
 }
-function chooseAuth(mode){ closeModal('auth-choice-modal'); afterAuth = 'checkout'; authMode = mode; renderAccount(); openModal('account-modal'); }
-function guestCheckout(){ closeModal('auth-choice-modal'); closeModal('account-modal'); openCheckoutForm(); }
+function guestCheckout(){ closeModal('account-modal'); afterAuth = null; openCheckoutForm(); }
 async function submitOrder(e){
   e.preventDefault();
   const f = e.target, d = new FormData(f), btn = $('co-btn'), err = $('co-error');
@@ -608,13 +610,27 @@ function doSearch(q){
     </div>`).join('') : `<p class="text-xs text-mauve text-center py-4">Ürün bulunamadı.</p>`;
 }
 
-/* ====== ÜYELİK (Supabase Auth) ====== */
-const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+/* ====== ÜYELİK (Supabase Auth) ======
+   TURNSTILE_SITE_KEY: Cloudflare Turnstile "site key" (robot doğrulaması). Boşsa doğrulama gösterilmez.
+   SOCIAL: Sağlayıcı Supabase'de açılıp ayarlandıktan sonra true yap, buton görünür. */
+const TURNSTILE_SITE_KEY = '';
+const SOCIAL = { facebook:false, google:false, apple:false };
+const REMEMBER_KEY = 'gamika_remember';
+/* "Beni hatırla" işaretli değilse oturum sadece bu sekme açıkken saklanır. */
+const authStorage = {
+  getItem: k => { try{ const v = sessionStorage.getItem(k); return v !== null ? v : localStorage.getItem(k); }catch(_){ return null; } },
+  setItem: (k, v) => { try{ (localStorage.getItem(REMEMBER_KEY) === '0' ? sessionStorage : localStorage).setItem(k, v); }catch(_){} },
+  removeItem: k => { try{ sessionStorage.removeItem(k); localStorage.removeItem(k); }catch(_){} }
+};
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth:{ storage:authStorage } }) : null;
 let user = null;          // giriş yapmış kullanıcı
 let afterAuth = null;     // 'checkout' ise giriş/üyelik sonrası sipariş formuna geçilir
 let authMode = 'login';   // 'login' | 'register'
+let captchaToken = '', tsLoading = null;
 const STATUS_TR = {odeme_bekleniyor:'Ödeme bekleniyor', odendi:'Ödendi', hazirlaniyor:'Hazırlanıyor', kargoda:'Kargoda', teslim_edildi:'Teslim edildi', iptal:'İptal edildi'};
 const INPUT_CLS = 'w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry';
+const STAR = '<span class="text-berry">*</span>';
 
 async function initAuth(){
   renderAccount();
@@ -627,11 +643,35 @@ async function initAuth(){
   }catch(err){ console.warn('Oturum okunamadı:', err); }
 }
 function setAuthMode(m){ authMode = m; renderAccount(); }
+function togglePw(btn){
+  const inp = btn.parentElement.querySelector('input'), show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.firstElementChild.className = show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+}
+function pwField(autocomplete, placeholder, min){
+  return `<div><label class="block text-xs font-semibold mb-1">Şifre ${STAR}</label>
+    <div class="relative"><input name="password" type="password" required minlength="${min}" maxlength="72" autocomplete="${autocomplete}" placeholder="${placeholder}" class="${INPUT_CLS} pr-11">
+    <button type="button" onclick="togglePw(this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-mauve hover:text-berry" aria-label="Şifreyi göster / gizle"><i class="fa-regular fa-eye"></i></button></div></div>`;
+}
+function socialButtons(){
+  const defs = [
+    ['facebook','Facebook ile Bağlan','border-[#3b5998] text-[#3b5998]'],
+    ['google','Google ile Bağlan','border-[#4285f4] text-[#4285f4]'],
+    ['apple','Apple ile Bağlan','border-ink text-ink']
+  ];
+  return defs.filter(d => SOCIAL[d[0]]).map(d =>
+    `<button type="button" onclick="socialLogin('${d[0]}')" class="w-full py-3.5 mt-3 rounded-full border bg-white font-semibold text-sm ${d[2]} hover:bg-petal transition">${d[1]}</button>`).join('');
+}
+function legalLink(title, label){
+  return `<a href="#" onclick="info('${title}','Bu metin yakında yayınlanacak.');return false" class="underline">${label}</a>`;
+}
 function renderAccount(){
   const box = $('account-body'); if(!box) return;
   if(user){
+    const md = user.user_metadata || {};
+    const who = [md.first_name, md.last_name].filter(Boolean).join(' ');
     box.innerHTML = `
-      <h3 class="font-serif text-2xl font-bold mb-1">Hesabım</h3>
+      <h3 class="font-serif text-2xl font-bold mb-1">${who ? 'Merhaba, ' + esc(who) : 'Hesabım'}</h3>
       <p class="text-xs text-mauve mb-5 break-all">${esc(user.email || '')}</p>
       <div class="text-left">
         <h4 class="font-serif font-bold text-lg mb-2">Siparişlerim</h4>
@@ -641,25 +681,67 @@ function renderAccount(){
     loadMyOrders();
     return;
   }
-  const reg = authMode === 'register';
+  if(authMode === 'register'){
+    box.innerHTML = `
+      <h3 class="font-serif text-2xl font-bold mb-5">Yeni Üyelik</h3>
+      <form onsubmit="authSubmit(event)" class="space-y-3 text-left">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs font-semibold mb-1">Adı ${STAR}</label><input name="first" required maxlength="60" autocomplete="given-name" class="${INPUT_CLS}"></div>
+          <div><label class="block text-xs font-semibold mb-1">Soyadı ${STAR}</label><input name="last" required maxlength="60" autocomplete="family-name" class="${INPUT_CLS}"></div>
+        </div>
+        <div><label class="block text-xs font-semibold mb-1">Email ${STAR}</label><input name="email" type="email" required maxlength="150" autocomplete="email" class="${INPUT_CLS}"></div>
+        ${pwField('new-password', 'En az 8 karakter', 8)}
+        <div><label class="block text-xs font-semibold mb-2">Cinsiyet</label>
+          <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="erkek" class="accent-berry"> Erkek</label>
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="kadin" class="accent-berry"> Kadın</label>
+            <label class="flex items-center gap-1.5"><input type="radio" name="gender" value="belirtmek_istemiyorum" class="accent-berry"> Belirtmek istemiyorum</label>
+          </div></div>
+        <div><label class="block text-xs font-semibold mb-1">Cep Telefonu ${STAR}</label><input name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="(5XX) XXX XX XX" class="${INPUT_CLS}"></div>
+        <div><label class="block text-xs font-semibold mb-1">Doğum Tarihi ${STAR}</label><input name="birth" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0,10)}" autocomplete="bday" class="${INPUT_CLS}"></div>
+        <div class="space-y-2.5 pt-1 text-xs leading-snug">
+          <label class="flex items-start gap-2"><input type="checkbox" name="consent" class="mt-0.5 accent-berry"><span>Aydınlatma Metninde belirtilen ilkeler nezdinde Elektronik Ticaret İletisi almak istiyorum.</span></label>
+          <label class="flex items-start gap-2"><input type="checkbox" name="terms" required class="mt-0.5 accent-berry"><span>${legalLink('Üyelik Sözleşmesi', 'Üyelik sözleşmesini')} kabul ediyorum.</span></label>
+          <label class="flex items-start gap-2"><input type="checkbox" name="privacy" required class="mt-0.5 accent-berry"><span>Kişisel verilerin işlenmesine ilişkin ${legalLink('Aydınlatma Metni', 'Aydınlatma Metnini')} okudum.</span></label>
+        </div>
+        <div id="captcha-box"></div>
+        <p id="auth-msg" class="hidden text-xs"></p>
+        <button id="auth-btn" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">ÜYE OL</button>
+      </form>
+      <p class="mt-4 text-xs text-ink/70">Zaten üye misin? <button type="button" onclick="setAuthMode('login')" class="underline font-semibold">Giriş yap</button></p>`;
+    renderCaptcha();
+    return;
+  }
   box.innerHTML = `
-    <h3 class="font-serif text-2xl font-bold mb-1">Gamika'ya Hoş Geldin</h3>
-    <p class="text-xs text-mauve mb-5">Siparişlerini takip et.</p>
-    <div class="grid grid-cols-2 gap-1 mb-5 p-1 rounded-xl bg-petal">
-      <button type="button" onclick="setAuthMode('login')" class="py-2 rounded-lg text-xs font-semibold ${!reg ? 'bg-ink text-cream' : ''}">Giriş Yap</button>
-      <button type="button" onclick="setAuthMode('register')" class="py-2 rounded-lg text-xs font-semibold ${reg ? 'bg-ink text-cream' : ''}">Üye Ol</button>
-    </div>
+    <h3 class="font-serif text-2xl font-bold mb-1">Giriş Yap</h3>
+    <p class="text-xs text-mauve mb-5">Hızlı ve güvenli alışverişe giriş yapın!</p>
     <form onsubmit="authSubmit(event)" class="space-y-4 text-left">
-      <div><label class="block text-xs font-semibold mb-1">E-posta</label><input name="email" type="email" required maxlength="150" autocomplete="email" placeholder="ornek@mail.com" class="${INPUT_CLS}"></div>
-      <div><label class="block text-xs font-semibold mb-1">Şifre</label><input name="password" type="password" required minlength="${reg ? 8 : 1}" maxlength="72" autocomplete="${reg ? 'new-password' : 'current-password'}" placeholder="${reg ? 'En az 8 karakter' : '••••••••'}" class="${INPUT_CLS}"></div>
+      <div><label class="block text-xs font-semibold mb-1">Email</label><input name="email" type="email" required maxlength="150" autocomplete="email" class="${INPUT_CLS}"></div>
+      ${pwField('current-password', '', 1)}
+      <div class="flex items-center justify-between text-xs">
+        <label class="flex items-center gap-2"><input type="checkbox" name="remember" class="accent-berry"> Beni Hatırla</label>
+        <button type="button" onclick="forgotPassword()" class="hover:text-berry">Şifremi Unuttum</button>
+      </div>
+      <div id="captcha-box"></div>
       <p id="auth-msg" class="hidden text-xs"></p>
-      <button id="auth-btn" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">${reg ? 'ÜYE OL' : 'GİRİŞ YAP'}</button>
+      <button id="auth-btn" class="w-full py-3.5 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">GİRİŞ YAP</button>
     </form>
-    ${afterAuth === 'checkout' ? `<button type="button" onclick="guestCheckout()" class="mt-4 text-xs underline text-mauve">Üye olmadan devam et</button>` : ''}`;
+    ${afterAuth === 'checkout' ? `<button type="button" onclick="guestCheckout()" class="mt-4 w-full py-3.5 bg-emerald-500 text-white rounded-full font-semibold text-sm hover:bg-emerald-600 transition">Üye Olmadan Devam Et</button>` : ''}
+    <div class="mt-6 pt-6 border-t border-rose/60 text-left">
+      <h4 class="font-serif font-bold text-lg mb-1">Henüz Üye Değil misiniz?</h4>
+      <p class="text-xs text-ink/70 mb-3">Kolayca üye olabilirsiniz!</p>
+      <button type="button" onclick="setAuthMode('register')" class="w-full py-3.5 rounded-full bg-petal font-semibold text-sm hover:bg-rose transition">Hemen Üye Ol</button>
+      ${socialButtons()}
+    </div>`;
+  renderCaptcha();
+}
+function forgotPassword(){
+  authMsg('Şifre sıfırlama e-postası yakında aktif olacak. Şimdilik gamikatr@hotmail.com adresine yazabilirsin.', null);
 }
 function authMsg(text, ok){
   const m = $('auth-msg'); if(!m) return;
-  m.innerText = text; m.className = 'text-xs ' + (ok ? 'text-emerald-700' : 'text-red-600');
+  m.innerText = text;
+  m.className = 'text-xs ' + (ok === true ? 'text-emerald-700' : ok === null ? 'text-ink/70' : 'text-red-600');
 }
 function authErrorTR(err){
   const m = String((err && err.message) || '').toLowerCase();
@@ -667,9 +749,36 @@ function authErrorTR(err){
   if(m.includes('already registered')) return 'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.';
   if(m.includes('at least')) return 'Şifre en az 8 karakter olmalı.';
   if(m.includes('not confirmed')) return 'E-postanı doğrulaman gerekiyor.';
+  if(m.includes('captcha')) return 'Robot doğrulaması başarısız, tekrar dene.';
   if(m.includes('rate limit') || m.includes('too many')) return 'Çok fazla deneme yapıldı, biraz sonra tekrar dene.';
   if(m.includes('valid email') || m.includes('invalid email')) return 'Geçerli bir e-posta yaz.';
   return 'İşlem yapılamadı: ' + ((err && err.message) || 'bilinmeyen hata');
+}
+function normalizePhone(v){
+  let p = String(v || '').replace(/\D/g, '');
+  if(p.length === 12 && p.startsWith('90')) p = p.slice(2);
+  if(p.length === 11 && p.startsWith('0')) p = p.slice(1);
+  return /^5\d{9}$/.test(p) ? p : '';
+}
+function loadTurnstile(){
+  if(window.turnstile) return Promise.resolve();
+  if(!tsLoading) tsLoading = new Promise((ok, fail) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    sc.async = true; sc.onload = ok; sc.onerror = fail; document.head.appendChild(sc);
+  });
+  return tsLoading;
+}
+async function renderCaptcha(){
+  captchaToken = '';
+  if(!TURNSTILE_SITE_KEY || !$('captcha-box')) return;
+  try{
+    await loadTurnstile();
+    const b = $('captcha-box'); if(!b) return;
+    b.innerHTML = '';
+    window.turnstile.render(b, { sitekey:TURNSTILE_SITE_KEY,
+      callback: t => { captchaToken = t; }, 'expired-callback': () => { captchaToken = ''; }, 'error-callback': () => { captchaToken = ''; } });
+  }catch(_){ /* doğrulama yüklenemezse form gönderilirken uyarılır */ }
 }
 async function authSubmit(e){
   e.preventDefault();
@@ -677,9 +786,27 @@ async function authSubmit(e){
   const d = new FormData(e.target), btn = $('auth-btn');
   const email = String(d.get('email')).trim(), password = String(d.get('password'));
   const reg = authMode === 'register';
+  if(TURNSTILE_SITE_KEY && !captchaToken){ authMsg('Lütfen "Ben robot değilim" doğrulamasını tamamla.', false); return; }
+  let meta = null;
+  if(reg){
+    const phone = normalizePhone(d.get('phone'));
+    if(!phone){ authMsg('Cep telefonu (5XX) XXX XX XX biçiminde olmalı.', false); return; }
+    const birth = String(d.get('birth') || '');
+    if(!birth || birth > new Date().toISOString().slice(0,10)){ authMsg('Doğum tarihi geçersiz.', false); return; }
+    const now = new Date().toISOString();
+    meta = {
+      first_name:String(d.get('first')).trim().slice(0,60), last_name:String(d.get('last')).trim().slice(0,60),
+      phone, gender:d.get('gender') || '', birth_date:birth,
+      email_consent:d.get('consent') === 'on', terms_accepted_at:now, privacy_read_at:now
+    };
+  }
+  try{ localStorage.setItem(REMEMBER_KEY, (reg || d.get('remember') === 'on') ? '1' : '0'); }catch(_){}
   btn.disabled = true;
   try{
-    const res = reg ? await sb.auth.signUp({ email, password }) : await sb.auth.signInWithPassword({ email, password });
+    const options = captchaToken ? { captchaToken } : {};
+    const res = reg
+      ? await sb.auth.signUp({ email, password, options:{ ...options, data:meta } })
+      : await sb.auth.signInWithPassword({ email, password, options });
     if(res.error){ authMsg(authErrorTR(res.error), false); return; }
     if(!res.data.session){
       authMsg('Üyeliğin oluşturuldu. E-postana gelen bağlantıyla doğrula, sonra giriş yap.', true);
@@ -692,7 +819,16 @@ async function authSubmit(e){
     if(afterAuth === 'checkout'){ afterAuth = null; openCheckoutForm(); }
   }catch(ex){
     authMsg('Bağlantı hatası, tekrar dene.', false);
-  }finally{ btn.disabled = false; }
+  }finally{
+    btn.disabled = false;
+    if(window.turnstile && $('captcha-box') && TURNSTILE_SITE_KEY){ try{ window.turnstile.reset(); }catch(_){} captchaToken = ''; }
+  }
+}
+async function socialLogin(provider){
+  if(!sb || !SOCIAL[provider]) return;
+  try{ localStorage.setItem(REMEMBER_KEY, '1'); }catch(_){}
+  const { error } = await sb.auth.signInWithOAuth({ provider, options:{ redirectTo: location.origin + '/' } });
+  if(error) authMsg(authErrorTR(error), false);
 }
 async function signOut(){
   if(!sb) return;
@@ -724,7 +860,7 @@ $('account-btn').onclick = () => { afterAuth = null; renderAccount(); openModal(
 $('mobile-account').onclick = () => { $('mobile-menu').classList.add('hidden'); afterAuth = null; renderAccount(); openModal('account-modal'); };
 $('menu-btn').onclick = () => $('mobile-menu').classList.toggle('hidden');
 document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('mobile-menu').classList.add('hidden')));
-document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal','checkout-modal','auth-choice-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ ['search-modal','account-modal','info-modal','checkout-modal'].forEach(closeModal); $('cart-drawer').classList.add('hidden'); } });
 initAuth();
 </script>
 </body>
