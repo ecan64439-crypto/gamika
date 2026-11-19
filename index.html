@@ -25,12 +25,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Tiny5&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  html{background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%) fixed;background-color:#FDEBF3}
+  html{background:#FDEBF3}
   body{font-family:'Inter',sans-serif;background:transparent;color:#2A1B2E;overflow-x:hidden}
-  #site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  #site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%);transform:translateZ(0)}
   h1,h2,h3,.font-serif{font-family:'Fraunces',serif}
   section[id]{scroll-margin-top:120px}
-  .glass{background:rgba(255,255,255,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(249,213,229,.6)}
+  .glass{background:rgba(255,255,255,.9);border:1px solid rgba(249,213,229,.6)}
   .imgbg{background:linear-gradient(135deg,#E8DDFB,#F9D5E5)}
   ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#E0709A;border-radius:4px}
   @keyframes glow{0%,100%{box-shadow:0 0 25px rgba(249,213,229,.7)}50%{box-shadow:0 0 50px rgba(224,112,154,.4)}}
@@ -64,17 +64,17 @@
   .hdr-ico{height:24px;display:flex;align-items:center;justify-content:center}
   .hdr-btn>span:last-child{font-size:11px;font-weight:500;line-height:1}
   .hdr-b{background:linear-gradient(90deg,#FDEBF3,#F3EAFE)}
-  .hdr-drip{position:absolute;left:0;right:0;top:100%;width:100%;height:46px;display:block;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(155,77,224,.12))}
+  .hdr-drip{position:absolute;left:0;right:0;top:100%;width:100%;height:46px;display:block;pointer-events:none;}
   .nav-pill{padding:6px 14px;border-radius:9999px;transition:all .15s}
   .nav-pill:hover{color:#9B4DE0}
   .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
   /* Giriş bölümü */
   .hz{position:relative;padding:72px 0 64px}
   .hz-grd{position:absolute;inset:0;background-image:linear-gradient(rgba(155,77,224,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(155,77,224,.06) 1px,transparent 1px);background-size:26px 26px}
-  .hz-blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45;animation:hz-drift 14s ease-in-out infinite alternate;pointer-events:none}
+  .hz-blob{position:absolute;border-radius:50%;opacity:.45;animation:hz-drift 14s ease-in-out infinite alternate;pointer-events:none;will-change:transform;-webkit-mask-image:radial-gradient(closest-side,#000 0%,rgba(0,0,0,.6) 45%,transparent 100%);mask-image:radial-gradient(closest-side,#000 0%,rgba(0,0,0,.6) 45%,transparent 100%)}
   @keyframes hz-drift{to{transform:translate(50px,-30px) scale(1.12)}}
   .hz-fx{position:absolute;inset:0;pointer-events:none}
-  .hz-fl{position:absolute;bottom:-30px;opacity:0;animation:hz-up linear infinite}
+  .hz-fl{position:absolute;bottom:-30px;opacity:0;animation:hz-up linear infinite;will-change:transform,opacity}
   @keyframes hz-up{0%{transform:translateY(0) rotate(0);opacity:0}8%{opacity:.4}92%{opacity:.4}100%{transform:translateY(-110vh) rotate(18deg);opacity:0}}
   .hz-tw{position:absolute;width:5px;height:5px;background:#fff;box-shadow:5px 0 #fff,-5px 0 #fff,0 5px #fff,0 -5px #fff;animation:hz-tw 2.6s ease-in-out infinite}
   @keyframes hz-tw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.9;transform:scale(1)}}
