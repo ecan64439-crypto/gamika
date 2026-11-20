@@ -215,6 +215,7 @@ function editP(id){
   <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
   <div class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
   <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
+  <label>Açıklama (ürün sayfasında ve Google'da görünür)</label><textarea id="f_desc" rows="4" style="width:100%;font:inherit;padding:8px;border-radius:8px;box-sizing:border-box" placeholder="Örn: 90x40 cm geniş, kaymaz tabanlı, dikişli kenar...">${esc(p.description||'')}</textarea>
   <label>Görsel adresi (URL)</label><input id="f_img" value="${esc(p.image_url)}">
   <label>İkon (emoji)</label><input id="f_icon" value="${esc(p.icon)}">
   <label><input id="f_act" type="checkbox" style="width:auto" ${p.is_active?'checked':''}> Aktif (mağazada görünsün)</label>
@@ -224,7 +225,7 @@ function editP(id){
 async function saveP(id){
   const r={name:$('#f_name').value.trim(),category:$('#f_cat').value,type_label:$('#f_type').value.trim(),
     price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
-    image_url:$('#f_img').value.trim()||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
+    description:$('#f_desc').value.trim()||null,image_url:$('#f_img').value.trim()||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
   if(!r.name||!r.type_label||isNaN(r.price)||isNaN(r.stock))return toast('Ad, tür, fiyat ve stok zorunlu');
   const q=id?sb.from('products').update(r).eq('id',id):sb.from('products').insert(r);
   const {error}=await q;
