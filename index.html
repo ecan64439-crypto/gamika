@@ -797,10 +797,17 @@ const STAR = '<span class="text-berry">*</span>';
 async function initAuth(){
   renderAccount();
   if(!sb) return;
-  const isRecovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
-  const isSignup = /type=signup/.test(location.hash) || /type=signup/.test(location.search);
-  const linkError = /error_code=|error=access_denied/.test(location.hash + location.search);
+  let isRecovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
+  let isSignup = /type=(signup|email)\b/.test(location.hash) || /type=(signup|email)\b/.test(location.search);
+  let linkError = /error_code=|error=access_denied/.test(location.hash + location.search);
   try{
+    // Mail linki doğrudan gamikatr.com'a gelir: ?token_hash=...&type=...
+    const qp = new URLSearchParams(location.search), th = qp.get('token_hash'), tt = qp.get('type');
+    if(th && tt){
+      const { error:vErr } = await sb.auth.verifyOtp({ token_hash:th, type:tt });
+      if(vErr){ linkError = true; isSignup = false; isRecovery = false; }
+      try{ history.replaceState(null,'',location.pathname); }catch(_){}
+    }
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
     if(isRecovery && user){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); try{ history.replaceState(null,'',location.pathname); }catch(_){} }
