@@ -829,10 +829,27 @@ function togglePw(btn){
   inp.type = show ? 'text' : 'password';
   btn.firstElementChild.className = show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
 }
+const PW_RULES = [
+  ['En az 8 karakter', p => p.length >= 8],
+  ['1 büyük harf (A-Z)', p => /[A-ZÇĞİÖŞÜ]/.test(p)],
+  ['1 küçük harf (a-z)', p => /[a-zçğıöşü]/.test(p)],
+  ['1 rakam (0-9)', p => /\d/.test(p)]
+];
+function pwStrong(p){ return PW_RULES.every(r => r[1](p)); }
+function pwCheck(inp){
+  const box = inp.closest('.pw-wrap').querySelector('.pw-rules'); if(!box) return;
+  box.querySelectorAll('li').forEach((li, i) => {
+    const ok = PW_RULES[i][1](inp.value);
+    li.className = ok ? 'text-emerald-700' : 'text-mauve';
+    li.firstElementChild.className = ok ? 'fa-solid fa-circle-check mr-1' : 'fa-regular fa-circle mr-1';
+  });
+}
 function pwField(autocomplete, placeholder, min){
-  return `<div><label class="block text-xs font-semibold mb-1">Şifre ${STAR}</label>
-    <div class="relative"><input name="password" type="password" required minlength="${min}" maxlength="72" autocomplete="${autocomplete}" placeholder="${placeholder}" class="${INPUT_CLS} pr-11">
-    <button type="button" onclick="togglePw(this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-mauve hover:text-berry" aria-label="Şifreyi göster / gizle"><i class="fa-regular fa-eye"></i></button></div></div>`;
+  const rules = min >= 8;
+  return `<div class="pw-wrap"><label class="block text-xs font-semibold mb-1">Şifre ${STAR}</label>
+    <div class="relative"><input name="password" type="password" required minlength="${min}" maxlength="72" autocomplete="${autocomplete}" placeholder="${placeholder}" ${rules ? 'oninput="pwCheck(this)"' : ''} class="${INPUT_CLS} pr-11">
+    <button type="button" onclick="togglePw(this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-mauve hover:text-berry" aria-label="Şifreyi göster / gizle"><i class="fa-regular fa-eye"></i></button></div>
+    ${rules ? `<ul class="pw-rules mt-2 grid grid-cols-2 gap-1 text-[11px]">${PW_RULES.map(r => `<li class="text-mauve"><i class="fa-regular fa-circle mr-1"></i>${r[0]}</li>`).join('')}</ul>` : ''}</div>`;
 }
 function socialButtons(){
   const defs = [
@@ -1181,7 +1198,7 @@ async function saveNewPassword(e){
   e.preventDefault();
   if(!sb) return;
   const pw = String(new FormData(e.target).get('password') || ''), btn = $('auth-btn');
-  if(pw.length < 8){ authMsg('Şifre en az 8 karakter olmalı.', false); return; }
+  if(!pwStrong(pw)){ authMsg('Şifre, aşağıdaki kuralların hepsine uymalı.', false); return; }
   btn.disabled = true;
   try{
     const { error } = await sb.auth.updateUser({ password: pw });
@@ -1263,6 +1280,7 @@ async function authSubmit(e){
   if(TURNSTILE_SITE_KEY && !captchaToken){ authMsg('Lütfen "Ben robot değilim" doğrulamasını tamamla.', false); return; }
   let meta = null;
   if(reg){
+    if(!pwStrong(password)){ authMsg('Şifre, şifre alanının altındaki kuralların hepsine uymalı.', false); return; }
     const phone = normalizePhone(d.get('phone'));
     if(!phone){ authMsg('Cep telefonu (5XX) XXX XX XX biçiminde olmalı.', false); return; }
     const birth = String(d.get('birth') || '');
