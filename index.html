@@ -1119,7 +1119,7 @@ async function saveAddress(e){
     const res = editingAddrId
       ? await sb.from('addresses').update(row).eq('id', editingAddrId)
       : await sb.from('addresses').insert(row);
-    if(res.error){ authMsg('Kaydedilemedi: ' + res.error.message, false); return; }
+    if(res.error){ authMsg('Kaydedilemedi. ' + authErrorTR(res.error), false); return; }
     toast('Adres kaydedildi.'); editingAddrId = null; setAccountView('addresses');
   }catch(_){ authMsg('Bağlantı hatası, tekrar dene.', false); }
   finally{ btn.disabled = false; }
@@ -1179,8 +1179,29 @@ function authMsg(text, ok){
   m.innerText = text;
   m.className = 'text-xs ' + (ok === true ? 'text-emerald-700' : ok === null ? 'text-ink/70' : 'text-red-600');
 }
+const ERR_TR = {
+  over_email_send_rate_limit:'Çok sık deneme yapıldı, biraz bekleyip tekrar dene.',
+  over_request_rate_limit:'Çok fazla deneme yapıldı, biraz sonra tekrar dene.',
+  over_sms_send_rate_limit:'Çok sık deneme yapıldı, biraz bekleyip tekrar dene.',
+  user_already_exists:'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.',
+  email_exists:'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.',
+  phone_exists:'Bu telefon numarası başka bir üyelikte kayıtlı.',
+  weak_password:'Şifre çok zayıf, daha güçlü bir şifre seç.',
+  invalid_credentials:'E-posta veya şifre hatalı.',
+  email_not_confirmed:'E-postanı doğrulaman gerekiyor.',
+  email_address_invalid:'Geçerli bir e-posta yaz.',
+  captcha_failed:'Robot doğrulaması başarısız, tekrar dene.',
+  same_password:'Yeni şifre eskisiyle aynı olamaz.',
+  signup_disabled:'Şu an yeni üyelik alınmıyor.',
+  user_banned:'Bu hesap kullanıma kapatılmış.',
+  session_expired:'Oturumun sona erdi, tekrar giriş yap.',
+  otp_expired:'Bağlantının süresi dolmuş, yenisini iste.'
+};
 function authErrorTR(err){
-  const m = String((err && err.message) || '').toLowerCase();
+  const raw = String((err && err.message) || ''), m = raw.toLowerCase();
+  const sec = raw.match(/after (\d+) seconds?/i);
+  if(sec) return sec[1] + ' saniye bekleyip tekrar dene.';
+  if(err && ERR_TR[err.code]) return ERR_TR[err.code];
   if(m.includes('invalid login')) return 'E-posta veya şifre hatalı.';
   if(m.includes('already registered')) return 'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.';
   if(m.includes('at least')) return 'Şifre en az 8 karakter olmalı.';
@@ -1188,7 +1209,8 @@ function authErrorTR(err){
   if(m.includes('captcha')) return 'Robot doğrulaması başarısız, tekrar dene.';
   if(m.includes('rate limit') || m.includes('too many')) return 'Çok fazla deneme yapıldı, biraz sonra tekrar dene.';
   if(m.includes('valid email') || m.includes('invalid email')) return 'Geçerli bir e-posta yaz.';
-  return 'İşlem yapılamadı: ' + ((err && err.message) || 'bilinmeyen hata');
+  if(m.includes('failed to fetch') || m.includes('network')) return 'Bağlantı hatası, tekrar dene.';
+  return 'İşlem yapılamadı, lütfen tekrar dene.';
 }
 function normalizePhone(v){
   let p = String(v || '').replace(/\D/g, '');
