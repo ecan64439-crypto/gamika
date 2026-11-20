@@ -440,7 +440,7 @@
 <!-- BİLGİ -->
 <div id="info-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
   <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
-    <div class="w-12 h-12 rounded-full bg-petal mx-auto flex items-center justify-center mb-4"><i class="fa-solid fa-circle-info text-xl"></i></div>
+    <div class="w-12 h-12 rounded-full bg-petal mx-auto flex items-center justify-center mb-4"><i id="info-icon" class="fa-solid fa-circle-info text-xl"></i></div>
     <h3 id="info-title" class="font-serif text-2xl font-bold mb-2"></h3>
     <p id="info-text" class="text-xs text-ink/80 leading-relaxed mb-6"></p>
     <button onclick="closeModal('info-modal')" class="w-full py-3 bg-ink text-cream rounded-xl font-semibold text-xs tracking-wider">TAMAM</button>
@@ -798,10 +798,19 @@ async function initAuth(){
   renderAccount();
   if(!sb) return;
   const isRecovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
+  const isSignup = /type=signup/.test(location.hash) || /type=signup/.test(location.search);
+  const linkError = /error_code=|error=access_denied/.test(location.hash + location.search);
   try{
     const { data } = await sb.auth.getSession();
     user = data.session ? data.session.user : null;
     if(isRecovery && user){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); try{ history.replaceState(null,'',location.pathname); }catch(_){} }
+    if(isSignup && user){
+      info('E-postan onaylandı! 💗', 'GAMİKA\'ya hoş geldin! Hesabın hazır ve giriş yapıldı. Keyifli alışverişler.', 'fa-solid fa-heart text-berry');
+      try{ history.replaceState(null,'',location.pathname); }catch(_){}
+    }else if(linkError){
+      info('Bağlantı geçersiz', 'Bu bağlantının süresi dolmuş ya da daha önce kullanılmış. Hesabın zaten onaylandıysa giriş yapabilirsin.', 'fa-solid fa-triangle-exclamation');
+      try{ history.replaceState(null,'',location.pathname); }catch(_){}
+    }
     sb.auth.onAuthStateChange((_ev, session) => { user = session ? session.user : null; setTimeout(() => { if(_ev === 'PASSWORD_RECOVERY'){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); } renderAccount(); loadFavorites(); }, 0); });
     renderAccount();
     loadFavorites();
@@ -1309,7 +1318,7 @@ async function loadMyOrders(){
 /* Genel */
 function openModal(id){ const m=$(id); m.classList.remove('hidden'); m.classList.add('flex'); }
 function closeModal(id){ const m=$(id); m.classList.add('hidden'); m.classList.remove('flex'); }
-function info(t,x){ $('info-title').innerText=t; $('info-text').innerText=x; openModal('info-modal'); }
+function info(t,x,icon){ $('info-title').innerText=t; $('info-text').innerText=x; $('info-icon').className=(icon||'fa-solid fa-circle-info')+' text-xl'; openModal('info-modal'); }
 function toast(msg){ $('toast-msg').innerText=msg; const t=$('toast'); t.classList.remove('translate-y-24','opacity-0'); setTimeout(()=>t.classList.add('translate-y-24','opacity-0'),3000); }
 function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
 
