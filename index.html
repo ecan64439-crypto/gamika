@@ -257,15 +257,12 @@
         <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
         <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
       </div>
-      <div class="flex flex-wrap gap-2" id="filters">
-        <button data-f="all" class="fbtn px-5 py-2 rounded-xl text-sm font-medium bg-ink text-cream">Tümü</button>
-        <button data-f="mousepad" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Mousepad</button>
-        <button data-f="figur" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Figür</button>
-        <button data-f="bilek" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Bilek Desteği</button>
-        <button data-f="switch" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Switch</button>
-      </div>
+      <div class="flex flex-wrap gap-2" id="filters"></div>
     </div>
     <div id="product-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <div class="text-center mt-12">
+      <a href="/urunler" onclick="openList('all');return false;" class="inline-block px-8 py-4 bg-ink text-cream rounded-2xl text-xs font-semibold tracking-wider hover:bg-berry transition">TÜM ÜRÜNLERİ GÖR <i class="fa-solid fa-arrow-right ml-1"></i></a>
+    </div>
   </div>
 </section>
 
@@ -452,8 +449,8 @@
 <div id="product-view" class="hidden" style="position:fixed;inset:0;z-index:45;overflow-y:auto;background:#FFF7FA">
   <div style="position:sticky;top:0;z-index:2;background:rgba(255,247,250,.95);border-bottom:1px solid #F9D5E5">
     <div style="max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
-      <button onclick="closeProduct()" class="text-xs font-semibold tracking-wider hover:text-berry transition"><i class="fa-solid fa-arrow-left mr-1"></i> MAĞAZAYA DÖN</button>
-      <a href="/" onclick="closeProduct();return false;" class="logo-text" style="font-size:22px;text-decoration:none">GAMİKA</a>
+      <button onclick="closeProduct()" class="text-xs font-semibold tracking-wider hover:text-berry transition"><i class="fa-solid fa-arrow-left mr-1"></i> GERİ</button>
+      <a href="/" onclick="goHome();return false;" class="logo-text" style="font-size:22px;text-decoration:none">GAMİKA</a>
       <button onclick="toggleCart()" class="hover:text-berry transition" aria-label="Sepet"><i class="fa-solid fa-bag-shopping text-lg"></i></button>
     </div>
   </div>
@@ -505,6 +502,12 @@ const CONTENTS = [
   {t:'Klavye Bilek Desteği',d:'Yazarken ve oynarken rahat duruş.',icon:'fa-hand',f:'bilek'},
   {t:"Klavye Switch'leri",d:'Klavyene yeni bir his.',icon:'fa-keyboard',f:'switch'}
 ];
+const CATS = [
+  {f:'mousepad', slug:'mousepad', t:'Mousepad', h:'Mousepad Modelleri', d:'Kadın oyuncular için pastel renkli, geniş boy gaming mousepad modelleri.'},
+  {f:'figur', slug:'figur', t:'Figür', h:'Masaüstü Figürler', d:'Oyun masana sevimli bir dokunuş katan masaüstü figürler.'},
+  {f:'bilek', slug:'bilek-destegi', t:'Bilek Desteği', h:'Klavye Bilek Destekleri', d:'Yazarken ve oynarken rahat duruş için pastel klavye bilek destekleri.'},
+  {f:'switch', slug:'klavye-switch', t:'Switch', h:"Klavye Switch'leri", d:"Mekanik klavyene yeni bir his katan linear ve tactile switch setleri."}
+];
 const BUILD = {
   pad:{title:'1. Mousepad',opts:[{n:'90x40 cm',p:690},{n:'Diğer ölçüler',p:690,out:true}]},
   fig:{title:'2. Figür',opts:[{n:'Tavşan',p:159},{n:'Ayıcık',p:159},{n:'Kedi',p:159}]},
@@ -533,7 +536,7 @@ let cart = loadCart();
 
 /* Kutunun içinde */
 $('content-grid').innerHTML = CONTENTS.map(c => `
-  <a href="#urunler" onclick="filterProducts('${c.f}')" class="group glass rounded-3xl p-7 text-center hover:shadow-xl hover:-translate-y-1 transition">
+  <a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;" class="group glass rounded-3xl p-7 text-center hover:shadow-xl hover:-translate-y-1 transition">
     <div class="w-16 h-16 mx-auto rounded-2xl imgbg flex items-center justify-center mb-4"><i class="fa-solid ${c.icon} text-2xl text-berry"></i></div>
     <h3 class="font-serif text-xl font-bold mb-1">${c.t}</h3>
     <p class="text-xs text-ink/70">${c.d}</p>
@@ -559,10 +562,8 @@ $('set-grid').innerHTML = SETS.map(s => `
 
 /* Ürünler */
 let currentFilter = 'all';
-function renderProducts(){
-  $('product-grid').innerHTML = PRODUCTS.length === 0
-    ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
-    : PRODUCTS.map(p => `
+const FEATURED_N = 6; // ana sayfada gösterilen ürün sayısı
+function cardHTML(p){ return `
   <div class="product-card glass rounded-3xl p-5 shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${esc(p.cat)}">
     <div class="relative">
       <button onclick="toggleFav(${Number(p.id)})" data-fav="${Number(p.id)}" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 shadow flex items-center justify-center hover:scale-110 transition" aria-label="Favorilere ekle / çıkar"><i class="${favIds.has(Number(p.id)) ? 'fa-solid text-berry' : 'fa-regular text-ink/60'} fa-heart"></i></button>
@@ -580,8 +581,13 @@ function renderProducts(){
         ? `<button disabled class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider" style="opacity:.4;cursor:not-allowed">TÜKENDİ</button>`
         : `<button onclick="addProduct(${Number(p.id)})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>`}
     </div>
-  </div>`).join('');
-  filterProducts(currentFilter);
+  </div>`; }
+function renderProducts(){
+  $('product-grid').innerHTML = PRODUCTS.length === 0
+    ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
+    : PRODUCTS.slice(0, FEATURED_N).map(cardHTML).join('');
+  $('filters').innerHTML = [['all','Tümü'], ...CATS.map(c => [c.f, c.t])].map(([f, t]) =>
+    `<a href="${listUrl(f)}" onclick="openList('${f}');return false;" class="px-5 py-2 rounded-xl text-sm font-medium ${f === 'all' ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('');
 }
 
 /* Ürünleri Supabase'den yükle. Başarısız olursa yukarıdaki yerel liste kullanılmaya devam eder. */
@@ -620,7 +626,6 @@ function filterProducts(f){
     c.style.display = (f==='all' || c.dataset.cat===f) ? 'flex' : 'none';
   });
 }
-document.querySelectorAll('.fbtn').forEach(b => b.addEventListener('click', () => filterProducts(b.dataset.f)));
 
 /* ====== ÜRÜN SAYFALARI: gamikatr.com/urun/<id>-<isim> ====== */
 let productsReady = false;
@@ -631,6 +636,33 @@ function slugify(t){
     .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function productUrl(p){ return '/urun/' + Number(p.id) + '-' + slugify(p.name); }
+function listUrl(f){ const c = CATS.find(x => x.f === f); return c ? '/kategori/' + c.slug : '/urunler'; }
+function openList(f){
+  history.pushState({ gmkProduct:true }, '', listUrl(f));
+  showList(f);
+}
+function showList(f){
+  const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f);
+  const items = c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS;
+  const title = c ? c.h : 'Tüm Ürünler';
+  box.innerHTML = `
+    <p class="text-xs text-mauve"><a href="/" onclick="goHome();return false;" class="hover:text-berry">Ana Sayfa</a> › ${c ? `<a href="/urunler" onclick="openList('all');return false;" class="hover:text-berry">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
+    <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
+    <p class="text-xs text-mauve" style="margin-bottom:18px">${items.length} ürün</p>
+    <div class="flex flex-wrap gap-2" style="margin-bottom:28px">
+      ${[['all','Tümü'], ...CATS.map(x => [x.f, x.t])].map(([k, t]) =>
+        `<a href="${listUrl(k)}" onclick="history.replaceState({ gmkProduct:true }, '', '${listUrl(k)}');showList('${k}');return false;" class="px-5 py-2 rounded-xl text-sm font-medium ${(c ? c.f : 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      ${items.length ? items.map(cardHTML).join('') : '<p class="col-span-full text-center text-sm text-mauve py-10">Bu kategoride henüz ürün yok.</p>'}
+    </div>`;
+  const url = 'https://gamikatr.com' + listUrl(f);
+  applySeo(title + ' | GAMİKA', c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
+  const ld = $('product-ld'); if(ld) ld.remove();
+  if(v.classList.contains('hidden')){ v.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+  v.scrollTop = 0;
+}
+function goHome(){ history.pushState(null, '', '/'); hideProduct(); }
 const SEO_DEFAULT = {
   title: document.title,
   desc: (document.querySelector('meta[name="description"]') || {}).content || '',
@@ -708,7 +740,8 @@ function showProduct(id){
       offers:{ '@type':'Offer', price:Number(p.price).toFixed(2), priceCurrency:'TRY', url,
         availability: soldOut(p) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' } });
   }
-  if(v.classList.contains('hidden')){ v.classList.remove('hidden'); v.scrollTop = 0; document.body.style.overflow = 'hidden'; }
+  if(v.classList.contains('hidden')){ v.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+  v.scrollTop = 0;
 }
 async function shareProduct(id){
   const p = PRODUCTS.find(x => x.id === id); if(!p) return;
@@ -719,8 +752,11 @@ async function shareProduct(id){
   }catch(_){}
 }
 function routeFromPath(){
-  const m = /^\/urun\/(\d+)/.exec(location.pathname);
+  const path = location.pathname.replace(/\/+$/, '');
+  const m = /^\/urun\/(\d+)/.exec(path), k = /^\/kategori\/([a-z0-9-]+)/.exec(path);
   if(m){ if(productsReady) showProduct(Number(m[1])); }
+  else if(path === '/urunler'){ if(productsReady) showList('all'); }
+  else if(k){ const c = CATS.find(x => x.slug === k[1]); if(productsReady) showList(c ? c.f : 'all'); }
   else hideProduct();
 }
 window.addEventListener('popstate', routeFromPath);
