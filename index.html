@@ -203,16 +203,16 @@
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
     <a href="#hero" class="nav-pill">Ana Sayfa</a>
+    <a href="#urunler" class="nav-pill">Ürünler</a>
     <a href="#setler" class="nav-pill">Hazır Setler</a>
     <a href="#olustur" class="nav-pill">Kendi Setini Yarat</a>
-    <a href="#urunler" class="nav-pill">Ürünler</a>
     <a href="#yakinda" class="nav-pill">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
     <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
+    <a href="#urunler" class="block text-lg font-medium">Ürünler</a>
     <a href="#setler" class="block text-lg font-medium">Hazır Setler</a>
     <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat</a>
-    <a href="#urunler" class="block text-lg font-medium">Ürünler</a>
     <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
     <button id="mobile-account" class="w-full py-2.5 bg-petal rounded-xl font-medium text-sm"><i class="fa-regular fa-user mr-2"></i>Hesabım</button>
   </div>
@@ -246,6 +246,26 @@
       <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="content-grid"></div>
+  </div>
+</section>
+
+<!-- TEK TEK ÜRÜNLER -->
+<section id="urunler" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div>
+        <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
+        <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" id="filters">
+        <button data-f="all" class="fbtn px-5 py-2 rounded-xl text-sm font-medium bg-ink text-cream">Tümü</button>
+        <button data-f="mousepad" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Mousepad</button>
+        <button data-f="figur" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Figür</button>
+        <button data-f="bilek" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Bilek Desteği</button>
+        <button data-f="switch" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Switch</button>
+      </div>
+    </div>
+    <div id="product-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
   </div>
 </section>
 
@@ -289,25 +309,6 @@
   </div>
 </section>
 
-<!-- TEK TEK ÜRÜNLER -->
-<section id="urunler" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-      <div>
-        <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
-        <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
-      </div>
-      <div class="flex flex-wrap gap-2" id="filters">
-        <button data-f="all" class="fbtn px-5 py-2 rounded-xl text-sm font-medium bg-ink text-cream">Tümü</button>
-        <button data-f="mousepad" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Mousepad</button>
-        <button data-f="figur" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Figür</button>
-        <button data-f="bilek" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Bilek Desteği</button>
-        <button data-f="switch" class="fbtn px-5 py-2 rounded-xl text-sm font-medium glass">Switch</button>
-      </div>
-    </div>
-    <div id="product-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-  </div>
-</section>
 
 <!-- ÇOK YAKINDA -->
 <section id="yakinda" class="py-20">
@@ -357,9 +358,9 @@
       <div>
         <h4 class="font-serif font-bold text-lg mb-4 text-rose">Alışveriş</h4>
         <ul class="space-y-2.5 text-xs text-cream/70">
+          <li><a href="#urunler" class="hover:text-white">Ürünler</a></li>
           <li><a href="#setler" class="hover:text-white">Hazır Setler</a></li>
           <li><a href="#olustur" class="hover:text-white">Kendi Setini Yarat</a></li>
-          <li><a href="#urunler" class="hover:text-white">Ürünler</a></li>
         </ul>
       </div>
       <div>
