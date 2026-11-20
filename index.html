@@ -1301,7 +1301,12 @@ async function authSubmit(e){
       : await sb.auth.signInWithPassword({ email, password, options });
     if(res.error){ authMsg(authErrorTR(res.error), false); return; }
     if(!res.data.session){
-      authMsg('Üyeliğin oluşturuldu. E-postana gelen bağlantıyla doğrula, sonra giriş yap.', true);
+      if(reg){
+        closeModal('account-modal');
+        info('Üyeliğin oluşturuldu! 💗', email + ' adresine bir onay e-postası gönderdik. Üyeliğini tamamlamak için e-postadaki "E-POSTAMI ONAYLA" butonuna tıkla. E-posta birkaç dakika içinde gelmezse Spam/Gereksiz klasörüne de bak.', 'fa-solid fa-envelope-circle-check text-berry');
+      }else{
+        authMsg('E-postanı doğrulaman gerekiyor. Gelen kutunu ve Spam klasörünü kontrol et.', false);
+      }
       return;
     }
     user = res.data.session.user;
