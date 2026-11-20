@@ -1196,7 +1196,7 @@ function authMsg(text, ok){
   m.className = 'text-xs ' + (ok === true ? 'text-emerald-700' : ok === null ? 'text-ink/70' : 'text-red-600');
 }
 const ERR_TR = {
-  over_email_send_rate_limit:'Çok sık deneme yapıldı, biraz bekleyip tekrar dene.',
+  over_email_send_rate_limit:'E-posta az önce gönderildi. Gelen kutunu ve Spam/Gereksiz klasörünü kontrol et. Gelmediyse 1 dakika sonra tekrar dene.',
   over_request_rate_limit:'Çok fazla deneme yapıldı, biraz sonra tekrar dene.',
   over_sms_send_rate_limit:'Çok sık deneme yapıldı, biraz bekleyip tekrar dene.',
   user_already_exists:'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.',
@@ -1216,7 +1216,7 @@ const ERR_TR = {
 function authErrorTR(err){
   const raw = String((err && err.message) || ''), m = raw.toLowerCase();
   const sec = raw.match(/after (\d+) seconds?/i);
-  if(sec) return sec[1] + ' saniye bekleyip tekrar dene.';
+  if(sec) return 'E-posta az önce gönderildi. Gelen kutunu ve Spam/Gereksiz klasörünü kontrol et. Gelmediyse ' + sec[1] + ' saniye sonra tekrar deneyebilirsin.';
   if(err && ERR_TR[err.code]) return ERR_TR[err.code];
   if(m.includes('invalid login')) return 'E-posta veya şifre hatalı.';
   if(m.includes('already registered')) return 'Bu e-posta ile zaten üyelik var, giriş yapmayı dene.';
