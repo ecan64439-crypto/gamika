@@ -43,11 +43,11 @@ function metaDesc(p) {
 
 function cardHTML(p) {
   const img = imgOf(p);
-  return `<a href="${productPath(p)}" class="product-card glass rounded-3xl p-5 shadow-sm flex flex-col">
-    <div class="rounded-2xl aspect-square imgbg mb-4 overflow-hidden">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : ''}</div>
-    <span class="text-xs text-berry">${esc(p.type_label)}</span>
-    <h3 class="font-serif text-xl font-bold">${esc(p.name)}</h3>
-    <p class="font-serif text-xl font-bold mt-3">${TL(p.price)}</p></a>`;
+  return `<a href="${productPath(p)}" class="product-card pcard glass shadow-sm flex flex-col">
+    <div class="pimg rounded-2xl aspect-square imgbg overflow-hidden">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : ''}</div>
+    <span class="ptype text-berry">${esc(p.type_label)}</span>
+    <h3 class="font-serif font-bold">${esc(p.name)}</h3>
+    <div class="pfoot border-t border-rose/60"><p class="pprice font-serif font-bold">${TL(p.price)}</p></div></a>`;
 }
 
 async function buildPage(path) {
@@ -102,7 +102,7 @@ async function buildPage(path) {
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
         <p class="text-xs text-mauve" style="margin-bottom:28px">${rows.length} ürün</p>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">${rows.map(cardHTML).join('')}</div>`
+        <div class="pgrid">${rows.map(cardHTML).join('')}</div>`
     };
   }
   return null;
