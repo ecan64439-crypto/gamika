@@ -25,6 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Tiny5&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+  body.page-mode section{display:none!important}
   html{background:#FDEBF3}
   body{font-family:'Inter',sans-serif;background:transparent;color:#2A1B2E;overflow-x:hidden}
   #site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%);transform:translateZ(0)}
@@ -218,6 +219,11 @@
   </div>
   <svg class="hdr-drip" viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hdr-g" x1="0" x2="1"><stop offset="0" stop-color="#FDEBF3"/><stop offset="1" stop-color="#F3EAFE"/></linearGradient></defs><path fill="url(#hdr-g)" d="M0 0H1200V10C1180 10 1172 14 1168 22C1164 32 1150 32 1148 22C1145 12 1120 10 1100 12C1085 13 1080 18 1078 30C1076 44 1056 44 1054 30C1052 16 1040 11 1010 11C985 11 975 14 970 20C966 26 955 26 952 18C948 10 920 9 890 10C870 11 862 16 860 26C858 40 838 40 836 26C834 14 815 10 790 10C760 10 745 13 742 22C740 30 728 30 726 22C723 12 700 9 670 10C648 11 640 16 638 28C636 42 612 42 610 28C608 16 595 10 570 10C540 10 528 14 525 21C522 28 510 28 508 20C505 11 480 9 450 10C428 11 420 17 418 32C416 45 394 45 392 32C390 17 378 11 350 10C320 10 310 14 306 22C303 30 290 30 288 22C285 12 260 9 230 10C210 11 202 16 200 26C198 38 178 38 176 26C174 14 160 10 130 10C105 10 96 14 92 22C89 30 76 30 74 21C71 11 45 9 20 10C10 10 4 10 0 10Z"/></svg>
 </header>
+
+<!-- AYRI SAYFALAR: /urunler, /kategori/..., /urun/... (site menüsü ve alt bilgi aynı kalır) -->
+<main id="product-view" class="hidden">
+  <div id="pv-body" style="max-width:1200px;margin:0 auto;padding:28px 20px 80px"></div>
+</main>
 
 <!-- HERO -->
 <section id="hero" class="hz">
@@ -446,17 +452,6 @@
 </div>
 
 <!-- TOAST -->
-<div id="product-view" class="hidden" style="position:fixed;inset:0;z-index:45;overflow-y:auto;background:#FFF7FA">
-  <div style="position:sticky;top:0;z-index:2;background:rgba(255,247,250,.95);border-bottom:1px solid #F9D5E5">
-    <div style="max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
-      <button onclick="closeProduct()" class="text-xs font-semibold tracking-wider hover:text-berry transition"><i class="fa-solid fa-arrow-left mr-1"></i> GERİ</button>
-      <a href="/" onclick="goHome();return false;" class="logo-text" style="font-size:22px;text-decoration:none">GAMİKA</a>
-      <button onclick="toggleCart()" class="hover:text-berry transition" aria-label="Sepet"><i class="fa-solid fa-bag-shopping text-lg"></i></button>
-    </div>
-  </div>
-  <main id="pv-body" style="max-width:1100px;margin:0 auto;padding:28px 20px 140px"></main>
-</div>
-
 <div id="toast" class="fixed bottom-6 right-6 z-[60] translate-y-24 opacity-0 transition-all duration-300 bg-ink text-cream px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
   <i class="fa-solid fa-check text-emerald-400"></i><span id="toast-msg" class="text-xs font-medium"></span>
 </div>
@@ -659,8 +654,7 @@ function showList(f){
   const url = 'https://gamikatr.com' + listUrl(f);
   applySeo(title + ' | GAMİKA', c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
   const ld = $('product-ld'); if(ld) ld.remove();
-  if(v.classList.contains('hidden')){ v.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
-  v.scrollTop = 0;
+  pageShow(v);
 }
 function goHome(){ history.pushState(null, '', '/'); hideProduct(); }
 const SEO_DEFAULT = {
@@ -694,7 +688,7 @@ function closeProduct(){
 }
 function hideProduct(){
   const v = $('product-view'); if(!v || v.classList.contains('hidden')) return;
-  v.classList.add('hidden'); document.body.style.overflow = '';
+  v.classList.add('hidden'); document.body.classList.remove('page-mode');
   applySeo(SEO_DEFAULT.title, SEO_DEFAULT.desc, 'https://gamikatr.com/', SEO_DEFAULT.img);
   const ld = $('product-ld'); if(ld) ld.remove();
 }
@@ -707,8 +701,9 @@ function showProduct(id){
       <button onclick="closeProduct()" class="px-5 py-3 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition">MAĞAZAYA DÖN</button></div>`;
     applySeo('Ürün bulunamadı | GAMİKA', SEO_DEFAULT.desc, 'https://gamikatr.com/', SEO_DEFAULT.img);
   }else{
-    const url = 'https://gamikatr.com' + productUrl(p), fav = favIds.has(Number(p.id));
+    const url = 'https://gamikatr.com' + productUrl(p), fav = favIds.has(Number(p.id)), pc = CATS.find(x => x.f === p.cat);
     box.innerHTML = `
+      <p class="text-xs text-mauve" style="margin-bottom:18px"><a href="/" onclick="goHome();return false;" class="hover:text-berry">Ana Sayfa</a> › <a href="/urunler" onclick="openList('all');return false;" class="hover:text-berry">Ürünler</a>${pc ? ` › <a href="${listUrl(pc.f)}" onclick="openList('${pc.f}');return false;" class="hover:text-berry">${esc(pc.t)}</a>` : ''} › ${esc(p.name)}</p>
       <div style="display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));align-items:start">
         <div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1;display:flex;align-items:center;justify-content:center">
           ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover">` : `<i class="fa-solid ${esc(p.icon || 'fa-gift')} text-berry/80" style="font-size:96px"></i>`}
@@ -740,8 +735,12 @@ function showProduct(id){
       offers:{ '@type':'Offer', price:Number(p.price).toFixed(2), priceCurrency:'TRY', url,
         availability: soldOut(p) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' } });
   }
-  if(v.classList.contains('hidden')){ v.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
-  v.scrollTop = 0;
+  pageShow(v);
+}
+function pageShow(v){
+  v.classList.remove('hidden'); document.body.classList.add('page-mode');
+  if(window.navSet) window.navSet('urunler');
+  window.scrollTo(0, 0);
 }
 async function shareProduct(id){
   const p = PRODUCTS.find(x => x.id === id); if(!p) return;
@@ -760,6 +759,10 @@ function routeFromPath(){
   else hideProduct();
 }
 window.addEventListener('popstate', routeFromPath);
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
+  if(a && document.body.classList.contains('page-mode')){ history.pushState(null, '', '/'); hideProduct(); }
+}, true);
 
 renderProducts();
 loadProducts();
@@ -1526,7 +1529,7 @@ $('search-btn').onclick = () => { openModal('search-modal'); $('search-input').f
   const links=[...document.querySelectorAll('#main-nav .nav-pill')];
   const map={}; links.forEach(l=>map[l.getAttribute('href').slice(1)]=l);
   const set=id=>links.forEach(l=>l.classList.toggle('on',l===map[id]));
-  set('hero');
+  set('hero'); window.navSet = set;
   if(!('IntersectionObserver' in window)) return;
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting && map[e.target.id]) set(e.target.id); }),{rootMargin:'-45% 0px -50% 0px'});
   Object.keys(map).forEach(id=>{ const el=document.getElementById(id); if(el) io.observe(el); });
