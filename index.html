@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr" class="scroll-smooth">
 <head>
+<script>if(/^\/(urun\/|urunler|kategori\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GAMİKA — Kadınlara Özel Gamer Setleri</title>
@@ -25,7 +26,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Tiny5&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  body.page-mode section{display:none!important}
+  html.page-mode section,body.page-mode section{display:none!important}
+  html.page-mode #product-view{display:block!important}
   html{background:#FDEBF3}
   body{font-family:'Inter',sans-serif;background:transparent;color:#2A1B2E;overflow-x:hidden}
   #site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#F3EAFE 0%,#FDEBF3 55%,#FFF9FB 100%);transform:translateZ(0)}
@@ -632,10 +634,7 @@ function slugify(t){
 }
 function productUrl(p){ return '/urun/' + Number(p.id) + '-' + slugify(p.name); }
 function listUrl(f){ const c = CATS.find(x => x.f === f); return c ? '/kategori/' + c.slug : '/urunler'; }
-function openList(f){
-  history.pushState({ gmkProduct:true }, '', listUrl(f));
-  showList(f);
-}
+function openList(f){ location.href = listUrl(f); }
 function showList(f){
   const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f);
   const items = c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS;
@@ -646,7 +645,7 @@ function showList(f){
     <p class="text-xs text-mauve" style="margin-bottom:18px">${items.length} ürün</p>
     <div class="flex flex-wrap gap-2" style="margin-bottom:28px">
       ${[['all','Tümü'], ...CATS.map(x => [x.f, x.t])].map(([k, t]) =>
-        `<a href="${listUrl(k)}" onclick="history.replaceState({ gmkProduct:true }, '', '${listUrl(k)}');showList('${k}');return false;" class="px-5 py-2 rounded-xl text-sm font-medium ${(c ? c.f : 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
+        `<a href="${listUrl(k)}"  class="px-5 py-2 rounded-xl text-sm font-medium ${(c ? c.f : 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
       ${items.length ? items.map(cardHTML).join('') : '<p class="col-span-full text-center text-sm text-mauve py-10">Bu kategoride henüz ürün yok.</p>'}
@@ -656,7 +655,7 @@ function showList(f){
   const ld = $('product-ld'); if(ld) ld.remove();
   pageShow(v);
 }
-function goHome(){ history.pushState(null, '', '/'); hideProduct(); }
+function goHome(){ location.href = '/'; }
 const SEO_DEFAULT = {
   title: document.title,
   desc: (document.querySelector('meta[name="description"]') || {}).content || '',
@@ -676,19 +675,18 @@ function productDesc(p){
   return (p.desc && p.desc.trim()) ? p.desc.trim().replace(/\s+/g,' ').slice(0,155)
     : `${p.name} (${p.type}) GAMİKA'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
 }
+// Her tıklamada gerçek sayfa yüklenir: ürün bilgileri sunucuda (worker.js) sayfaya yazılır.
 function openProduct(id){
   const p = PRODUCTS.find(x => x.id === id); if(!p) return;
-  history.pushState({ gmkProduct:true }, '', productUrl(p));
-  showProduct(id);
+  location.href = productUrl(p);
 }
 function closeProduct(){
-  if(history.state && history.state.gmkProduct){ history.back(); return; }
-  history.pushState(null, '', '/');
-  hideProduct();
+  if(document.referrer && new URL(document.referrer).origin === location.origin){ history.back(); return; }
+  location.href = '/urunler';
 }
 function hideProduct(){
   const v = $('product-view'); if(!v || v.classList.contains('hidden')) return;
-  v.classList.add('hidden'); document.body.classList.remove('page-mode');
+  v.classList.add('hidden'); document.body.classList.remove('page-mode'); document.documentElement.classList.remove('page-mode');
   applySeo(SEO_DEFAULT.title, SEO_DEFAULT.desc, 'https://gamikatr.com/', SEO_DEFAULT.img);
   const ld = $('product-ld'); if(ld) ld.remove();
 }
@@ -728,12 +726,7 @@ function showProduct(id){
         </div>
       </div>`;
     applySeo(p.name + ' | GAMİKA', productDesc(p), url, p.img || SEO_DEFAULT.img);
-    let ld = $('product-ld');
-    if(!ld){ ld = document.createElement('script'); ld.type = 'application/ld+json'; ld.id = 'product-ld'; document.head.appendChild(ld); }
-    ld.textContent = JSON.stringify({ '@context':'https://schema.org', '@type':'Product', name:p.name, description:productDesc(p),
-      image: p.img || SEO_DEFAULT.img, url, brand:{ '@type':'Brand', name:'GAMİKA' },
-      offers:{ '@type':'Offer', price:Number(p.price).toFixed(2), priceCurrency:'TRY', url,
-        availability: soldOut(p) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock' } });
+    // Google ürün bilgisi (JSON-LD) sunucuda worker.js tarafından ekleniyor.
   }
   pageShow(v);
 }
@@ -761,7 +754,7 @@ function routeFromPath(){
 window.addEventListener('popstate', routeFromPath);
 document.addEventListener('click', e => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
-  if(a && document.body.classList.contains('page-mode')){ history.pushState(null, '', '/'); hideProduct(); }
+  if(a && document.documentElement.classList.contains('page-mode')){ e.preventDefault(); location.href = '/' + a.getAttribute('href'); }
 }, true);
 
 renderProducts();
