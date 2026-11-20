@@ -1278,7 +1278,8 @@ async function authSubmit(e){
   }catch(ex){
     authMsg('Bağlantı hatası, tekrar dene.', false);
   }finally{
-    btn.disabled = false;
+    // Çift tıklamayı önlemek için buton 3 saniye daha pasif kalır
+    setTimeout(() => { btn.disabled = false; }, 3000);
     if(window.turnstile && $('captcha-box') && TURNSTILE_SITE_KEY){ try{ window.turnstile.reset(); }catch(_){} captchaToken = ''; }
   }
 }
