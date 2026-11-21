@@ -4,7 +4,7 @@
 <script>if(/^\/(urun\/|urunler|kategori\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GAMİKA — Kadınlara Özel Gamer Setleri</title>
+<title>Gamika — Kadınlara Özel Gamer Setleri</title>
 <meta name="description" content="Gamika: kadın oyuncular için mousepad, figür, klavye bilek desteği ve klavye switch'leri. Tek tek ya da set halinde.">
 <link rel="icon" href="/logo.png">
 <link rel="canonical" href="https://gamikatr.com/">
@@ -12,15 +12,15 @@
 <meta name="theme-color" content="#F9D5E5">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="GAMİKA">
+<meta property="og:site_name" content="Gamika">
 <meta property="og:locale" content="tr_TR">
-<meta property="og:title" content="GAMİKA — Kadınlara Özel Gamer Setleri">
+<meta property="og:title" content="Gamika — Kadınlara Özel Gamer Setleri">
 <meta property="og:description" content="Gamika: kadın oyuncular için mousepad, figür, klavye bilek desteği ve klavye switch'leri. Tek tek ya da set halinde.">
 <meta property="og:url" content="https://gamikatr.com/">
 <meta property="og:image" content="https://gamikatr.com/logo.png">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "GAMİKA", "url": "https://gamikatr.com/", "logo": "https://gamikatr.com/logo.png", "email": "gamikatr@hotmail.com", "telephone": "+905442844781", "address": {"@type": "PostalAddress", "streetAddress": "Cumhuriyet Mah. Akbal Sk. No:8 D:6", "addressLocality": "Kartal", "addressRegion": "İstanbul", "addressCountry": "TR"}, "sameAs": ["https://www.instagram.com/gamikatr"]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "GAMİKA", "url": "https://gamikatr.com/", "inLanguage": "tr"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Gamika", "alternateName": "GAMİKA", "url": "https://gamikatr.com/", "logo": "https://gamikatr.com/logo.png", "email": "gamikatr@hotmail.com", "telephone": "+905442844781", "address": {"@type": "PostalAddress", "streetAddress": "Cumhuriyet Mah. Akbal Sk. No:8 D:6", "addressLocality": "Kartal", "addressRegion": "İstanbul", "addressCountry": "TR"}, "sameAs": ["https://www.instagram.com/gamikatr"]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Gamika", "alternateName": ["GAMİKA", "gamikatr.com"], "url": "https://gamikatr.com/", "inLanguage": "tr"}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -688,7 +688,7 @@ function showList(f){
       ${items.length ? items.map(cardHTML).join('') : '<p class="col-span-full text-center text-sm text-mauve py-10">Bu kategoride henüz ürün yok.</p>'}
     </div>`;
   const url = 'https://gamikatr.com' + listUrl(f);
-  applySeo(title + ' | GAMİKA', c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
+  applySeo(title + ' | Gamika', c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
   const ld = $('product-ld'); if(ld) ld.remove();
   pageShow(v);
 }
@@ -710,7 +710,7 @@ function applySeo(title, desc, url, img){
 }
 function productDesc(p){
   return (p.desc && p.desc.trim()) ? p.desc.trim().replace(/\s+/g,' ').slice(0,155)
-    : `${p.name} (${p.type}) GAMİKA'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
+    : `${p.name} (${p.type}) Gamika'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
 }
 // Her tıklamada gerçek sayfa yüklenir: ürün bilgileri sunucuda (worker.js) sayfaya yazılır.
 function openProduct(id){
@@ -734,7 +734,7 @@ function showProduct(id){
       <h1 class="font-serif" style="font-size:26px;font-weight:700;margin:16px 0 8px">Ürün bulunamadı</h1>
       <p class="text-xs text-mauve" style="margin-bottom:20px">Bu ürün satıştan kalkmış olabilir.</p>
       <button onclick="closeProduct()" class="px-5 py-3 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition">MAĞAZAYA DÖN</button></div>`;
-    applySeo('Ürün bulunamadı | GAMİKA', SEO_DEFAULT.desc, 'https://gamikatr.com/', SEO_DEFAULT.img);
+    applySeo('Ürün bulunamadı | Gamika', SEO_DEFAULT.desc, 'https://gamikatr.com/', SEO_DEFAULT.img);
   }else{
     const url = 'https://gamikatr.com' + productUrl(p), fav = favIds.has(Number(p.id)), pc = CATS.find(x => x.f === p.cat);
     box.innerHTML = `
@@ -767,7 +767,7 @@ function showProduct(id){
           </ul>
         </div>
       </div>`;
-    applySeo(p.name + ' | GAMİKA', productDesc(p), url, p.img || SEO_DEFAULT.img);
+    applySeo(p.name + ' | Gamika', productDesc(p), url, p.img || SEO_DEFAULT.img);
     pvImgs = p.imgs || []; pvIdx = 0;
     if(window.gmkTrack) gmkTrack('view_item', { value:p.price, items:[{ id:'p' + p.id, name:p.name, price:p.price, qty:1 }] });
     const mainEl = $('pv-main');
@@ -797,7 +797,7 @@ async function shareProduct(id){
   const p = PRODUCTS.find(x => x.id === id); if(!p) return;
   const url = 'https://gamikatr.com' + productUrl(p);
   try{
-    if(navigator.share){ await navigator.share({ title:p.name + ' | GAMİKA', url }); return; }
+    if(navigator.share){ await navigator.share({ title:p.name + ' | Gamika', url }); return; }
     await navigator.clipboard.writeText(url); toast('Ürün linki kopyalandı.');
   }catch(_){}
 }

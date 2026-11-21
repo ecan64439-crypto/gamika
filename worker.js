@@ -61,7 +61,7 @@ async function merchantFeed() {
 ${imgs.slice(1, 10).map(u => `      <g:additional_image_link>${xml(u)}</g:additional_image_link>`).join('\n')}
       <g:availability>${soldOut ? 'out_of_stock' : 'in_stock'}</g:availability>
       <g:price>${Number(p.price).toFixed(2)} TRY</g:price>
-      <g:brand>GAMİKA</g:brand>
+      <g:brand>Gamika</g:brand>
       <g:condition>new</g:condition>
       <g:identifier_exists>no</g:identifier_exists>
       <g:product_type>${xml(c ? c.t : p.type_label)}</g:product_type>
@@ -69,7 +69,7 @@ ${imgs.slice(1, 10).map(u => `      <g:additional_image_link>${xml(u)}</g:additi
     </item>`;
   });
   return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n  <channel>\n'
-    + '    <title>GAMİKA</title>\n    <link>' + SITE + '</link>\n    <description>GAMİKA ürünleri</description>\n'
+    + '    <title>Gamika</title>\n    <link>' + SITE + '</link>\n    <description>Gamika ürünleri</description>\n'
     + items.join('\n') + '\n  </channel>\n</rss>\n';
 }
 
@@ -84,7 +84,7 @@ async function db(query) {
 
 function metaDesc(p) {
   const d = (p.description || '').trim().replace(/\s+/g, ' ');
-  return d ? d.slice(0, 155) : `${p.name} (${p.type_label}) GAMİKA'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
+  return d ? d.slice(0, 155) : `${p.name} (${p.type_label}) Gamika'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
 }
 
 function cardHTML(p) {
@@ -101,14 +101,14 @@ async function buildPage(path) {
   if (m) {
     const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description&is_active=eq.true&id=eq.' + Number(m[1]));
     const p = rows[0];
-    if (!p) return { status: 404, title: 'Ürün bulunamadı | GAMİKA', desc: 'Bu ürün satıştan kalkmış olabilir.', url: SITE + '/urunler', img: DEFAULT_IMG, noindex: true, body: '<h1 class="font-serif" style="font-size:26px;font-weight:700">Ürün bulunamadı</h1><p><a href="/urunler">Tüm ürünlere göz at</a></p>' };
+    if (!p) return { status: 404, title: 'Ürün bulunamadı | Gamika', desc: 'Bu ürün satıştan kalkmış olabilir.', url: SITE + '/urunler', img: DEFAULT_IMG, noindex: true, body: '<h1 class="font-serif" style="font-size:26px;font-weight:700">Ürün bulunamadı</h1><p><a href="/urunler">Tüm ürünlere göz at</a></p>' };
     const canonical = productPath(p);
     if (path !== canonical) return { redirect: canonical }; // eski / yanlış isimli linkleri doğru adrese yönlendir
     const c = CATS.find(x => x.f === p.category), url = SITE + canonical, img = imgOf(p) || DEFAULT_IMG;
     const soldOut = p.stock != null && p.stock <= 0;
     const ld = {
       '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: metaDesc(p), image: imgsOf(p).length ? imgsOf(p) : [img], url,
-      brand: { '@type': 'Brand', name: 'GAMİKA' }, category: c ? c.t : p.type_label,
+      brand: { '@type': 'Brand', name: 'Gamika' }, category: c ? c.t : p.type_label,
       offers: { '@type': 'Offer', price: Number(p.price).toFixed(2), priceCurrency: 'TRY', url,
         availability: soldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition' }
@@ -120,7 +120,7 @@ async function buildPage(path) {
       { '@type': 'ListItem', position: c ? 4 : 3, name: p.name, item: url }
     ] };
     return {
-      status: 200, title: p.name + ' | GAMİKA', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
+      status: 200, title: p.name + ' | Gamika', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › <a href="/urunler">Ürünler</a>${c ? ` › <a href="${listPath(c)}">${esc(c.t)}</a>` : ''} › ${esc(p.name)}</p>
         <div style="display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:18px">
           <div><div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<img src="${esc(imgOf(p))}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover">` : ''}</div>
@@ -144,7 +144,7 @@ async function buildPage(path) {
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, title: title + ' | GAMİKA', desc: c ? c.d : 'GAMİKA tüm ürünler: kadın oyuncular için mousepad, figür, klavye bilek desteği ve switch.',
+      status: 200, title: title + ' | Gamika', desc: c ? c.d : 'Gamika tüm ürünler: kadın oyuncular için mousepad, figür, klavye bilek desteği ve switch.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
