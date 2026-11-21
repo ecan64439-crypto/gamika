@@ -150,6 +150,10 @@ export default {
 
     const headers = new Headers(out.headers);
     headers.set('Cache-Control', 'public, max-age=60');
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('X-Frame-Options', 'SAMEORIGIN');
+    headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    headers.set('Strict-Transport-Security', 'max-age=31536000');
     headers.delete('ETag');
     return new Response(out.body, { status: page.status, headers });
   }
