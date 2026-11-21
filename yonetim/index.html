@@ -218,7 +218,7 @@ async function togP(id){
 async function editP(id){
   VARS=[];VDEL=[];
   if(id){const {data,error}=await sb.from('product_variants').select('*').eq('product_id',id).order('sort').order('id');if(error)return toast('Seçenekler yüklenemedi: '+error.message);VARS=(data||[]).map(v=>({...v,price:v.price==null?'':v.price}));}
-  const p=D.products.find(x=>x.id===id)||{category:'mousepad',stock:10,is_active:true,price:0};
+  const p=D.products.find(x=>x.id===id)||{category:'mousepad',stock:10,is_active:true,price:0,option2_label:'Ölçü'};
   $('#dlg').innerHTML=`<h3 style="margin-top:0">${id?'Ürünü düzenle':'Yeni ürün'}</h3>
   <label>Ad</label><input id="f_name" value="${esc(p.name)}">
   <label>Kategori</label><select id="f_cat">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
@@ -230,8 +230,10 @@ async function editP(id){
     <div class="mu" style="margin-bottom:8px">Seçenek eklersen müşteri ürün sayfasında seçim yapar. Her seçeneğin kendi fiyatı, stoğu ve fotoğrafı olabilir. Fiyatı boş bırakırsan yukarıdaki fiyat kullanılır. Seçenek varsa yukarıdaki stok yerine seçeneklerin stoğu geçerli olur.</div>
     <div class="row" style="gap:8px"><div style="flex:1"><label>1. seçenek adı</label><input id="f_o1" placeholder="Renk" value="${esc(p.option_label||'')}"></div>
       <div style="flex:1"><label>2. seçenek adı (isteğe bağlı)</label><input id="f_o2" placeholder="Ölçü" value="${esc(p.option2_label||'')}" oninput="drawVar()"></div></div>
-    <details style="margin:8px 0"><summary class="mu" style="cursor:pointer">⚡ Hızlı oluştur: değerleri virgülle yaz, tüm birleşimler eklensin</summary>
-      <div class="row" style="gap:8px;margin-top:6px"><input id="g1" placeholder="Pembe, Lila, Mor" style="flex:1"><input id="g2" placeholder="90x40, 80x30" style="flex:1"><button class="sm" onclick="genVar()">Oluştur</button></div></details>
+    <details style="margin:8px 0" ${VARS.length?'':'open'}><summary class="mu" style="cursor:pointer">⚡ Hızlı oluştur: değerleri virgülle yaz, tüm birleşimler eklensin</summary>
+      <div class="mu" style="margin:6px 0 2px">Mousepad ölçüleri hazır yazılı (90x40, 70x40, 48x40); istemediğini silebilirsin.</div>
+      <div class="row" style="gap:8px;margin-top:6px"><input id="g1" placeholder="Pembe, Lila, Mor" style="flex:1"><input id="g2" placeholder="90x40, 70x40, 48x40" value="${p.category==='mousepad'?'90x40, 70x40, 48x40':''}" style="flex:1"><button class="sm" onclick="genVar()">Oluştur</button></div></details>
+    <datalist id="olculer"><option value="90x40"><option value="70x40"><option value="48x40"></datalist>
     <div id="vars"></div>
     <button class="sm" style="margin-top:6px" onclick="VARS.push({name:'',opt2:'',price:'',stock:0,images:[],is_active:true});drawVar()">+ Seçenek ekle</button>
   </div>
@@ -265,7 +267,7 @@ function drawVar(){
   const two=!!$('#f_o2').value.trim();
   $('#vars').innerHTML=VARS.length?`<div style="overflow-x:auto"><table class="vt" style="border-collapse:collapse;font-size:13px"><tr class="mu"><td>${esc($('#f_o1').value||'1. seçenek')}</td>${two?`<td>${esc($('#f_o2').value)}</td>`:''}<td>Fiyat ₺</td><td>Stok</td><td>Aktif</td><td>Foto</td><td></td></tr>`+
     VARS.map((v,i)=>`<tr><td><input value="${esc(v.name)}" oninput="VARS[${i}].name=this.value" style="width:58px;padding:6px"></td>
-      ${two?`<td><input value="${esc(v.opt2||'')}" oninput="VARS[${i}].opt2=this.value" style="width:58px;padding:6px"></td>`:''}
+      ${two?`<td><input list="olculer" value="${esc(v.opt2||'')}" oninput="VARS[${i}].opt2=this.value" style="width:58px;padding:6px"></td>`:''}
       <td><input type="number" min="0" step="0.01" value="${v.price}" placeholder="aynı" oninput="VARS[${i}].price=this.value" style="width:58px;padding:6px"></td>
       <td><input type="number" min="0" step="1" value="${v.stock}" oninput="VARS[${i}].stock=this.value" style="width:44px;padding:6px"></td>
       <td><input type="checkbox" ${v.is_active?'checked':''} onchange="VARS[${i}].is_active=this.checked"></td>
@@ -275,7 +277,9 @@ function drawVar(){
 }
 function rmVar(i){if(VARS[i].id)VDEL.push(VARS[i].id);VARS.splice(i,1);drawVar();}
 function genVar(){
-  const a=$('#g1').value.split(',').map(x=>x.trim()).filter(Boolean),b=$('#g2').value.split(',').map(x=>x.trim()).filter(Boolean);
+  let a=$('#g1').value.split(',').map(x=>x.trim()).filter(Boolean),b=$('#g2').value.split(',').map(x=>x.trim()).filter(Boolean);
+  // Sadece ölçü yazıldıysa (renk yok): ölçüler tek seçenek olur
+  if(!a.length&&b.length){a=b;b=[];$('#f_o1').value=$('#f_o1').value.trim()||$('#f_o2').value.trim()||'Ölçü';$('#f_o2').value='';}
   if(!a.length)return toast('En az bir değer yaz');
   if(b.length&&!$('#f_o2').value.trim())$('#f_o2').value='Ölçü';
   if(!$('#f_o1').value.trim())$('#f_o1').value='Renk';
