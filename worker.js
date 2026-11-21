@@ -25,7 +25,53 @@ function slugify(t) {
 }
 const productPath = p => '/urun/' + Number(p.id) + '-' + slugify(p.name);
 const listPath = c => (c ? '/kategori/' + c.slug : '/urunler');
-const imgOf = p => (typeof p.image_url === 'string' && p.image_url.startsWith('https://')) ? p.image_url : '';
+const okUrl = u => typeof u === 'string' && u.startsWith('https://');
+// Ürünün tüm fotoğrafları (yeni "images" listesi + eski tek "image_url"), tekrarsız
+const imgsOf = p => [...new Set([...(Array.isArray(p.images) ? p.images : []), p.image_url].filter(okUrl))];
+const imgOf = p => imgsOf(p)[0] || '';
+const xml = s => esc(s).replace(/&#39;/g, '&apos;');
+const STATIC_PAGES = ['/', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
+
+async function sitemap() {
+  const rows = await db('select=id,name,category,created_at&is_active=eq.true&order=id.asc');
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [
+    ...STATIC_PAGES.map(u => ({ loc: SITE + u, pr: u === '/' ? '1.0' : '0.3' })),
+    { loc: SITE + '/urunler', pr: '0.9' },
+    ...CATS.map(c => ({ loc: SITE + listPath(c), pr: '0.8' })),
+    ...rows.map(p => ({ loc: SITE + productPath(p), pr: '0.8' }))
+  ];
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + urls.map(u => `  <url><loc>${xml(u.loc)}</loc><lastmod>${today}</lastmod><priority>${u.pr}</priority></url>`).join('\n')
+    + '\n</urlset>\n';
+}
+
+// Google Merchant Center ürün akışı (Google Alışveriş'te ücretsiz listeleme için)
+async function merchantFeed() {
+  const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description&is_active=eq.true&order=id.asc');
+  const items = rows.filter(p => imgOf(p)).map(p => {
+    const imgs = imgsOf(p), c = CATS.find(x => x.f === p.category);
+    const soldOut = p.stock != null && p.stock <= 0;
+    return `    <item>
+      <g:id>${Number(p.id)}</g:id>
+      <g:title>${xml(p.name)}</g:title>
+      <g:description>${xml((p.description || '').trim() || metaDesc(p))}</g:description>
+      <g:link>${xml(SITE + productPath(p))}</g:link>
+      <g:image_link>${xml(imgs[0])}</g:image_link>
+${imgs.slice(1, 10).map(u => `      <g:additional_image_link>${xml(u)}</g:additional_image_link>`).join('\n')}
+      <g:availability>${soldOut ? 'out_of_stock' : 'in_stock'}</g:availability>
+      <g:price>${Number(p.price).toFixed(2)} TRY</g:price>
+      <g:brand>GAMİKA</g:brand>
+      <g:condition>new</g:condition>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:product_type>${xml(c ? c.t : p.type_label)}</g:product_type>
+      <g:shipping><g:country>TR</g:country><g:price>0.00 TRY</g:price></g:shipping>
+    </item>`;
+  });
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n  <channel>\n'
+    + '    <title>GAMİKA</title>\n    <link>' + SITE + '</link>\n    <description>GAMİKA ürünleri</description>\n'
+    + items.join('\n') + '\n  </channel>\n</rss>\n';
+}
 
 async function db(query) {
   const res = await fetch(SUPABASE_URL + '/rest/v1/products?' + query, {
@@ -53,7 +99,7 @@ function cardHTML(p) {
 async function buildPage(path) {
   const m = /^\/urun\/(\d+)/.exec(path);
   if (m) {
-    const rows = await db('select=id,name,category,type_label,price,stock,image_url,description&is_active=eq.true&id=eq.' + Number(m[1]));
+    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description&is_active=eq.true&id=eq.' + Number(m[1]));
     const p = rows[0];
     if (!p) return { status: 404, title: 'Ürün bulunamadı | GAMİKA', desc: 'Bu ürün satıştan kalkmış olabilir.', url: SITE + '/urunler', img: DEFAULT_IMG, noindex: true, body: '<h1 class="font-serif" style="font-size:26px;font-weight:700">Ürün bulunamadı</h1><p><a href="/urunler">Tüm ürünlere göz at</a></p>' };
     const canonical = productPath(p);
@@ -61,7 +107,7 @@ async function buildPage(path) {
     const c = CATS.find(x => x.f === p.category), url = SITE + canonical, img = imgOf(p) || DEFAULT_IMG;
     const soldOut = p.stock != null && p.stock <= 0;
     const ld = {
-      '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: metaDesc(p), image: img, url,
+      '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: metaDesc(p), image: imgsOf(p).length ? imgsOf(p) : [img], url,
       brand: { '@type': 'Brand', name: 'GAMİKA' }, category: c ? c.t : p.type_label,
       offers: { '@type': 'Offer', price: Number(p.price).toFixed(2), priceCurrency: 'TRY', url,
         availability: soldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
@@ -77,7 +123,8 @@ async function buildPage(path) {
       status: 200, title: p.name + ' | GAMİKA', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › <a href="/urunler">Ürünler</a>${c ? ` › <a href="${listPath(c)}">${esc(c.t)}</a>` : ''} › ${esc(p.name)}</p>
         <div style="display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:18px">
-          <div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<img src="${esc(imgOf(p))}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover">` : ''}</div>
+          <div><div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<img src="${esc(imgOf(p))}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover">` : ''}</div>
+            ${imgsOf(p).length > 1 ? `<div class="pv-thumbs">${imgsOf(p).map(u => `<span class="pv-th"><img src="${esc(u)}" alt="${esc(p.name)}" loading="lazy"></span>`).join('')}</div>` : ''}</div>
           <div><span class="text-xs text-berry font-semibold">${esc(p.type_label)}</span>
             <h1 class="font-serif" style="font-size:32px;font-weight:700;margin:6px 0 14px">${esc(p.name)}</h1>
             <p class="font-serif" style="font-size:28px;font-weight:700">${TL(p.price)}</p>
@@ -91,7 +138,7 @@ async function buildPage(path) {
   if (path === '/urunler' || k) {
     const c = k ? CATS.find(x => x.slug === k[1]) : null;
     if (k && !c) return { redirect: '/urunler' };
-    const rows = await db('select=id,name,category,type_label,price,stock,image_url&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : ''));
+    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : ''));
     const title = c ? c.h : 'Tüm Ürünler';
     const url = SITE + listPath(c);
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
@@ -117,6 +164,16 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, '') || '/';
+
+    if (path === '/sitemap.xml' || path === '/merchant-feed.xml') {
+      try {
+        const body = path === '/sitemap.xml' ? await sitemap() : await merchantFeed();
+        return new Response(body, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });
+      } catch (err) {
+        console.log('XML hazırlanamadı:', err && err.message);
+        return env.ASSETS.fetch(request); // yedek: depodaki sabit sitemap.xml
+      }
+    }
     let page = null;
     try { page = await buildPage(decodeURIComponent(path)); }
     catch (err) { console.log('Sayfa hazırlanamadı:', err && err.message); }
