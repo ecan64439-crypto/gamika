@@ -32,6 +32,20 @@ const imgOf = p => imgsOf(p)[0] || '';
 const xml = s => esc(s).replace(/&#39;/g, '&apos;');
 const STATIC_PAGES = ['/', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
 
+// Ürünlerin seçenekleri (renk, ölçü): { ürünId: [seçenek, ...] }
+async function variantsBy(ids) {
+  if (!ids.length) return {};
+  const res = await fetch(SUPABASE_URL + '/rest/v1/product_variants?select=id,product_id,name,opt2,price,stock,images&is_active=eq.true&order=sort.asc,id.asc&product_id=in.(' + ids.map(Number).join(',') + ')', {
+    headers: { apikey: SUPABASE_KEY }, cf: { cacheTtl: 60, cacheEverything: true }
+  });
+  const rows = res.ok ? await res.json() : [];
+  const out = {};
+  for (const v of rows) (out[v.product_id] = out[v.product_id] || []).push(v);
+  return out;
+}
+const vLabel = v => v.name + (v.opt2 ? ' / ' + v.opt2 : '');
+const vPrice = (p, v) => Number(v.price == null ? p.price : v.price);
+
 async function sitemap() {
   const rows = await db('select=id,name,category,created_at&is_active=eq.true&order=id.asc');
   const today = new Date().toISOString().slice(0, 10);
@@ -48,15 +62,29 @@ async function sitemap() {
 
 // Google Merchant Center ürün akışı (Google Alışveriş'te ücretsiz listeleme için)
 async function merchantFeed() {
-  const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description&is_active=eq.true&order=id.asc');
-  const items = rows.filter(p => imgOf(p)).map(p => {
+  const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description,option_label,option2_label&is_active=eq.true&order=id.asc');
+  const vmap = await variantsBy(rows.map(p => p.id));
+  // Seçenekli ürünlerde her seçenek Google'a ayrı ürün olarak gider (aynı grup numarasıyla)
+  const flat = rows.flatMap(p => (vmap[p.id] || []).length
+    ? vmap[p.id].map(v => ({ ...p, _v: v, images: [...(v.images || []), ...(p.images || [])], price: vPrice(p, v), stock: v.stock }))
+    : [p]);
+  const attr = (label, val) => {
+    const l = String(label || '').toLocaleLowerCase('tr');
+    if (!val) return '';
+    if (/renk/.test(l)) return `      <g:color>${xml(val)}</g:color>\n`;
+    if (/ölçü|olcu|boyut|ebat/.test(l)) return `      <g:size>${xml(val)}</g:size>\n`;
+    if (/desen|model/.test(l)) return `      <g:pattern>${xml(val)}</g:pattern>\n`;
+    return '';
+  };
+  const items = flat.filter(p => imgOf(p)).map(p => {
     const imgs = imgsOf(p), c = CATS.find(x => x.f === p.category);
     const soldOut = p.stock != null && p.stock <= 0;
+    const v = p._v;
     return `    <item>
-      <g:id>${Number(p.id)}</g:id>
-      <g:title>${xml(p.name)}</g:title>
+      <g:id>${Number(p.id)}${v ? '-' + Number(v.id) : ''}</g:id>
+${v ? `      <g:item_group_id>${Number(p.id)}</g:item_group_id>\n` + attr(p.option_label, v.name) + attr(p.option2_label, v.opt2) : ''}      <g:title>${xml(p.name + (v ? ' – ' + vLabel(v) : ''))}</g:title>
       <g:description>${xml((p.description || '').trim() || metaDesc(p))}</g:description>
-      <g:link>${xml(SITE + productPath(p))}</g:link>
+      <g:link>${xml(SITE + productPath(p) + (v ? '?v=' + Number(v.id) : ''))}</g:link>
       <g:image_link>${xml(imgs[0])}</g:image_link>
 ${imgs.slice(1, 10).map(u => `      <g:additional_image_link>${xml(u)}</g:additional_image_link>`).join('\n')}
       <g:availability>${soldOut ? 'out_of_stock' : 'in_stock'}</g:availability>
@@ -99,8 +127,9 @@ function cardHTML(p) {
 async function buildPage(path) {
   const m = /^\/urun\/(\d+)/.exec(path);
   if (m) {
-    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description&is_active=eq.true&id=eq.' + Number(m[1]));
+    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,description,option_label,option2_label&is_active=eq.true&id=eq.' + Number(m[1]));
     const p = rows[0];
+    const vars = p ? ((await variantsBy([p.id]))[p.id] || []) : [];
     if (!p) return { status: 404, title: 'Ürün bulunamadı | Gamika', desc: 'Bu ürün satıştan kalkmış olabilir.', url: SITE + '/urunler', img: DEFAULT_IMG, noindex: true, body: '<h1 class="font-serif" style="font-size:26px;font-weight:700">Ürün bulunamadı</h1><p><a href="/urunler">Tüm ürünlere göz at</a></p>' };
     const canonical = productPath(p);
     if (path !== canonical) return { redirect: canonical }; // eski / yanlış isimli linkleri doğru adrese yönlendir
@@ -109,10 +138,17 @@ async function buildPage(path) {
     const ld = {
       '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: metaDesc(p), image: imgsOf(p).length ? imgsOf(p) : [img], url,
       brand: { '@type': 'Brand', name: 'Gamika' }, category: c ? c.t : p.type_label,
-      offers: { '@type': 'Offer', price: Number(p.price).toFixed(2), priceCurrency: 'TRY', url,
+      offers: vars.length
+        ? vars.map(v => ({ '@type': 'Offer', name: vLabel(v), sku: p.id + '-' + v.id, price: vPrice(p, v).toFixed(2), priceCurrency: 'TRY', url: url + '?v=' + v.id,
+            availability: v.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', itemCondition: 'https://schema.org/NewCondition' }))
+        : { '@type': 'Offer', price: Number(p.price).toFixed(2), priceCurrency: 'TRY', url,
         availability: soldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition' }
     };
+    const prices = vars.map(v => vPrice(p, v));
+    const priceText = vars.length && Math.min(...prices) !== Math.max(...prices) ? TL(Math.min(...prices)) + "'den başlayan" : TL(vars.length ? Math.min(...prices) : p.price);
+    const others = await db('select=id,name,category&is_active=eq.true&id=neq.' + Number(p.id) + '&order=id.asc&limit=40');
+    const similar = [...others.filter(x => x.category === p.category), ...others.filter(x => x.category !== p.category)].slice(0, 4);
     const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: SITE + '/' },
       { '@type': 'ListItem', position: 2, name: 'Ürünler', item: SITE + '/urunler' },
@@ -127,10 +163,12 @@ async function buildPage(path) {
             ${imgsOf(p).length > 1 ? `<div class="pv-thumbs">${imgsOf(p).map(u => `<span class="pv-th"><img src="${esc(u)}" alt="${esc(p.name)}" loading="lazy"></span>`).join('')}</div>` : ''}</div>
           <div><span class="text-xs text-berry font-semibold">${esc(p.type_label)}</span>
             <h1 class="font-serif" style="font-size:32px;font-weight:700;margin:6px 0 14px">${esc(p.name)}</h1>
-            <p class="font-serif" style="font-size:28px;font-weight:700">${TL(p.price)}</p>
-            <p class="text-xs">${soldOut ? 'Tükendi' : 'Stokta var'}</p>
+            <p class="font-serif" style="font-size:28px;font-weight:700">${priceText}</p>
+            <p class="text-xs">${(vars.length ? vars.every(v => v.stock <= 0) : soldOut) ? 'Tükendi' : 'Stokta var'}</p>
+            ${vars.length ? `<p class="text-xs">${esc(p.option_label || 'Seçenekler')}${p.option2_label ? ' / ' + esc(p.option2_label) : ''}: ${vars.map(v => esc(vLabel(v))).join(', ')}</p>` : ''}
             ${p.description ? `<p style="font-size:14px;line-height:1.7;margin-top:18px;white-space:pre-line">${esc(p.description)}</p>` : ''}
-          </div></div>`
+          </div></div>
+        ${similar.length ? `<h2 class="font-serif" style="font-size:24px;font-weight:700;margin:48px 0 12px">Bunlar da hoşuna gidebilir</h2><ul>${similar.map(x => `<li><a href="${productPath(x)}">${esc(x.name)}</a></li>`).join('')}</ul>` : ''}`
     };
   }
 
@@ -138,7 +176,10 @@ async function buildPage(path) {
   if (path === '/urunler' || k) {
     const c = k ? CATS.find(x => x.slug === k[1]) : null;
     if (k && !c) return { redirect: '/urunler' };
-    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : ''));
+    const rows0 = await db('select=id,name,category,type_label,price,stock,image_url,images&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : ''));
+    const vmap = await variantsBy(rows0.map(p => p.id));
+    // Seçenekli ürünlerde kartta en düşük fiyat gösterilir
+    const rows = rows0.map(p => (vmap[p.id] || []).length ? { ...p, price: Math.min(...vmap[p.id].map(v => vPrice(p, v))) } : p);
     const title = c ? c.h : 'Tüm Ürünler';
     const url = SITE + listPath(c);
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,

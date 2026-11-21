@@ -63,6 +63,7 @@ tr.cl{cursor:pointer}tr.cl:hover td{background:#ffffff06}
 .pic .k{position:absolute;left:4px;top:4px;background:#2A1B2E;color:#fff;font-size:10px;padding:1px 6px;border-radius:6px}
 .pic .bt{position:absolute;bottom:3px;left:3px;right:3px;display:flex;justify-content:space-between}
 .pic .bt button{padding:0 6px;font-size:12px;line-height:20px;min-height:0;border-radius:6px;background:rgba(255,255,255,.9)}
+.vt{width:auto!important;min-width:0!important}.vt td{padding:3px 3px!important;border:0!important;white-space:nowrap}.vt input{margin:0}
 .thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;background:var(--bd);display:inline-flex;align-items:center;justify-content:center;font-size:18px}
 .det td{background:#0f0c18}
 dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(440px,92vw);padding:18px}
@@ -214,7 +215,9 @@ async function togP(id){
   if(error)return toast('Hata: '+error.message);
   p.is_active=!p.is_active;render();
 }
-function editP(id){
+async function editP(id){
+  VARS=[];VDEL=[];
+  if(id){const {data,error}=await sb.from('product_variants').select('*').eq('product_id',id).order('sort').order('id');if(error)return toast('Seçenekler yüklenemedi: '+error.message);VARS=(data||[]).map(v=>({...v,price:v.price==null?'':v.price}));}
   const p=D.products.find(x=>x.id===id)||{category:'mousepad',stock:10,is_active:true,price:0};
   $('#dlg').innerHTML=`<h3 style="margin-top:0">${id?'Ürünü düzenle':'Yeni ürün'}</h3>
   <label>Ad</label><input id="f_name" value="${esc(p.name)}">
@@ -222,6 +225,16 @@ function editP(id){
   <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
   <div class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
   <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
+  <div class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)">
+    <div class="b" style="margin-bottom:4px">Seçenekler (renk, ölçü vb.)</div>
+    <div class="mu" style="margin-bottom:8px">Seçenek eklersen müşteri ürün sayfasında seçim yapar. Her seçeneğin kendi fiyatı, stoğu ve fotoğrafı olabilir. Fiyatı boş bırakırsan yukarıdaki fiyat kullanılır. Seçenek varsa yukarıdaki stok yerine seçeneklerin stoğu geçerli olur.</div>
+    <div class="row" style="gap:8px"><div style="flex:1"><label>1. seçenek adı</label><input id="f_o1" placeholder="Renk" value="${esc(p.option_label||'')}"></div>
+      <div style="flex:1"><label>2. seçenek adı (isteğe bağlı)</label><input id="f_o2" placeholder="Ölçü" value="${esc(p.option2_label||'')}" oninput="drawVar()"></div></div>
+    <details style="margin:8px 0"><summary class="mu" style="cursor:pointer">⚡ Hızlı oluştur: değerleri virgülle yaz, tüm birleşimler eklensin</summary>
+      <div class="row" style="gap:8px;margin-top:6px"><input id="g1" placeholder="Pembe, Lila, Mor" style="flex:1"><input id="g2" placeholder="90x40, 80x30" style="flex:1"><button class="sm" onclick="genVar()">Oluştur</button></div></details>
+    <div id="vars"></div>
+    <button class="sm" style="margin-top:6px" onclick="VARS.push({name:'',opt2:'',price:'',stock:0,images:[],is_active:true});drawVar()">+ Seçenek ekle</button>
+  </div>
   <label>Açıklama (ürün sayfasında ve Google'da görünür)</label><textarea id="f_desc" rows="4" style="width:100%;font:inherit;padding:8px;border-radius:8px;box-sizing:border-box" placeholder="Örn: 90x40 cm geniş, kaymaz tabanlı, dikişli kenar...">${esc(p.description||'')}</textarea>
   <label>Fotoğraflar (ilki kapak fotoğrafı olur, en fazla 10)</label>
   <div id="pics" class="pics"></div>
@@ -244,9 +257,43 @@ function editP(id){
   drawPics();
   VIDS=(Array.isArray(p.videos)?p.videos:[]).filter(u=>typeof u==='string'&&u.startsWith('https://'));
   drawVids();
+  drawVar();
   $('#dlg').showModal();
 }
-let IMGS=[],VIDS=[];
+let IMGS=[],VIDS=[],VARS=[],VDEL=[];
+function drawVar(){
+  const two=!!$('#f_o2').value.trim();
+  $('#vars').innerHTML=VARS.length?`<div style="overflow-x:auto"><table class="vt" style="border-collapse:collapse;font-size:13px"><tr class="mu"><td>${esc($('#f_o1').value||'1. seçenek')}</td>${two?`<td>${esc($('#f_o2').value)}</td>`:''}<td>Fiyat ₺</td><td>Stok</td><td>Aktif</td><td>Foto</td><td></td></tr>`+
+    VARS.map((v,i)=>`<tr><td><input value="${esc(v.name)}" oninput="VARS[${i}].name=this.value" style="width:58px;padding:6px"></td>
+      ${two?`<td><input value="${esc(v.opt2||'')}" oninput="VARS[${i}].opt2=this.value" style="width:58px;padding:6px"></td>`:''}
+      <td><input type="number" min="0" step="0.01" value="${v.price}" placeholder="aynı" oninput="VARS[${i}].price=this.value" style="width:58px;padding:6px"></td>
+      <td><input type="number" min="0" step="1" value="${v.stock}" oninput="VARS[${i}].stock=this.value" style="width:44px;padding:6px"></td>
+      <td><input type="checkbox" ${v.is_active?'checked':''} onchange="VARS[${i}].is_active=this.checked"></td>
+      <td><label style="cursor:pointer;margin:0" title="Bu seçeneğe özel fotoğraf">📷${(v.images||[]).length||''}<input type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="upVarPics(${i},this.files)"></label>${(v.images||[]).length?` <a href="#" onclick="VARS[${i}].images=[];drawVar();return false" class="mu" title="Fotoğrafları kaldır">✕</a>`:''}</td>
+      <td><button class="sm" onclick="rmVar(${i})" title="Seçeneği sil">🗑</button></td></tr>`).join('')+'</table></div>'
+    :'<p class="mu" style="margin:4px 0">Seçenek yok, ürün tek seçenekli satılır.</p>';
+}
+function rmVar(i){if(VARS[i].id)VDEL.push(VARS[i].id);VARS.splice(i,1);drawVar();}
+function genVar(){
+  const a=$('#g1').value.split(',').map(x=>x.trim()).filter(Boolean),b=$('#g2').value.split(',').map(x=>x.trim()).filter(Boolean);
+  if(!a.length)return toast('En az bir değer yaz');
+  if(b.length&&!$('#f_o2').value.trim())$('#f_o2').value='Ölçü';
+  if(!$('#f_o1').value.trim())$('#f_o1').value='Renk';
+  for(const x of a)for(const y of (b.length?b:[null]))if(!VARS.some(v=>v.name===x&&(v.opt2||null)===y))VARS.push({name:x,opt2:y||'',price:'',stock:0,images:[],is_active:true});
+  drawVar();
+}
+async function upVarPics(i,files){
+  for(const f of [...files]){
+    if(!/^image\/(jpeg|png|webp)$/.test(f.type)){toast(f.name+': sadece JPG, PNG, WEBP');continue;}
+    toast('Yükleniyor...');
+    const blob=await shrink(f),ext=blob.type==='image/webp'?'webp':(f.type.split('/')[1]);
+    const path=`urun/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const {error}=await sb.storage.from('product-images').upload(path,blob,{contentType:blob.type||f.type,cacheControl:'31536000'});
+    if(error){toast('Yüklenemedi: '+error.message);continue;}
+    (VARS[i].images=VARS[i].images||[]).push(sb.storage.from('product-images').getPublicUrl(path).data.publicUrl);
+  }
+  drawVar();toast('Fotoğraf eklendi');
+}
 function drawVids(){
   $('#vids').innerHTML=VIDS.length?VIDS.map((u,i)=>`<div class="pic"><video src="${esc(u)}" muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover"></video><span class="k">▶ Video</span>
     <div class="bt"><button title="Sola al" onclick="mvVid(${i},-1)" ${i===0?'disabled':''}>‹</button><button title="Kaldır" onclick="rmVid(${i})">✕</button><button title="Sağa al" onclick="mvVid(${i},1)" ${i===VIDS.length-1?'disabled':''}>›</button></div></div>`).join('')
@@ -301,9 +348,29 @@ async function saveP(id){
     price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
     description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
   if(!r.name||!r.type_label||isNaN(r.price)||isNaN(r.stock))return toast('Ad, tür, fiyat ve stok zorunlu');
-  const q=id?sb.from('products').update(r).eq('id',id):sb.from('products').insert(r);
-  const {error}=await q;
+  // Seçenekler
+  const o1=$('#f_o1').value.trim(),o2=$('#f_o2').value.trim();
+  const vs=VARS.map((v,i)=>({id:v.id,product_id:id,name:String(v.name||'').trim(),opt2:o2?(String(v.opt2||'').trim()||null):null,
+    price:String(v.price).trim()===''?null:parseFloat(v.price),stock:parseInt(v.stock,10)||0,images:v.images||[],sort:i,is_active:!!v.is_active}));
+  if(vs.length){
+    if(!o1)return toast('1. seçenek adını yaz (ör. Renk)');
+    if(vs.some(v=>!v.name||(o2&&!v.opt2)))return toast('Seçeneklerde boş değer var');
+    if(vs.some(v=>v.price!=null&&(isNaN(v.price)||v.price<0)))return toast('Seçenek fiyatı geçersiz');
+    const keys=vs.map(v=>v.name.toLocaleLowerCase('tr')+'|'+(v.opt2||'').toLocaleLowerCase('tr'));
+    if(new Set(keys).size!==keys.length)return toast('Aynı seçenek iki kez yazılmış');
+    r.stock=vs.filter(v=>v.is_active).reduce((s,v)=>s+v.stock,0); // ürün stoğu = seçeneklerin toplamı
+  }
+  r.option_label=vs.length?o1:null; r.option2_label=vs.length&&o2?o2:null;
+  const q=id?sb.from('products').update(r).eq('id',id).select('id').single():sb.from('products').insert(r).select('id').single();
+  const {data:pr,error}=await q;
   if(error)return toast('Hata: '+error.message);
+  const pid=pr.id;
+  if(VDEL.length){const {error:e}=await sb.from('product_variants').delete().in('id',VDEL);if(e)return toast('Seçenek silinemedi: '+e.message);}
+  for(const v of vs){
+    const row={product_id:pid,name:v.name,opt2:v.opt2,price:v.price,stock:v.stock,images:v.images,sort:v.sort,is_active:v.is_active};
+    const {error:e}=v.id?await sb.from('product_variants').update(row).eq('id',v.id):await sb.from('product_variants').insert(row);
+    if(e)return toast('Seçenek kaydedilemedi ('+v.name+'): '+e.message);
+  }
   $('#dlg').close();toast('Kaydedildi');load();
 }
 
