@@ -137,6 +137,8 @@
   .nl-in>*{min-width:0}
   @media (max-width:767px){.nl-in{grid-template-columns:1fr;padding:20px}.nl-t h3{font-size:21px}.nl-row button{padding:13px 14px}}
   .pv-revs{margin-top:40px}
+  .pv-revbtn{float:right;font-family:Inter,sans-serif;font-size:13px;font-weight:600;background:#2A1B2E;color:#fff;border-radius:12px;padding:9px 16px}
+  .pv-rev0{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pv-rev0 p{margin:0}.pv-rev0 .pv-revbtn{float:none}
   .pv-revs h2{font-size:24px;font-weight:700;margin-bottom:12px}.pv-revs h2 span{font-family:Inter,sans-serif;font-size:14px;font-weight:500;color:#A67B9B;margin-left:8px}
   .pv-rev{background:#fff;border:1px solid #F3EAFE;border-radius:16px;padding:14px 16px;margin-bottom:10px;font-size:14px}
   .pv-rev div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pv-rev .st{color:#F5B301;letter-spacing:1px}.pv-rev small{color:#A67B9B;margin-left:auto}
@@ -680,6 +682,20 @@
 </div>
 
 <!-- BİLGİ -->
+<div id="review-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
+  <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative">
+    <button onclick="closeModal('review-modal')" class="absolute top-6 right-6 text-xl hover:text-berry" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <h3 class="font-serif text-2xl font-bold mb-1">Yorum Yaz</h3>
+    <p class="text-xs text-mauve mb-5">Yorumları sadece ürünü satın alıp teslim alan müşterilerimiz yazabilir. Siparişini bulalım:</p>
+    <form onsubmit="findReview(event)" class="space-y-3">
+      <div><label class="block text-xs font-semibold mb-1">Sipariş numarası</label><input name="no" required maxlength="20" placeholder="GMK-1001" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm uppercase focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Sipariş verdiğin e-posta</label><input name="eposta" type="email" required maxlength="150" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <p id="rv-err" class="hidden text-xs text-red-600"></p>
+      <button id="rv-btn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">DEVAM ET</button>
+      <p class="text-[11px] text-mauve text-center">Sipariş numaran, sipariş onay mailinde yazıyor. Üyeysen önce <a href="#" onclick="closeModal('review-modal');authMode='login';renderAccount();openModal('account-modal');return false;" class="underline">giriş yap</a>.</p>
+    </form>
+  </div>
+</div>
 <div id="info-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
   <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative text-center">
     <div class="w-12 h-12 rounded-full bg-petal mx-auto flex items-center justify-center mb-4"><i id="info-icon" class="fa-solid fa-circle-info text-xl"></i></div>
@@ -757,10 +773,36 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
 function reviewsHTML(p){
-  if(!p.revs || !p.revs.length) return '';
+  const btn = `<button type="button" onclick="writeReview(${Number(p.id)})" class="pv-revbtn">✍️ Yorum Yaz</button>`;
+  if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Bu ürünü aldın mı? İlk yorumu sen yaz, diğer oyuncu kızlara yol göster 💖</p>${btn}</div></div>`;
   const st = n => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
-  return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span></h2>
+  return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span>${btn}</h2>
     ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span><small>${new Date(r.created_at).toLocaleDateString('tr-TR')}</small></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}<em>✓ Doğrulanmış alıcı</em></div>`).join('')}</div>`;
+}
+/* Yorum yazma: üye ise kendi teslim edilmiş siparişinden, değilse sipariş no + e-posta ile */
+let revPid = null;
+async function writeReview(pid){
+  revPid = pid;
+  if(user && sb){
+    try{
+      const { data } = await sb.rpc('my_review_token', { p_product_id: pid });
+      if(data && data.done){ toast('Bu ürünü zaten değerlendirdin, teşekkürler 💖'); return; }
+      if(data && data.token){ location.href = '/degerlendir.html?t=' + encodeURIComponent(data.token); return; }
+    }catch(_){}
+  }
+  $('rv-err').classList.add('hidden'); openModal('review-modal');
+}
+async function findReview(e){
+  e.preventDefault();
+  const f = e.target, err = $('rv-err'), btn = $('rv-btn');
+  err.classList.add('hidden'); btn.disabled = true;
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/find_review_token', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ p_order_no: f.no.value, p_email: f.eposta.value }) });
+    const d = await r.json().catch(() => null);
+    if(!r.ok) throw new Error((d && d.message) || 'Bir hata oluştu');
+    location.href = '/degerlendir.html?t=' + encodeURIComponent(d);
+  }catch(ex){ err.innerText = ex.message; err.classList.remove('hidden'); btn.disabled = false; }
 }
 // Mousepad özellikleri (tüm mousepadler için aynı)
 const MP_SPECS = [['Yüzey','Kumaş'],['Kalınlık','3 mm'],['Taban','Kaymaz kauçuk'],['Kenarlar','Dikişli'],['Bakım','Nemli bir bezle silinmesi tavsiye edilir']];
@@ -1999,13 +2041,13 @@ async function signOut(){
 }
 async function loadMyOrders(){
   const box = $('my-orders'); if(!box || !sb) return;
-  const { data, error } = await sb.from('orders').select('order_no,created_at,status,total').order('created_at', { ascending:false }).limit(10);
+  const { data, error } = await sb.from('orders').select('order_no,created_at,status,total,review_token').order('created_at', { ascending:false }).limit(10);
   const b2 = $('my-orders'); if(!b2) return;
   if(error){ b2.innerHTML = '<p class="text-red-600">Siparişler yüklenemedi.</p>'; return; }
   b2.innerHTML = data.length ? data.map(o => `
     <div class="p-3 bg-white rounded-xl border border-rose/50 flex items-center justify-between gap-2">
       <div><p class="font-semibold">${esc(o.order_no)}</p><p class="text-mauve">${new Date(o.created_at).toLocaleDateString('tr-TR')} • ${esc(STATUS_TR[o.status] || o.status)}</p></div>
-      <span class="font-serif font-bold text-sm">${TL(Number(o.total))}</span>
+      <div class="text-right"><span class="font-serif font-bold text-sm">${TL(Number(o.total))}</span>${o.status === 'teslim_edildi' && o.review_token ? `<a href="/degerlendir.html?t=${esc(o.review_token)}" class="block mt-1 text-xs font-semibold text-berry underline">Değerlendir ⭐</a>` : ''}</div>
     </div>`).join('') : '<p class="text-mauve">Henüz siparişin yok.</p>';
 }
 
