@@ -102,7 +102,7 @@ const tl=n=>Number(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY'
 const dt=d=>new Date(d).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 let tab='orders',fil='',D={orders:[],products:[],sets:[]};
 
-function toast(t){const m=$('#msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',2200)}
+function toast(t){let m=$('#msg');const d=$('#dlg');if(!m){m=document.createElement('div');m.id='msg';document.body.appendChild(m);}if(d&&d.open){if(m.parentNode!==d)d.appendChild(m);}else if(m.parentNode!==document.body)document.body.appendChild(m);m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',2200)}
 
 function loginView(err){
   $('#app').innerHTML=`<div class="login"><h1 class="brand">Gamika Yönetim</h1>
@@ -384,10 +384,10 @@ function addUrl(){const u=$('#f_url').value.trim();if(!u.startsWith('https://'))
 const isHeic=f=>/^image\/hei[cf]$/.test(f.type)||/\.hei[cf]$/i.test(f.name||'');
 const okImg=f=>/^image\/(jpeg|png|webp)$/.test(f.type)||isHeic(f);
 let _heic;
-function heicLib(){return _heic||(_heic=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';sc.onload=()=>res(window.heic2any);sc.onerror=()=>{_heic=null;rej(new Error('HEIC dönüştürücü yüklenemedi'))};document.head.appendChild(sc);}));}
+function heicLib(){return _heic||(_heic=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/heic-to@1.4.2/dist/iife/heic-to.js';sc.onload=()=>res(window.HeicTo);sc.onerror=()=>{_heic=null;rej(new Error('HEIC dönüştürücü yüklenemedi'))};document.head.appendChild(sc);}));}
 async function fromHeic(f){
   if(!isHeic(f))return f;
-  const conv=await heicLib();let b=await conv({blob:f,toType:'image/jpeg',quality:0.92});if(Array.isArray(b))b=b[0];
+  const conv=await heicLib();if(!conv)throw new Error('HEIC dönüştürücü yüklenemedi');const b=await conv({blob:f,type:'image/jpeg',quality:0.92});
   return new File([b],(f.name||'foto').replace(/\.hei[cf]$/i,'')+'.jpg',{type:'image/jpeg'});
 }
 // Fotoğrafı yüklemeden önce küçült (en uzun kenar 1600px, webp) — site hızlı açılsın
