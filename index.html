@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr" class="scroll-smooth">
 <head>
-<script>if(/^\/(urun\/|urunler|kategori\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
+<script>if(/^\/(urun\/|urunler|kategori\/|seri\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gamika — Kadınlara Özel Gaming Mousepad</title>
@@ -124,6 +124,23 @@
   .m-cats .m-soon{color:#A67B9B}
   .m-cats .m-soon small{font-size:11px;color:#E0709A;font-weight:600;margin-left:4px}
   .yk-b{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9999px;background:#FDEBF3;color:#E0709A;font-size:10px;font-weight:700;vertical-align:middle}
+  .pv-promo{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#2A1B2E;background:#FDEBF3;border-radius:10px;padding:6px 10px;margin:2px 0 6px}
+  .pv-promo span{background:#E0709A;color:#fff;font-weight:700;letter-spacing:.05em;padding:1px 7px;border-radius:6px;font-size:12px}
+  .pv-promo b{color:#E0709A}
+  .pv-specs{margin-top:22px;background:#fff;border:1px solid #F3EAFE;border-radius:16px;padding:14px 16px}
+  .pv-specs p{font-weight:700;font-size:13px;margin-bottom:8px;color:#2A1B2E}
+  .pv-specs dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;margin:0}
+  .pv-specs dt{color:#A67B9B}.pv-specs dd{margin:0;color:#2A1B2E}
+  .pv-trust{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+  .pv-trust li{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #F3EAFE;border-radius:14px;padding:10px 12px;font-size:12px;color:#6B5368}
+  .pv-trust i{color:#9B4DE0;font-size:16px;width:20px;text-align:center}
+  .pv-trust b{display:block;color:#2A1B2E;font-size:13px}
+  .pv-trust a{text-decoration:underline}
+  .pv-sticky{display:none}
+  @media (max-width:1023px){.pv-sticky{display:flex;position:fixed;left:0;right:0;bottom:70px;z-index:44;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#fff;border-top:1px solid #F3EAFE;box-shadow:0 -6px 18px rgba(42,27,46,.1);transform:translateY(130%);transition:transform .25s}
+    .pv-sticky.on{transform:none}
+    .pv-sticky span{font-size:18px;font-weight:700;display:block;line-height:1.1}.pv-sticky small{font-size:11px;color:#E0709A}
+    .pv-sticky button{background:#2A1B2E;color:#FFF9FB;border-radius:12px;padding:12px 22px;font-size:12px;font-weight:600;letter-spacing:.05em}}
   .soon-b{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:9999px;background:#FDEBF3;color:#E0709A;font-size:11px;font-weight:700;letter-spacing:.02em}
   .hz-tile.hz-soon > svg,.hz-tile.hz-soon > span{opacity:.5}
   .nav-soon{display:block;padding:7px 14px;color:#A67B9B;cursor:default;white-space:nowrap}
@@ -262,7 +279,7 @@
       <button id="search-btn" class="hover:text-berry p-2" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
     </div>
     <a href="#" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
-      <img src="/logo.png" alt="Gamika" class="hdr-logo block h-9 sm:h-12 w-auto object-contain"
+      <img src="/logo.webp" alt="Gamika" class="hdr-logo block h-9 sm:h-12 w-auto object-contain"
            onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
       <span class="logo-text text-4xl sm:text-5xl" style="display:none">GAM<span class="logo-i">I</span>KA</span>
     </a>
@@ -319,9 +336,9 @@
     <div class="hz-fan-wrap">
       <div class="hz-fan-h"><span>3 seri · 1 tarz</span><b>Tarzını <i>seç</i></b><a href="/kategori/mousepad" class="hz-promo">🎀 Açılışa özel <b>%10 indirim</b> · Kod: <code>GAMIKA10</code></a></div>
       <div class="hz-fan">
-        <a href="/kategori/mousepad?seri=minimal" class="hz-fc hz-fc1"><img src="/img/urun/white-marble-vitrin.webp" alt="Minimal serisi mousepad"><b>Minimal</b></a>
-        <a href="/kategori/mousepad?seri=dark" class="hz-fc hz-fc3"><img src="/img/urun/midnight-oni-vitrin.webp" alt="Dark serisi mousepad"><b>Dark</b></a>
-        <a href="/kategori/mousepad?seri=candy" class="hz-fc hz-fc2"><img src="/img/urun/sakura-cafe-vitrin.webp" alt="Candy serisi mousepad"><b>Candy</b></a>
+        <a href="/seri/minimal" class="hz-fc hz-fc1"><img src="/img/urun/white-marble-vitrin.webp" alt="Minimal serisi mousepad"><b>Minimal</b></a>
+        <a href="/seri/dark" class="hz-fc hz-fc3"><img src="/img/urun/midnight-oni-vitrin.webp" alt="Dark serisi mousepad"><b>Dark</b></a>
+        <a href="/seri/candy" class="hz-fc hz-fc2"><img src="/img/urun/sakura-cafe-vitrin.webp" alt="Candy serisi mousepad"><b>Candy</b></a>
       </div>
     </div>
   </div>
@@ -541,7 +558,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
       <div class="md:col-span-2 space-y-4">
-        <a href="#" class="inline-block bg-petal rounded-2xl px-4 py-3" aria-label="Gamika"><img src="/logo.png" alt="Gamika" class="block h-10 w-auto"></a>
+        <a href="#" class="inline-block bg-petal rounded-2xl px-4 py-3" aria-label="Gamika"><img src="/logo.webp" alt="Gamika" class="block h-10 w-auto"></a>
         <p class="text-xs text-cream/70 max-w-sm leading-relaxed">Kadın oyuncular için gamer ürünleri.</p>
         <div class="flex gap-3 pt-2">
           <a href="https://www.instagram.com/gamikatr" target="_blank" rel="noopener" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-berry transition"><i class="fa-brands fa-instagram text-sm"></i></a>
@@ -715,6 +732,17 @@ const TL = n => Number(n).toLocaleString('tr-TR', { minimumFractionDigits: Numbe
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
+// Mousepad özellikleri (tüm mousepadler için aynı)
+const MP_SPECS = [['Yüzey','Kumaş'],['Kalınlık','3 mm'],['Taban','Kaymaz kauçuk'],['Kenarlar','Dikişli'],['Bakım','Nemli bir bezle silinmesi tavsiye edilir']];
+function specsHTML(p){
+  if(p.cat !== 'mousepad') return '';
+  const sizes = hasVars(p) ? [...new Set(p.vars.map(v => v.o1))].map(x => x + ' cm').join(' / ') : '';
+  const rows = (sizes ? [['Ölçü', sizes]] : []).concat(MP_SPECS);
+  return `<div class="pv-specs"><p>Ürün Özellikleri</p><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>`;
+}
+// Açılış indirimi (veritabanındaki 'coupons' tablosuyla aynı tutulmalı)
+const PROMO = { code:'GAMIKA10', pct:10 };
+const promoHTML = price => PROMO && price > 0 ? `<p class="pv-promo"><span>${PROMO.code}</span> koduyla <b>${TL(Math.round(price * (100 - PROMO.pct)) / 100)}</b></p>` : '';
 // Setler henüz satışta değil (figür, bilek desteği, switch gelince false yap)
 const SETS_SOON = true;
 function loadCart(){
@@ -780,6 +808,7 @@ const FEATURED_N = 6; // ana sayfada gösterilen ürün sayısı
 // Puan: şimdilik herkes 0. Gerçek değerlendirme sistemi gelince p.rating (0-5) ve p.reviews (adet) dolacak.
 function starsHTML(p, big){
   const r = Math.max(0, Math.min(5, Number(p.rating) || 0)), n = Number(p.reviews) || 0;
+  if(!n) return ''; // değerlendirme yoksa yıldız gösterilmez
   let st = '';
   for(let i = 1; i <= 5; i++) st += `<i class="${r >= i ? 'fa-solid fa-star' : r >= i - 0.5 ? 'fa-solid fa-star-half-stroke' : 'fa-regular fa-star'}" style="color:${r >= i - 0.5 ? '#F5B301' : '#D9C9D6'}"></i>`;
   return `<div class="stars${big ? ' big' : ''}" aria-label="5 üzerinden ${r.toFixed(1)} puan, ${n} değerlendirme">${st}<span>${r.toFixed(1)} · ${n} değerlendirme</span></div>`;
@@ -790,7 +819,7 @@ function variantInfo(r, vs, okUrl){
   const vars = vs.map(v => ({ id: Number(v.id), o1: String(v.name), o2: v.opt2 ? String(v.opt2) : null,
     price: v.price == null ? Number(r.price) : Number(v.price), stock: Math.max(0, Number(v.stock) || 0),
     imgs: (Array.isArray(v.images) ? v.images : []).filter(okUrl) }));
-  const prices = vars.map(v => v.price);
+  const inStock = vars.filter(v => v.stock > 0), prices = (inStock.length ? inStock : vars).map(v => v.price);
   return { vars, o1: r.option_label || 'Seçenek', o2: r.option2_label || null,
     minPrice: Math.min(...prices), maxPrice: Math.max(...prices),
     stock: vars.reduce((s, v) => s + v.stock, 0) };
@@ -905,28 +934,33 @@ function filterSeries(sr){
   const ct = $('list-count'); if(ct) ct.textContent = n + ' ürün';
 }
 function openList(f){ location.href = listUrl(f); }
-function showList(f){
-  const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f);
-  const items = c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS;
-  const title = c ? c.h : 'Tüm Ürünler';
+const SERIES_INFO = {
+  dark:{ h:'Dark Serisi – Siyah ve Koyu Gaming Mousepad', d:'Gamika Dark serisi: siyah, mor ve koyu tonlarda, anime ve Japon temalı 90x40 gaming mousepad modelleri. Ücretsiz kargo, 2 iş gününde kargoda.' },
+  minimal:{ h:'Minimal Serisi – Beyaz ve Sade Gaming Mousepad', d:'Gamika Minimal serisi: beyaz, mermer desenli ve sade gaming mousepad modelleri; beyaz ve açık renk masa düzenlerine uygun. Ücretsiz kargo.' },
+  candy:{ h:'Candy Serisi – Pastel Pembe Kawaii Mousepad', d:'Gamika Candy serisi: pastel pembe, sakura ve kawaii temalı tatlı gaming mousepad modelleri. Kadın oyunculara özel, ücretsiz kargo.' }
+};
+function showList(f, sr){
+  const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f), si = sr && SERIES_INFO[sr];
+  const catItems = c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS;
+  const items = si ? catItems.filter(p => p.series === sr) : catItems;
+  const sName = si ? SERIES.find(([k]) => k === sr)[1] : '';
+  const title = si ? si.h : c ? c.h : 'Tüm Ürünler';
   box.innerHTML = `
-    <p class="text-xs text-mauve"><a href="/" onclick="goHome();return false;" class="hover:text-berry">Ana Sayfa</a> › ${c ? `<a href="/urunler" onclick="openList('all');return false;" class="hover:text-berry">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
+    <p class="text-xs text-mauve"><a href="/" onclick="goHome();return false;" class="hover:text-berry">Ana Sayfa</a> › ${c ? `<a href="/urunler" onclick="openList('all');return false;" class="hover:text-berry">Ürünler</a> › ${si ? `<a href="${listUrl(c.f)}" class="hover:text-berry">${esc(c.t)}</a> › ${esc(sName)} Serisi` : esc(c.t)}` : 'Ürünler'}</p>
     <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
     <p id="list-count" class="text-xs text-mauve" style="margin-bottom:18px">${items.length} ürün</p>
     ${liveCats().length > 1 ? `<div class="flex flex-wrap gap-2" style="margin-bottom:12px">
       ${[['all','Tümü'], ...liveCats().map(x => [x.f, x.t])].map(([k, t]) =>
         `<a href="${listUrl(k)}"  class="px-5 py-2 rounded-xl text-sm font-medium ${(c ? c.f : 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
     </div>` : ''}
-    ${(() => { const ss = SERIES.filter(([k]) => items.some(p => p.series === k)); return ss.length > 1 ? `<div class="flex flex-wrap gap-2" style="margin-bottom:28px">
-      ${[['all','Tümü'], ...ss].map(([k, t]) => `<button type="button" data-s="${k}" onclick="filterSeries('${k}')" class="sbtn px-5 py-2 rounded-xl text-sm font-medium ${k === 'all' ? 'bg-ink text-cream' : 'glass'}">${t}</button>`).join('')}
+    ${(() => { const ss = SERIES.filter(([k]) => catItems.some(p => p.series === k)); return ss.length > 1 ? `<div class="flex flex-wrap gap-2" style="margin-bottom:28px">
+      ${[['all','Tümü'], ...ss].map(([k, t]) => `<a href="${k === 'all' ? listUrl(c ? c.f : 'mousepad') : '/seri/' + k}" class="px-5 py-2 rounded-xl text-sm font-medium ${(sr || 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
     </div>` : '<div style="margin-bottom:16px"></div>'; })()}
     <div class="pgrid">
       ${items.length ? items.map(cardHTML).join('') : '<p class="col-span-full text-center text-sm text-mauve py-10">Bu kategoride henüz ürün yok.</p>'}
     </div>`;
-  const qs = new URLSearchParams(location.search).get('seri');
-  if(qs && SERIES.some(([k]) => k === qs)) filterSeries(qs);
-  const url = 'https://gamikatr.com' + listUrl(f);
-  applySeo(title + ' | Gamika', c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
+  const url = 'https://gamikatr.com' + (si ? '/seri/' + sr : listUrl(f));
+  applySeo(title + ' | Gamika', si ? si.d : c ? c.d : SEO_DEFAULT.desc, url, SEO_DEFAULT.img);
   const ld = $('product-ld'); if(ld) ld.remove();
   pageShow(v);
 }
@@ -992,6 +1026,7 @@ function showProduct(id){
           <h1 class="font-serif" style="font-size:32px;line-height:1.15;font-weight:700;margin:6px 0 14px">${esc(p.name)}</h1>
           ${starsHTML(p, true)}
           <p id="pv-price" class="font-serif" style="font-size:28px;font-weight:700;margin:14px 0 6px">${priceHTML(p)}</p>
+          <div id="pv-promo">${promoHTML(hasVars(p) ? p.minPrice : p.price)}</div>
           <p id="pv-stock" class="text-xs">${stockHTML(soldOut(p) ? 0 : p.stock, hasVars(p))}</p>
           ${hasVars(p) ? `<div id="pv-opts"></div>` : ''}
           ${p.desc ? `<p class="text-ink/80" style="font-size:14px;line-height:1.7;margin:18px 0 0;white-space:pre-line">${esc(p.desc)}</p>` : ''}
@@ -1002,13 +1037,17 @@ function showProduct(id){
             <button onclick="toggleFav(${Number(p.id)});setTimeout(()=>showProduct(${Number(p.id)}),300)" class="glass rounded-xl" style="width:48px" aria-label="Favorilere ekle / çıkar"><i class="${fav ? 'fa-solid text-berry' : 'fa-regular'} fa-heart"></i></button>
             <button onclick="shareProduct(${Number(p.id)})" class="glass rounded-xl" style="width:48px" aria-label="Paylaş"><i class="fa-solid fa-share-nodes"></i></button>
           </div>
-          <ul class="text-xs text-ink/70" style="margin-top:22px;line-height:2">
-            <li><i class="fa-solid fa-truck-fast text-berry mr-1"></i> Hızlı kargo</li>
-            <li><i class="fa-solid fa-rotate-left text-berry mr-1"></i> <a href="/kargo-iade.html" style="text-decoration:underline">Kargo ve iade koşulları</a></li>
+          ${specsHTML(p)}
+          <ul class="pv-trust">
+            <li><i class="fa-solid fa-truck-fast"></i><span><b>Ücretsiz kargo</b>Tüm Türkiye'ye</span></li>
+            <li><i class="fa-solid fa-box"></i><span><b>2 iş gününde kargoda</b>Hızlı gönderim</span></li>
+            <li><i class="fa-solid fa-rotate-left"></i><span><b>14 gün iade</b><a href="/kargo-iade.html">Koşullar</a></span></li>
+            <li><i class="fa-solid fa-gift"></i><span><b>Sürpriz hediye</b>Her siparişte</span></li>
           </ul>
         </div>
       </div>
-      ${similarHTML(p)}`;
+      ${similarHTML(p)}
+      ${soldOut(p) ? '' : `<div id="pv-sticky" class="pv-sticky"><div><span id="sticky-price" class="font-serif">${priceHTML(p)}</span><small>Ücretsiz kargo</small></div><button onclick="(document.getElementById('pv-add')||{}).click()">SEPETE EKLE</button></div>`}`;
     applySeo(p.name + ' | Gamika', productDesc(p), url, p.img || SEO_DEFAULT.img);
     pvProd = p; pvSel = { o1:null, o2:null };
     if(hasVars(p)){
@@ -1018,6 +1057,12 @@ function showProduct(id){
     }
     pvImgs = mediaOf(p); pvIdx = 0; pvName = p.name;
     if(hasVars(p)) pvApply(); else pvShow(0);
+    // Telefonda: asıl "Sepete Ekle" butonu ekrandan çıkınca alttaki sabit çubuk görünür
+    const stk = $('pv-sticky'), addb = $('pv-add');
+    if(stk && addb && 'IntersectionObserver' in window){
+      const mb = document.getElementById('mbar'); if(mb) stk.style.bottom = mb.offsetHeight + 'px';
+      new IntersectionObserver(es => es.forEach(e => stk.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0))).observe(addb);
+    }
     if(window.gmkTrack) gmkTrack('view_item', { value:p.price, items:[{ id:'p' + p.id, name:p.name, price:p.price, qty:1 }] });
     const mainEl = $('pv-main');
     if(mainEl && pvImgs.length > 1){
@@ -1065,6 +1110,8 @@ function pvApply(){
     }).join('')}</div></div>`;
   box.innerHTML = row(p.o1, 'o1', vals('o1')) + (p.o2 ? row(p.o2, 'o2', vals('o2')) : '');
   $('pv-price').innerHTML = v ? TL(v.price) : priceHTML(p);
+  const pp = $('pv-promo'); if(pp) pp.innerHTML = promoHTML(v ? v.price : p.minPrice);
+  const sp = $('sticky-price'); if(sp) sp.innerHTML = v ? TL(v.price) : priceHTML(p);
   $('pv-stock').innerHTML = v ? stockHTML(v.stock) : '<span class="text-mauve">Bu birleşim mevcut değil</span>';
   const btn = $('pv-add');
   if(btn){ const ok = v && v.stock > 0; btn.disabled = !ok; btn.style.opacity = ok ? '' : '.4';
@@ -1125,6 +1172,7 @@ function routeFromPath(){
   if(m){ if(productsReady) showProduct(Number(m[1])); }
   else if(path === '/urunler'){ if(productsReady) showList('all'); }
   else if(k){ const c = CATS.find(x => x.slug === k[1]); if(productsReady) showList(c ? c.f : 'all'); }
+  else if(/^\/seri\/([a-z]+)$/.test(path)){ const sr = path.split('/')[2]; if(productsReady) showList('mousepad', SERIES_INFO[sr] ? sr : null); }
   else hideProduct();
 }
 window.addEventListener('popstate', routeFromPath);

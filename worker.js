@@ -14,6 +14,24 @@ const CATS = [
   { f: 'switch', slug: 'klavye-switch', t: 'Switch', h: "Klavye Switch'leri", d: 'Mekanik klavyene yeni bir his katan linear ve tactile switch setleri.' }
 ];
 
+// Mousepad serileri: her birinin kendi sayfası var (/seri/dark gibi)
+const SERIES = [
+  { k: 'dark', t: 'Dark', h: 'Dark Serisi – Siyah ve Koyu Gaming Mousepad', d: 'Gamika Dark serisi: siyah, mor ve koyu tonlarda, anime ve Japon temalı 90x40 gaming mousepad modelleri. Ücretsiz kargo, 2 iş gününde kargoda.' },
+  { k: 'minimal', t: 'Minimal', h: 'Minimal Serisi – Beyaz ve Sade Gaming Mousepad', d: 'Gamika Minimal serisi: beyaz, mermer desenli ve sade gaming mousepad modelleri; beyaz ve açık renk masa düzenlerine uygun. Ücretsiz kargo.' },
+  { k: 'candy', t: 'Candy', h: 'Candy Serisi – Pastel Pembe Kawaii Mousepad', d: 'Gamika Candy serisi: pastel pembe, sakura ve kawaii temalı tatlı gaming mousepad modelleri. Kadın oyunculara özel, ücretsiz kargo.' }
+];
+// Google ürün bilgisine kargo (ücretsiz, Türkiye, 0-2 gün hazırlık + 1-3 gün kargo) ve 14 gün iade bilgisi
+const OFFER_EXTRA = {
+  shippingDetails: { '@type': 'OfferShippingDetails',
+    shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'TRY' },
+    shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'TR' },
+    deliveryTime: { '@type': 'ShippingDeliveryTime',
+      handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 2, unitCode: 'DAY' },
+      transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3, unitCode: 'DAY' } } },
+  hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', applicableCountry: 'TR',
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 14,
+    returnMethod: 'https://schema.org/ReturnByMail' }
+};
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const TL = n => Number(n).toLocaleString('tr-TR') + ' ₺';
 
@@ -49,12 +67,13 @@ const vLabel = v => v.name + (v.opt2 ? ' / ' + v.opt2 : '');
 const vPrice = (p, v) => Number(v.price == null ? p.price : v.price);
 
 async function sitemap() {
-  const rows = await db('select=id,name,category,created_at&is_active=eq.true&order=id.asc');
+  const rows = await db('select=id,name,category,series,created_at&is_active=eq.true&order=id.asc');
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     ...STATIC_PAGES.map(u => ({ loc: SITE + u, pr: u === '/' ? '1.0' : '0.3' })),
     { loc: SITE + '/urunler', pr: '0.9' },
-    ...CATS.map(c => ({ loc: SITE + listPath(c), pr: '0.8' })),
+    ...CATS.filter(c => rows.some(p => p.category === c.f)).map(c => ({ loc: SITE + listPath(c), pr: '0.8' })),
+    ...SERIES.filter(x => rows.some(p => p.series === x.k)).map(x => ({ loc: SITE + '/seri/' + x.k, pr: '0.8' })),
     ...rows.map(p => ({ loc: SITE + productPath(p), pr: '0.8' }))
   ];
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -142,12 +161,12 @@ async function buildPage(path) {
       brand: { '@type': 'Brand', name: 'Gamika' }, category: c ? c.t : p.type_label,
       offers: vars.length
         ? vars.map(v => ({ '@type': 'Offer', name: vLabel(v), sku: p.id + '-' + v.id, price: vPrice(p, v).toFixed(2), priceCurrency: 'TRY', url: url + '?v=' + v.id,
-            availability: v.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', itemCondition: 'https://schema.org/NewCondition' }))
+            availability: v.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', itemCondition: 'https://schema.org/NewCondition', ...OFFER_EXTRA }))
         : { '@type': 'Offer', price: Number(p.price).toFixed(2), priceCurrency: 'TRY', url,
         availability: soldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition' }
+        itemCondition: 'https://schema.org/NewCondition', ...OFFER_EXTRA }
     };
-    const prices = vars.map(v => vPrice(p, v));
+    const prices = (vars.some(v => v.stock > 0) ? vars.filter(v => v.stock > 0) : vars).map(v => vPrice(p, v));
     const priceText = vars.length && Math.min(...prices) !== Math.max(...prices) ? TL(Math.min(...prices)) + "'den başlayan" : TL(vars.length ? Math.min(...prices) : p.price);
     const others = await db('select=id,name,category&is_active=eq.true&id=neq.' + Number(p.id) + '&order=id.asc&limit=40');
     const similar = [...others.filter(x => x.category === p.category), ...others.filter(x => x.category !== p.category)].slice(0, 4);
@@ -174,22 +193,23 @@ async function buildPage(path) {
     };
   }
 
-  const k = /^\/kategori\/([a-z0-9-]+)$/.exec(path);
-  if (path === '/urunler' || k) {
-    const c = k ? CATS.find(x => x.slug === k[1]) : null;
-    if (k && !c) return { redirect: '/urunler' };
-    const rows0 = await db('select=id,name,category,type_label,price,stock,image_url,images,google_image,series&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : ''));
+  const k = /^\/kategori\/([a-z0-9-]+)$/.exec(path), sm = /^\/seri\/([a-z0-9-]+)$/.exec(path);
+  if (path === '/urunler' || k || sm) {
+    const c = k ? CATS.find(x => x.slug === k[1]) : null, se = sm ? SERIES.find(x => x.k === sm[1]) : null;
+    if ((k && !c) || (sm && !se)) return { redirect: '/urunler' };
+    const rows0 = await db('select=id,name,category,type_label,price,stock,image_url,images,google_image,series&is_active=eq.true&order=id.asc' + (c ? '&category=eq.' + encodeURIComponent(c.f) : '') + (se ? '&series=eq.' + se.k : ''));
     const vmap = await variantsBy(rows0.map(p => p.id));
     // Seçenekli ürünlerde kartta en düşük fiyat gösterilir
-    const rows = rows0.map(p => (vmap[p.id] || []).length ? { ...p, price: Math.min(...vmap[p.id].map(v => vPrice(p, v))) } : p);
-    const title = c ? c.h : 'Tüm Ürünler';
-    const url = SITE + listPath(c);
+    const pick = vs => (vs.some(v => v.stock > 0) ? vs.filter(v => v.stock > 0) : vs);
+    const rows = rows0.map(p => (vmap[p.id] || []).length ? { ...p, price: Math.min(...pick(vmap[p.id]).map(v => vPrice(p, v))) } : p);
+    const title = se ? se.h : c ? c.h : 'Tüm Ürünler';
+    const url = se ? SITE + '/seri/' + se.k : SITE + listPath(c);
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, title: title + ' | Gamika', desc: c ? c.d : 'Gamika tüm ürünler: kadın oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
+      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
-      body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
+      body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${se ? `<a href="/urunler">Ürünler</a> › <a href="/kategori/mousepad">Mousepad</a> › ${esc(se.t)} Serisi` : c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
         <p class="text-xs text-mauve" style="margin-bottom:28px">${rows.length} ürün</p>
         <div class="pgrid">${rows.map(cardHTML).join('')}</div>`

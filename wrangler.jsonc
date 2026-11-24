@@ -7,7 +7,7 @@
     "directory": ".",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/urun/*", "/urunler", "/urunler/", "/kategori/*", "/sitemap.xml", "/merchant-feed.xml"]
+    "run_worker_first": ["/urun/*", "/urunler", "/urunler/", "/kategori/*", "/seri/*", "/sitemap.xml", "/merchant-feed.xml"]
   },
   "routes": [
     { "pattern": "gamikatr.com", "custom_domain": true },
