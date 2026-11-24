@@ -617,7 +617,7 @@ function priceHTML(p){
   return hasVars(p) && p.minPrice !== p.maxPrice ? `${TL(p.minPrice)}<span class="pfrom">'den başlayan</span>` : TL(hasVars(p) ? p.minPrice : p.price);
 }
 function cardHTML(p){ return `
-  <div class="product-card pcard glass shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${esc(p.cat)}">
+  <div class="product-card pcard glass shadow-sm hover:shadow-xl transition flex flex-col justify-between" data-cat="${esc(p.cat)}" data-series="${esc(p.series || '')}">
     <div class="relative">
       <button onclick="toggleFav(${Number(p.id)})" data-fav="${Number(p.id)}" class="pfav absolute z-10 rounded-full bg-white/90 shadow flex items-center justify-center hover:scale-110 transition" aria-label="Favorilere ekle / çıkar"><i class="${favIds.has(Number(p.id)) ? 'fa-solid text-berry' : 'fa-regular text-ink/60'} fa-heart"></i></button>
       <a href="${productUrl(p)}" onclick="openProduct(${Number(p.id)});return false;" class="block">
@@ -642,7 +642,7 @@ function renderProducts(){
   $('product-grid').innerHTML = PRODUCTS.length === 0
     ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
     : PRODUCTS.slice(0, FEATURED_N).map(cardHTML).join('');
-  $('filters').innerHTML = [['all','Tümü'], ...CATS.map(c => [c.f, c.t])].map(([f, t]) =>
+  $('filters').innerHTML = liveCats().length < 2 ? '' : [['all','Tümü'], ...liveCats().map(c => [c.f, c.t])].map(([f, t]) =>
     `<a href="${listUrl(f)}" onclick="openList('${f}');return false;" class="px-5 py-2 rounded-xl text-sm font-medium ${f === 'all' ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('');
 }
 
@@ -668,7 +668,7 @@ async function loadProducts(){
     PRODUCTS.splice(0, PRODUCTS.length, ...rows.map(r => {
       let imgs = [...new Set([...(Array.isArray(r.images) ? r.images : []), r.image_url].filter(okUrl))]; if(!imgs.length) imgs = [r.google_image].filter(okUrl); // beyaz Google görseli sitede gösterilmez
       return {
-      id: Number(r.id), name: r.name, cat: r.category, type: r.type_label,
+      id: Number(r.id), name: r.name, cat: r.category, type: r.type_label, series: r.series || '',
       price: Number(r.price), stock: Number.isFinite(Number(r.stock)) ? Number(r.stock) : null, icon: r.icon || 'fa-gift',
       img: imgs[0] || '', imgs, vids: (Array.isArray(r.videos) ? r.videos : []).filter(okUrl),
       desc: typeof r.description === 'string' ? r.description : '',
@@ -702,6 +702,15 @@ function slugify(t){
 }
 function productUrl(p){ return '/urun/' + Number(p.id) + '-' + slugify(p.name); }
 function listUrl(f){ const c = CATS.find(x => x.f === f); return c ? '/kategori/' + c.slug : '/urunler'; }
+// Sadece ürünü olan kategoriler gösterilir
+const liveCats = () => CATS.filter(c => PRODUCTS.some(p => p.cat === c.f));
+const SERIES = [['dark','Dark'],['minimal','Minimal'],['candy','Candy']];
+function filterSeries(sr){
+  let n = 0;
+  document.querySelectorAll('#pv-body .product-card').forEach(c => { const on = sr === 'all' || c.dataset.series === sr; c.style.display = on ? '' : 'none'; if(on) n++; });
+  document.querySelectorAll('.sbtn').forEach(b => b.className = 'sbtn px-5 py-2 rounded-xl text-sm font-medium ' + (b.dataset.s === sr ? 'bg-ink text-cream' : 'glass'));
+  const ct = $('list-count'); if(ct) ct.textContent = n + ' ürün';
+}
 function openList(f){ location.href = listUrl(f); }
 function showList(f){
   const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f);
@@ -710,11 +719,14 @@ function showList(f){
   box.innerHTML = `
     <p class="text-xs text-mauve"><a href="/" onclick="goHome();return false;" class="hover:text-berry">Ana Sayfa</a> › ${c ? `<a href="/urunler" onclick="openList('all');return false;" class="hover:text-berry">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
     <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
-    <p class="text-xs text-mauve" style="margin-bottom:18px">${items.length} ürün</p>
-    <div class="flex flex-wrap gap-2" style="margin-bottom:28px">
-      ${[['all','Tümü'], ...CATS.map(x => [x.f, x.t])].map(([k, t]) =>
+    <p id="list-count" class="text-xs text-mauve" style="margin-bottom:18px">${items.length} ürün</p>
+    ${liveCats().length > 1 ? `<div class="flex flex-wrap gap-2" style="margin-bottom:12px">
+      ${[['all','Tümü'], ...liveCats().map(x => [x.f, x.t])].map(([k, t]) =>
         `<a href="${listUrl(k)}"  class="px-5 py-2 rounded-xl text-sm font-medium ${(c ? c.f : 'all') === k ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('')}
-    </div>
+    </div>` : ''}
+    ${(() => { const ss = SERIES.filter(([k]) => items.some(p => p.series === k)); return ss.length > 1 ? `<div class="flex flex-wrap gap-2" style="margin-bottom:28px">
+      ${[['all','Tümü'], ...ss].map(([k, t]) => `<button type="button" data-s="${k}" onclick="filterSeries('${k}')" class="sbtn px-5 py-2 rounded-xl text-sm font-medium ${k === 'all' ? 'bg-ink text-cream' : 'glass'}">${t}</button>`).join('')}
+    </div>` : '<div style="margin-bottom:16px"></div>'; })()}
     <div class="pgrid">
       ${items.length ? items.map(cardHTML).join('') : '<p class="col-span-full text-center text-sm text-mauve py-10">Bu kategoride henüz ürün yok.</p>'}
     </div>`;
