@@ -203,7 +203,7 @@ function vProducts(){
   $('#view').innerHTML=`<div class="row" style="margin-bottom:10px"><span class="mu">${D.products.length} ürün, stoku en az olan üstte</span>
     <button class="pri" onclick="editP()">+ Yeni ürün</button></div>
     <div class="card tbl"><table><tr><th></th><th>Ürün</th><th>Kategori</th><th>Stok</th><th>Fiyat</th><th>Durum</th><th></th></tr>
-    ${sorted.map(p=>`<tr><td>${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:`<span class="thumb">${ico(p.icon)}</span>`}</td>
+    ${sorted.map(p=>`<tr><td>${(p.image_url||p.google_image)?`<img class="thumb" src="${esc(p.image_url||p.google_image)}" alt="">`:`<span class="thumb">${ico(p.icon)}</span>`}</td>
     <td><span class="b">${esc(p.name)}</span><div class="mu">${esc(p.type_label)}</div></td><td class="mu">${esc(p.category)}</td>
     <td>${p.stock<=3?`<span class="pill wa">${p.stock} adet kaldı</span>`:`${p.stock} adet`}</td><td>${tl(p.price)}</td>
     <td><button class="sm" onclick="togP(${p.id})"><span class="${p.is_active?'ok':'er'}">${p.is_active?'Aktif':'Pasif'}</span></button></td>
@@ -223,6 +223,7 @@ async function editP(id){
   <label>Ad</label><input id="f_name" value="${esc(p.name)}">
   <label>Kategori</label><select id="f_cat">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
   <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
+  <label>Seri</label><select id="f_series">${[['','Seri yok'],['dark','Dark'],['minimal','Minimal'],['candy','Candy']].map(([v,t])=>`<option value="${v}" ${(p.series||'')===v?'selected':''}>${t}</option>`).join('')}</select>
   <div class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
   <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
   <div class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)">
@@ -238,7 +239,15 @@ async function editP(id){
     <button class="sm" style="margin-top:6px" onclick="VARS.push({name:'',opt2:'',price:'',stock:0,images:[],is_active:true});drawVar()">+ Seçenek ekle</button>
   </div>
   <label>Açıklama (ürün sayfasında ve Google'da görünür)</label><textarea id="f_desc" rows="4" style="width:100%;font:inherit;padding:8px;border-radius:8px;box-sizing:border-box" placeholder="Örn: 90x40 cm geniş, kaymaz tabanlı, dikişli kenar...">${esc(p.description||'')}</textarea>
-  <label>Fotoğraflar (ilki kapak fotoğrafı olur, en fazla 10)</label>
+  <label>Beyaz görsel (Google)</label>
+  <div class="mu" style="margin-bottom:6px">Beyaz arka planlı fotoğraf. Google ve Google Alışveriş bu fotoğrafı gösterir.</div>
+  <div id="gpic" class="pics"></div>
+  <div class="row" style="gap:8px;flex-wrap:wrap">
+    <label class="sm" style="display:inline-block;cursor:pointer;border:1px solid var(--bd);padding:6px 12px;border-radius:8px;margin:0">📷 Beyaz görsel yükle<input id="f_gfile" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="upGPic(this.files)"></label>
+    <span id="gupst" class="mu"></span>
+  </div>
+  <label style="margin-top:12px">Vitrin görseli (seri) ve diğer fotoğraflar</label>
+  <div class="mu" style="margin-bottom:6px">İlk fotoğraf sitede kapak olur: buraya önce Dark / Minimal / Candy görselini yükle. En fazla 10 fotoğraf.</div>
   <div id="pics" class="pics"></div>
   <div class="row" style="gap:8px;flex-wrap:wrap">
     <label class="sm" style="display:inline-block;cursor:pointer;border:1px solid var(--bd);padding:6px 12px;border-radius:8px;margin:0">📷 Fotoğraf yükle<input id="f_files" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="upPics(this.files)"></label>
@@ -257,12 +266,13 @@ async function editP(id){
   <div class="row" style="margin-top:16px"><button onclick="$('#dlg').close()">Vazgeç</button><button class="pri" onclick="saveP(${id||0})">Kaydet</button></div>`;
   IMGS=[...new Set([...(Array.isArray(p.images)?p.images:[]),p.image_url].filter(u=>typeof u==='string'&&u.startsWith('https://')))];
   drawPics();
+  GIMG=typeof p.google_image==='string'&&p.google_image.startsWith('https://')?p.google_image:'';drawGPic();
   VIDS=(Array.isArray(p.videos)?p.videos:[]).filter(u=>typeof u==='string'&&u.startsWith('https://'));
   drawVids();
   drawVar();
   $('#dlg').showModal();
 }
-let IMGS=[],VIDS=[],VARS=[],VDEL=[];
+let IMGS=[],VIDS=[],VARS=[],VDEL=[],GIMG='';
 function drawVar(){
   const two=!!$('#f_o2').value.trim();
   $('#vars').innerHTML=VARS.length?`<div style="overflow-x:auto"><table class="vt" style="border-collapse:collapse;font-size:13px"><tr class="mu"><td>${esc($('#f_o1').value||'1. seçenek')}</td>${two?`<td>${esc($('#f_o2').value)}</td>`:''}<td>Fiyat ₺</td><td>Stok</td><td>Aktif</td><td>Foto</td><td></td></tr>`+
@@ -326,6 +336,21 @@ function drawPics(){
     <div class="bt"><button title="Sola al" onclick="mvPic(${i},-1)" ${i===0?'disabled':''}>‹</button><button title="Kaldır" onclick="rmPic(${i})">✕</button><button title="Sağa al" onclick="mvPic(${i},1)" ${i===IMGS.length-1?'disabled':''}>›</button></div></div>`).join('')
     :'<span class="mu">Henüz fotoğraf yok.</span>';
 }
+function drawGPic(){
+  $('#gpic').innerHTML=GIMG?`<div class="pic"><img src="${esc(GIMG)}" alt=""><span class="k">Google</span><div class="bt"><button title="Kaldır" onclick="GIMG='';drawGPic()">✕</button></div></div>`
+    :'<span class="mu">Henüz beyaz görsel yok.</span>';
+}
+async function upGPic(files){
+  const f=[...files][0];if(!f)return;
+  if(!/^image\/(jpeg|png|webp)$/.test(f.type))return toast('Sadece JPG, PNG, WEBP');
+  $('#gupst').textContent='Yükleniyor...';
+  const blob=await shrink(f),ext=blob.type==='image/webp'?'webp':(f.type.split('/')[1]);
+  const path=`urun/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const {error}=await sb.storage.from('product-images').upload(path,blob,{contentType:blob.type||f.type,cacheControl:'31536000'});
+  $('#gupst').textContent='';$('#f_gfile').value='';
+  if(error)return toast('Yüklenemedi: '+error.message);
+  GIMG=sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;drawGPic();
+}
 function mvPic(i,d){const j=i+d;if(j<0||j>=IMGS.length)return;[IMGS[i],IMGS[j]]=[IMGS[j],IMGS[i]];drawPics();}
 function rmPic(i){IMGS.splice(i,1);drawPics();}
 function addUrl(){const u=$('#f_url').value.trim();if(!u.startsWith('https://'))return toast('Adres https:// ile başlamalı');if(IMGS.length>=10)return toast('En fazla 10 fotoğraf');IMGS.push(u);$('#f_url').value='';drawPics();}
@@ -350,7 +375,7 @@ async function upPics(files){
 async function saveP(id){
   const r={name:$('#f_name').value.trim(),category:$('#f_cat').value,type_label:$('#f_type').value.trim(),
     price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
-    description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
+    description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,google_image:GIMG||null,series:$('#f_series').value||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
   if(!r.name||!r.type_label||isNaN(r.price)||isNaN(r.stock))return toast('Ad, tür, fiyat ve stok zorunlu');
   // Seçenekler
   const o1=$('#f_o1').value.trim(),o2=$('#f_o2').value.trim();
