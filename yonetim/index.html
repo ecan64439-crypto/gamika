@@ -61,6 +61,7 @@ tr.cl{cursor:pointer}tr.cl:hover td{background:#ffffff06}
 .pic{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;background:var(--bd)}
 .pic img{width:100%;height:100%;object-fit:cover}.pic{cursor:grab}.pic.drg{opacity:.4}.pic.ovr{outline:3px dashed #E0709A;outline-offset:2px}
 .pic .k{position:absolute;left:4px;top:4px;background:#2A1B2E;color:#fff;font-size:10px;padding:1px 6px;border-radius:6px}
+.pic .px{position:absolute;top:4px;right:4px;width:22px;height:22px;padding:0;border:0;border-radius:50%;background:#d9415f;color:#fff;font-size:12px;font-weight:700;line-height:22px;text-align:center;cursor:pointer;min-height:0}.pic .px:hover{background:#b8304b}
 .pic .bt{position:absolute;bottom:3px;left:3px;right:3px;display:flex;justify-content:space-between}
 .pic .bt button{padding:0 7px;font-size:13px;font-weight:700;line-height:22px;min-height:0;border-radius:6px;border:0;background:rgba(42,27,46,.85);color:#fff}.pic .bt button:disabled{opacity:.3}.pic .bt button[title="Kaldır"]{background:#d9415f}
 .vt{width:auto!important;min-width:0!important}.vt td{padding:3px 3px!important;border:0!important;white-space:nowrap}.vt input{margin:0}
@@ -335,10 +336,12 @@ async function upVarPics(i,files){
   drawVar();toast('Fotoğraf eklendi');
 }
 function drawVids(){
-  $('#vids').innerHTML=VIDS.length?VIDS.map((u,i)=>`<div class="pic"><video src="${esc(u)}" muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover"></video><span class="k">▶ Video</span>
-    <div class="bt"><button title="Sola al" onclick="mvVid(${i},-1)" ${i===0?'disabled':''}>‹</button><button title="Kaldır" onclick="rmVid(${i})">✕</button><button title="Sağa al" onclick="mvVid(${i},1)" ${i===VIDS.length-1?'disabled':''}>›</button></div></div>`).join('')
+  $('#vids').innerHTML=VIDS.length?VIDS.map((u,i)=>`<div class="pic" draggable="true" title="Sürükleyerek yerini değiştir" ondragstart="DRAGV=${i};this.classList.add('drg')" ondragend="this.classList.remove('drg')" ondragover="event.preventDefault();this.classList.add('ovr')" ondragleave="this.classList.remove('ovr')" ondrop="event.preventDefault();dropVid(${i})"><video draggable="false" src="${esc(u)}" muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover"></video><span class="k">▶ Video</span>
+    <button class="px" title="Kaldır" onclick="rmVid(${i})">✕</button></div>`).join('')
     :'<span class="mu">Henüz video yok.</span>';
 }
+let DRAGV=-1;
+function dropVid(j){const i=DRAGV;DRAGV=-1;if(i<0||i===j)return drawVids();const [x]=VIDS.splice(i,1);VIDS.splice(j,0,x);drawVids();}
 function mvVid(i,d){const j=i+d;if(j<0||j>=VIDS.length)return;[VIDS[i],VIDS[j]]=[VIDS[j],VIDS[i]];drawVids();}
 function rmVid(i){VIDS.splice(i,1);drawVids();}
 async function upVids(files){
@@ -359,11 +362,11 @@ async function upVids(files){
 }
 function drawPics(){
   $('#pics').innerHTML=IMGS.length?IMGS.map((u,i)=>`<div class="pic" draggable="true" title="Sürükleyerek yerini değiştir" ondragstart="DRAG=${i};this.classList.add('drg')" ondragend="this.classList.remove('drg')" ondragover="event.preventDefault();this.classList.add('ovr')" ondragleave="this.classList.remove('ovr')" ondrop="event.preventDefault();dropPic(${i})"><img src="${esc(u)}" alt="" draggable="false">${i===0?'<span class="k">Kapak</span>':''}
-    <div class="bt"><button title="Sola al" onclick="mvPic(${i},-1)" ${i===0?'disabled':''}>‹</button><button title="Kaldır" onclick="rmPic(${i})">✕</button><button title="Sağa al" onclick="mvPic(${i},1)" ${i===IMGS.length-1?'disabled':''}>›</button></div></div>`).join('')
+    <button class="px" title="Kaldır" onclick="rmPic(${i})">✕</button></div>`).join('')
     :'<span class="mu">Henüz fotoğraf yok.</span>';
 }
 function drawGPic(){
-  $('#gpic').innerHTML=GIMG?`<div class="pic"><img src="${esc(GIMG)}" alt=""><span class="k">Google</span><div class="bt"><button title="Kaldır" onclick="GIMG='';drawGPic()">✕</button></div></div>`
+  $('#gpic').innerHTML=GIMG?`<div class="pic"><img src="${esc(GIMG)}" alt=""><span class="k">Google</span><button class="px" title="Kaldır" onclick="GIMG='';drawGPic()">✕</button></div>`
     :'<span class="mu">Henüz beyaz görsel yok.</span>';
 }
 async function upGPic(files){
