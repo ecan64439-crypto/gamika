@@ -112,6 +112,12 @@
   .hdr-drip{position:absolute;left:0;right:0;top:100%;width:100%;height:46px;display:block;pointer-events:none;}
   .nav-pill{padding:6px 14px;border-radius:9999px;transition:all .15s}
   .nav-pill:hover{color:#9B4DE0}
+  .nav-dd{position:relative}
+  .nav-dd-menu{position:absolute;left:50%;top:100%;transform:translate(-50%,6px);min-width:180px;background:#fff;border-radius:16px;box-shadow:0 12px 30px rgba(42,27,46,.15);border:1.5px solid #F3EAFE;padding:8px;opacity:0;visibility:hidden;transition:opacity .15s,transform .15s;z-index:60}
+  .nav-dd-menu::before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+  .nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{opacity:1;visibility:visible;transform:translate(-50%,2px)}
+  .nav-dd-menu a{display:block;padding:9px 14px;border-radius:10px;color:#2A1B2E;white-space:nowrap}
+  .nav-dd-menu a:hover{background:#FDEBF3;color:#9B4DE0}
   .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
   /* Giriş bölümü */
   .hz{position:relative;padding:72px 0 64px}
@@ -239,7 +245,8 @@
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
     <a href="#hero" class="nav-pill">Ana Sayfa</a>
-    <a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler</a>
+    <div class="nav-dd"><a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px"></i></a>
+      <div class="nav-dd-menu" id="nav-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a></div></div>
     <a href="#setler" class="nav-pill">Hazır Setler</a>
     <a href="#olustur" class="nav-pill">Kendi Setini Yarat</a>
     <a href="#yakinda" class="nav-pill">Çok Yakında</a>
@@ -638,7 +645,12 @@ function cardHTML(p){ return `
           : `<button onclick="addProduct(${Number(p.id)})" class="pbtn bg-ink text-cream rounded-xl font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>`}
     </div>
   </div>`; }
+function renderNavCats(){
+  const m = $('nav-cats'); if(!m) return; const cs = liveCats();
+  if(cs.length) m.innerHTML = cs.map(c => `<a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;">${esc(c.t)}</a>`).join('');
+}
 function renderProducts(){
+  renderNavCats();
   $('product-grid').innerHTML = PRODUCTS.length === 0
     ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
     : PRODUCTS.slice(0, FEATURED_N).map(cardHTML).join('');
