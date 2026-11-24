@@ -163,6 +163,27 @@
   .hz-pad::before{content:'';position:absolute;inset:9px;border:2px dashed #D9C2F7;border-radius:20px;pointer-events:none}
   .hz-pt{font-family:'Tiny5',sans-serif;font-weight:400;text-align:center;color:#9B4DE0;font-size:20px;letter-spacing:.12em;margin:4px 0 16px}
   .hz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .hz-fan-wrap{max-width:560px;margin:0 auto;width:100%;text-align:center}
+  .hz-fan-h span{display:block;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#E0709A;font-weight:700}
+  .hz-fan-h b{display:block;font-family:Fraunces,serif;font-size:34px;line-height:1.1;color:#2A1B2E;margin-top:4px}
+  .hz-fan-h b i{color:#E0709A;font-weight:400}
+  .hz-fan{position:relative;height:400px}
+  .hz-fc{position:absolute;top:50%;left:50%;width:260px;aspect-ratio:1/1;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px rgba(42,27,46,.28);border:6px solid #fff;transition:transform .35s ease,box-shadow .35s}
+  .hz-fc img{width:100%;height:100%;object-fit:cover}
+  .hz-fc b{position:absolute;left:10px;bottom:10px;background:#fff;border-radius:99px;padding:5px 13px;font-size:12px;color:#2A1B2E;letter-spacing:.04em}
+  .hz-fc b::after{content:" →";color:#9B4DE0}
+  .hz-fc1{transform:translate(-110%,-50%) rotate(-12deg)}
+  .hz-fc3{transform:translate(10%,-50%) rotate(12deg)}
+  .hz-fc3 b{left:auto;right:10px}
+  .hz-fc2{transform:translate(-50%,-56%);z-index:2}
+  .hz-fan:hover .hz-fc1{transform:translate(-122%,-52%) rotate(-15deg)}
+  .hz-fan:hover .hz-fc3{transform:translate(22%,-52%) rotate(15deg)}
+  .hz-fc:hover{z-index:3;box-shadow:0 24px 50px rgba(155,77,224,.4)}
+  @media (max-width:640px){.hz-fan{height:270px;overflow:visible}.hz-fc{width:150px;border-width:4px;border-radius:16px}.hz-fc b{font-size:11px;padding:4px 10px}.hz-fc1{transform:translate(-100%,-50%) rotate(-10deg)}.hz-fc3{transform:translate(0%,-50%) rotate(10deg)}.hz-fan:hover .hz-fc1{transform:translate(-100%,-50%) rotate(-10deg)}.hz-fan:hover .hz-fc3{transform:translate(0%,-50%) rotate(10deg)}.hz-fan-h b{font-size:28px}}
+  .hz-promo{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:8px 16px;border-radius:9999px;background:#2A1B2E;color:#fff;font-size:13px;box-shadow:0 6px 16px rgba(42,27,46,.25)}
+  .hz-promo b{display:inline;font-family:inherit;font-size:inherit;color:#F9D5E5;margin:0}
+  .hz-promo code{font-family:inherit;font-weight:700;letter-spacing:.06em;background:#E0709A;padding:2px 8px;border-radius:6px}
+
   .hz-sc{position:relative;display:block;border-radius:18px;overflow:hidden;aspect-ratio:4/3;background:#F3EAFE;transition:transform .2s,box-shadow .2s}
   .hz-sc-wide{grid-column:1 / -1;aspect-ratio:2/1}
   .hz-sc img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
@@ -295,12 +316,115 @@
       <div class="hz-btns"><a href="/urunler" onclick="openList('all');return false;" class="hz-b1">ÜRÜNLERİ GÖR →</a><a href="#setler" class="hz-b2">SETLERE BAK</a></div>
       <div class="hz-perks"><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#fff"/><rect x="8" y="2" width="1" height="1" fill="#fff"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="7" width="1" height="1" fill="#9B4DE0"/></svg>Ücretsiz Kargo</span><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="7" width="1" height="1" fill="#9B4DE0"/></svg>14 Gün Kolay İade</span></div>
     </div>
-    <div class="hz-pad">
-      <div class="hz-pt">GAMİKA</div>
-      <div class="hz-grid hz-series" id="hz-series">
-        <a href="/kategori/mousepad?seri=dark" class="hz-sc hz-sc-wide"><img src="/img/urun/midnight-oni-vitrin.webp" alt="Dark serisi mousepad" data-s="dark"><span class="hz-sl">Dark</span></a>
-        <a href="/kategori/mousepad?seri=minimal" class="hz-sc"><img src="/img/urun/white-marble-vitrin.webp" alt="Minimal serisi mousepad" data-s="minimal"><span class="hz-sl">Minimal</span></a>
-        <a href="/kategori/mousepad?seri=candy" class="hz-sc"><img src="/img/urun/sakura-cafe-vitrin.webp" alt="Candy serisi mousepad" data-s="candy"><span class="hz-sl">Candy</span></a>
+    <div class="hz-fan-wrap">
+      <div class="hz-fan-h"><span>3 seri · 1 tarz</span><b>Tarzını <i>seç</i></b><a href="/kategori/mousepad" class="hz-promo">🎀 Açılışa özel <b>%10 indirim</b> · Kod: <code>GAMIKA10</code></a></div>
+      <div class="hz-fan">
+        <a href="/kategori/mousepad?seri=minimal" class="hz-fc hz-fc1"><img src="/img/urun/white-marble-vitrin.webp" alt="Minimal serisi mousepad"><b>Minimal</b></a>
+        <a href="/kategori/mousepad?seri=dark" class="hz-fc hz-fc3"><img src="/img/urun/midnight-oni-vitrin.webp" alt="Dark serisi mousepad"><b>Dark</b></a>
+        <a href="/kategori/mousepad?seri=candy" class="hz-fc hz-fc2"><img src="/img/urun/sakura-cafe-vitrin.webp" alt="Candy serisi mousepad"><b>Candy</b></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- KUTUNUN İÇİNDE -->
+<section id="icerik" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Gamika'da</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">NELER VAR?</h2>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="content-grid"></div>
+  </div>
+</section>
+
+<!-- TEK TEK ÜRÜNLER -->
+<section id="urunler" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div>
+        <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
+        <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" id="filters"></div>
+    </div>
+    <div id="product-grid" class="pgrid"></div>
+    <div class="text-center mt-12">
+      <a href="/urunler" onclick="openList('all');return false;" class="inline-block px-8 py-4 bg-ink text-cream rounded-2xl text-xs font-semibold tracking-wider hover:bg-berry transition">TÜM ÜRÜNLERİ GÖR <i class="fa-solid fa-arrow-right ml-1"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- HAZIR SETLER -->
+<section id="setler" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">SETLER</h2>
+      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8" id="set-grid"></div>
+  </div>
+</section>
+
+<!-- KENDİ SETİNİ YARAT -->
+<section id="olustur" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Senin Seçimin</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">KENDİ SETİNİ YARAT</h2>
+      <p class="text-ink/70 mt-3 font-light">Her parçayı sen seç, setin sana özel hazırlansın.</p>
+      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
+      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
+    </div>
+    <div class="grid lg:grid-cols-5 gap-8 items-start">
+      <div id="builder-opts" class="lg:col-span-3 glass rounded-3xl p-6 sm:p-8 space-y-7"></div>
+      <div class="lg:col-span-2 lg:sticky lg:top-40 rounded-3xl p-6 sm:p-8 bg-ink text-cream shadow-2xl">
+        <h3 class="font-serif text-2xl font-bold mb-4"><i class="fa-solid fa-gift text-rose mr-2"></i>Senin Setin</h3>
+        <div id="builder-summary" class="space-y-3 text-sm"></div>
+        <div class="mt-6 pt-5 border-t border-white/15 flex items-center justify-between gap-3">
+          <span class="text-cream/70 text-sm">Toplam</span>
+          <div class="text-right">
+            <span id="builder-old" class="block text-sm text-cream/50 line-through"></span>
+            <span id="builder-total" class="font-serif text-3xl font-bold"></span>
+            <span class="block text-xs text-rose mt-1"><i class="fa-solid fa-truck-fast mr-1"></i>Ücretsiz Kargo</span>
+          </div>
+        </div>
+        <button disabled class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider" style="opacity:.5;cursor:not-allowed">ÇOK YAKINDA</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ÇOK YAKINDA -->
+<section id="yakinda" class="py-20">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+    <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Yolda</span>
+    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÇOK YAKINDA</h2>
+    <div class="w-16 h-0.5 bg-berry mx-auto mt-4 mb-12"></div>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-computer-mouse text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Gaming Mouse</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-keyboard text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Mekanik Klavye</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-headphones text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Kulaklık</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HAKKIMIZDA -->
+<section id="hikaye" class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="space-y-6">
+      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Biz Kimiz</span>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">SENİN İÇİN, <span class="italic text-berry font-normal">SENİN GİBİ.</span></h2>
+      <p class="text-ink/75 leading-relaxed font-light text-lg">
+        Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik kadın oyunculara özel gaming mousepadler sunuyoruz. Figür, klavye bilek desteği, switch'ler ve hazır setler çok yakında.
+      </p>
+      <div class="grid grid-cols-1 gap-6 pt-2">
+        <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-gift text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Set Halinde</h4><p class="text-xs text-ink/70">Her şey uyumlu renklerde, tek seferde.</p></div>
       </div>
     </div>
   </div>
@@ -460,7 +584,13 @@
     </div>
     <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
     <div class="p-6 border-t border-rose bg-petal/30 space-y-4">
+      <div id="cp-box">
+        <div class="flex gap-2"><input id="cp-in" maxlength="30" placeholder="İndirim kodu" autocomplete="off" class="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-white border border-rose text-sm uppercase focus:outline-none focus:border-berry" onkeydown="if(event.key==='Enter')applyCoupon()"><button type="button" onclick="applyCoupon()" class="px-4 py-2.5 rounded-xl bg-white border border-rose text-xs font-semibold hover:bg-petal">Uygula</button></div>
+        <p id="cp-msg" class="text-[11px] mt-1.5"></p>
+      </div>
       <div class="flex justify-between"><span>Ara Toplam</span><span id="subtotal" class="font-serif text-xl font-bold">0 ₺</span></div>
+      <div id="cp-row" class="hidden flex justify-between text-sm text-berry font-semibold"><span id="cp-label">İndirim</span><span id="cp-amount"></span></div>
+      <div id="cp-total-row" class="hidden flex justify-between"><span>Toplam</span><span id="cp-total" class="font-serif text-xl font-bold"></span></div>
       <p id="ship-note" class="text-[11px] text-berry"></p>
       <button onclick="checkout()" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition">ÖDEMEYE GEÇ <i class="fa-solid fa-arrow-right ml-2"></i></button>
     </div>
@@ -581,7 +711,7 @@ const sel = {pad:0,fig:0,wrist:0,sw:0};
 const SET_PRICE = 1099; // "Kendi Setini Yarat" indirimli set fiyatı
 
 const $ = id => document.getElementById(id);
-const TL = n => n.toLocaleString('tr-TR') + ' ₺';
+const TL = n => Number(n).toLocaleString('tr-TR', { minimumFractionDigits: Number(n) % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' ₺';
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
@@ -1060,10 +1190,36 @@ function qty(i,d){
   const vv = mv && PRODUCTS.flatMap(x => x.vars || []).find(x => x.id === Number(mv[1]));
   if(d > 0 && vv && cart[i].qty + d > vv.stock){ toast('Stokta yalnızca ' + vv.stock + ' adet var.'); return; }
   cart[i].qty += d; if(cart[i].qty<=0) cart.splice(i,1); renderCart(); }
+/* İndirim kodu: sepette kontrol edilir, asıl hesap siparişte sunucuda yapılır */
+let coupon = null; // { code, pct }
+try{ const c = JSON.parse(localStorage.getItem('gamika_coupon') || 'null'); if(c && c.code && c.pct) coupon = c; }catch(_){}
+const discountOf = sub => coupon ? Math.round(sub * coupon.pct) / 100 : 0;
+async function applyCoupon(){
+  const code = ($('cp-in').value || '').trim().toUpperCase(), msg = $('cp-msg');
+  if(!code){ coupon = null; try{ localStorage.removeItem('gamika_coupon'); }catch(_){} renderCart(); return; }
+  msg.className = 'text-[11px] mt-1.5 text-mauve'; msg.innerText = 'Kontrol ediliyor...';
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/check_coupon', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ p_code: code }) });
+    const pct = r.ok ? await r.json() : null;
+    if(!pct){ coupon = null; try{ localStorage.removeItem('gamika_coupon'); }catch(_){} renderCart(); msg.className = 'text-[11px] mt-1.5 text-red-600'; msg.innerText = 'Bu kod geçerli değil.'; return; }
+    coupon = { code, pct: Number(pct) }; try{ localStorage.setItem('gamika_coupon', JSON.stringify(coupon)); }catch(_){}
+    renderCart();
+  }catch(_){ msg.className = 'text-[11px] mt-1.5 text-red-600'; msg.innerText = 'Kod kontrol edilemedi, tekrar dene.'; }
+}
+function removeCoupon(){ coupon = null; try{ localStorage.removeItem('gamika_coupon'); }catch(_){} $('cp-in').value = ''; renderCart(); }
+function renderCoupon(sub){
+  const on = !!coupon && sub > 0, d = discountOf(sub);
+  $('cp-row').classList.toggle('hidden', !on); $('cp-total-row').classList.toggle('hidden', !on);
+  if(on){ $('cp-label').innerText = 'İndirim (' + coupon.code + ' · %' + coupon.pct + ')'; $('cp-amount').innerText = '−' + TL(d); $('cp-total').innerText = TL(sub - d); }
+  const msg = $('cp-msg');
+  if(coupon){ $('cp-in').value = coupon.code; msg.className = 'text-[11px] mt-1.5 text-emerald-700'; msg.innerHTML = '✓ %' + coupon.pct + ' indirim uygulandı · <a href="#" onclick="removeCoupon();return false;" class="underline">Kaldır</a>'; }
+  else if(!/geçerli değil|kontrol edilemedi/.test(msg.innerText)) msg.innerText = '';
+}
 function renderCart(){
   try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(_){}
   const count = cart.reduce((s,i)=>s+i.qty,0);
   const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  renderCoupon(sub);
   $('cart-badge').innerText = count; const mbb=$('mb-badge'); if(mbb) mbb.innerText = count;
   $('subtotal').innerText = TL(sub);
   $('ship-note').innerText = sub>0 ? 'Kargo ücretsiz 🎉' : '';
@@ -1092,7 +1248,7 @@ function checkout(){
 function openCheckoutForm(){
   const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
   if(window.gmkTrack) gmkTrack('begin_checkout', { value:sub, items:cart });
-  $('co-total').innerText = 'Toplam: ' + TL(sub) + ' • Kargo ücretsiz';
+  $('co-total').innerText = coupon ? ('Toplam: ' + TL(sub - discountOf(sub)) + ' (' + coupon.code + ' ile %' + coupon.pct + ' indirim) • Kargo ücretsiz') : ('Toplam: ' + TL(sub) + ' • Kargo ücretsiz');
   $('co-error').classList.add('hidden');
   if(user){
     const md = user.user_metadata || {};
@@ -1145,7 +1301,7 @@ async function submitOrder(e){
       headers,
       body: JSON.stringify({
         token:coToken, name:d.get('ad'), phone:d.get('telefon'), email:d.get('eposta'),
-        city:cityValue(d), address:d.get('adres'), note:d.get('not') || null, items
+        city:cityValue(d), address:d.get('adres'), note:d.get('not') || null, items, coupon: coupon ? coupon.code : null
       }),
       signal: ctrl.signal
     });

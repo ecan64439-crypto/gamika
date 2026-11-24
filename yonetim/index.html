@@ -185,7 +185,7 @@ function vOrders(){
     const items=Array.isArray(o.items)?o.items:[];
     return `<tr class="cl" onclick="tg(${o.id})"><td class="b">${esc(o.order_no)}</td>
       <td>${esc(o.customer_name)}<div class="mu">${esc(o.city)}</div></td><td class="mu">${dt(o.created_at)}</td>
-      <td><span class="pill s_${o.status}">${ST[o.status]||esc(o.status)}</span></td><td class="r b">${tl(o.total)}</td></tr>
+      <td><span class="pill s_${o.status}">${ST[o.status]||esc(o.status)}</span></td><td class="r b">${tl(o.total)}${Number(o.discount)>0?`<div class="mu" style="font-weight:400;font-size:12px">${esc(o.coupon||'')} −${tl(o.discount)}</div>`:''}</td></tr>
       <tr class="det" id="d${o.id}" style="display:none"><td colspan="5">
         <div class="row"><span class="mu">Tel: ${esc(o.phone)} · ${esc(o.email)}</span>
         <select style="width:auto" onchange="setStatus(${o.id},this.value)">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}</select></div>
