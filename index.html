@@ -118,6 +118,11 @@
   .nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{opacity:1;visibility:visible;transform:translate(-50%,2px)}
   .nav-dd-menu a{display:block;padding:9px 14px;border-radius:10px;color:#2A1B2E;white-space:nowrap}
   .nav-dd-menu a:hover{background:#FDEBF3;color:#9B4DE0}
+  .m-cats{margin:-4px 0 4px 14px;padding-left:12px;border-left:2px solid #F3D3E3}
+  .m-cats a,.m-cats .m-soon{display:block;padding:5px 0;font-size:15px}
+  .m-cats a{color:#2A1B2E;font-weight:500}
+  .m-cats .m-soon{color:#A67B9B}
+  .m-cats .m-soon small{font-size:11px;color:#E0709A;font-weight:600;margin-left:4px}
   .nav-soon{display:block;padding:7px 14px;color:#A67B9B;cursor:default;white-space:nowrap}
   .nav-soon small{display:block;font-size:11px;color:#E0709A;font-weight:600;margin-top:1px}
   .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
@@ -256,6 +261,7 @@
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
     <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
     <a href="/urunler" onclick="openList('all');return false;" class="block text-lg font-medium">Ürünler</a>
+    <div id="m-cats" class="m-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="m-soon">Figür <small>Çok yakında</small></span><span class="m-soon">Bilek Desteği <small>Çok yakında</small></span><span class="m-soon">Switch <small>Çok yakında</small></span></div>
     <a href="#setler" class="block text-lg font-medium">Hazır Setler</a>
     <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat</a>
     <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
@@ -651,6 +657,9 @@ function renderNavCats(){
   const m = $('nav-cats'); if(!m) return; const cs = liveCats();
   if(cs.length) m.innerHTML = cs.map(c => `<a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;">${esc(c.t)}</a>`).join('')
     + CATS.filter(c => !cs.includes(c)).map(c => `<span class="nav-soon">${esc(c.t)}<small>Çok yakında</small></span>`).join('');
+  const mm = $('m-cats');
+  if(mm && cs.length) mm.innerHTML = cs.map(c => `<a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;">${esc(c.t)}</a>`).join('')
+    + CATS.filter(c => !cs.includes(c)).map(c => `<span class="m-soon">${esc(c.t)} <small>Çok yakında</small></span>`).join('');
 }
 function renderProducts(){
   renderNavCats();
