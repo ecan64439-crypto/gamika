@@ -97,7 +97,8 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ST={odeme_bekleniyor:'Ödeme bekleniyor',odendi:'Ödendi',hazirlaniyor:'Hazırlanıyor',kargoda:'Kargoda',teslim_edildi:'Teslim edildi',iptal:'İptal'};
 const CAT=['mousepad','figur','bilek','switch'];
-const TITLE={orders:'Siparişler',products:'Ürünler',sets:'Setler'};
+const TITLE={orders:'Siparişler',products:'Ürünler',sets:'Setler',reviews:'Yorumlar',subs:'Aboneler'};
+const BG={reviews:'products',subs:'orders'};
 const ico=i=>{i=String(i||'').trim();if(!i)return '📦';if(i.includes('fa-'))return `<i class="${i.includes(' ')?esc(i):'fa-solid '+esc(i)}"></i>`;return esc(i)};
 const tl=n=>Number(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY'});
 const dt=d=>new Date(d).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
@@ -141,13 +142,15 @@ async function boot(){
   await load();
 }
 async function load(){
-  const [o,p,s]=await Promise.all([
+  const [o,p,s,r,u]=await Promise.all([
     sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200),
     sb.from('products').select('*').order('id'),
-    sb.from('sets').select('*').order('id')]);
+    sb.from('sets').select('*').order('id'),
+    sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(500),
+    sb.from('subscribers').select('*').order('created_at',{ascending:false}).limit(2000)]);
   const e=o.error||p.error||s.error;
   if(e)toast('Hata: '+e.message);
-  D.orders=o.data||[];D.products=p.data||[];D.sets=s.data||[];
+  D.orders=o.data||[];D.products=p.data||[];D.sets=s.data||[];D.reviews=r.data||[];D.subs=u.data||[];
   render();
 }
 
@@ -159,10 +162,10 @@ function render(){
   const rev=D.orders.filter(x=>!['iptal','odeme_bekleniyor'].includes(x.status)).reduce((a,x)=>a+Number(x.total||0),0);
   const low=D.products.filter(x=>x.is_active&&x.stock<=3).length;
   const N=(k)=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()"><span>${TITLE[k]}</span>${k==='orders'&&(wait+open)?`<span class="bd">${wait+open}</span>`:''}</button>`;
-  $('#app').innerHTML=`<div class="shell"><div class="bgimg" style="background-image:url(img/bg-${tab}.jpg);background-position:center ${({orders:'20%',products:'20%',sets:'85%'})[tab]}"></div>
-    <aside><div class="sideimg" style="background-image:linear-gradient(#100d19e6 0,#100d1980 45%,#100d1999 100%),url(img/side-${tab}.jpg)"></div>
+  $('#app').innerHTML=`<div class="shell"><div class="bgimg" style="background-image:url(img/bg-${BG[tab]||tab}.jpg);background-position:center ${({orders:'20%',products:'20%',sets:'85%'})[BG[tab]||tab]}"></div>
+    <aside><div class="sideimg" style="background-image:linear-gradient(#100d19e6 0,#100d1980 45%,#100d1999 100%),url(img/side-${BG[tab]||tab}.jpg)"></div>
       <div class="brand">Gamika<small>Yönetim</small></div>
-      <nav>${N('orders')}${N('products')}${N('sets')}</nav>
+      <nav>${N('orders')}${N('products')}${N('sets')}${N('reviews')}${N('subs')}</nav>
       <button class="out" onclick="logout()">Çıkış</button></aside>
     <main><div class="top"><h2>${TITLE[tab]}</h2>
       <div class="kpi"><div><div class="l">Ciro (iptal hariç, ödenen)</div><div class="v">${tl(rev)}</div></div>
@@ -173,7 +176,7 @@ function render(){
         <div><div class="l">Kargoda</div><div class="n">${ship}</div></div>
         <div><div class="l">Teslim edildi</div><div class="n">${done}</div></div></div>`:''}
       <div id="view"></div></main></div>`;
-  ({orders:vOrders,products:vProducts,sets:vSets})[tab]();
+  ({orders:vOrders,products:vProducts,sets:vSets,reviews:vReviews,subs:vSubs})[tab]();
 }
 
 function vOrders(){
@@ -450,6 +453,27 @@ async function saveP(id){
   $('#dlg').close();toast('Kaydedildi');load();
 }
 
+function vReviews(){
+  const pn=id=>{const p=D.products.find(x=>x.id===id);return p?p.name:'#'+id};
+  $('#view').innerHTML=`<div class="mu" style="margin-bottom:10px">Yorumlar sadece teslim edilmiş siparişlerden, mail ile gönderilen bağlantıyla yazılabilir. Uygunsuz bir yorumu "Gizle" ile siteden kaldırabilirsin.</div>
+    <div class="card tbl"><table><tr><th>Ürün</th><th>Puan</th><th>Yorum</th><th>Tarih</th><th>Durum</th></tr>
+    ${D.reviews.length?D.reviews.map(r=>`<tr><td>${esc(pn(r.product_id))}</td><td style="color:#F5B301;white-space:nowrap">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</td>
+      <td><span class="b">${esc(r.name)}</span><div class="mu">${esc(r.comment||'')}</div></td><td class="mu">${dt(r.created_at)}</td>
+      <td><button class="sm" onclick="togR(${r.id})"><span class="${r.is_approved?'ok':'er'}">${r.is_approved?'Yayında':'Gizli'}</span></button></td></tr>`).join(''):'<tr><td colspan="5" class="mu">Henüz yorum yok. Sipariş "Teslim edildi" yapılınca müşteriye yorum bağlantısı gider.</td></tr>'}</table></div>`;
+}
+async function togR(id){
+  const r=D.reviews.find(x=>x.id===id);
+  const {error}=await sb.from('reviews').update({is_approved:!r.is_approved}).eq('id',id);
+  if(error)return toast('Hata: '+error.message);
+  r.is_approved=!r.is_approved;render();
+}
+function vSubs(){
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:10px"><span class="mu">${D.subs.length} abone · İndirim kodu kutusundan izin vererek kayıt olanlar</span>
+    <button class="sm" onclick="copySubs()">📋 Tüm adresleri kopyala</button></div>
+    <div class="card tbl"><table><tr><th>E-posta</th><th>Kayıt tarihi</th></tr>
+    ${D.subs.length?D.subs.map(u=>`<tr><td>${esc(u.email)}</td><td class="mu">${dt(u.created_at)}</td></tr>`).join(''):'<tr><td colspan="2" class="mu">Henüz abone yok.</td></tr>'}</table></div>`;
+}
+function copySubs(){navigator.clipboard.writeText(D.subs.map(u=>u.email).join(', ')).then(()=>toast('Kopyalandı'),()=>toast('Kopyalanamadı'));}
 function vSets(){
   $('#view').innerHTML=`<div class="mu" style="margin-bottom:10px">${D.sets.length} set</div>`+
   (D.sets.map(s=>`<div class="card row" style="padding:12px 14px"><div class="b">${esc(s.name)}</div>

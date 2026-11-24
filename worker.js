@@ -166,6 +166,14 @@ async function buildPage(path) {
         availability: soldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition', ...OFFER_EXTRA }
     };
+    // Gerçek müşteri yorumları varsa Google'a puan bilgisi verilir
+    const revs = await fetch(SUPABASE_URL + '/rest/v1/reviews?select=name,rating,comment,created_at&order=created_at.desc&limit=50&product_id=eq.' + Number(p.id), {
+      headers: { apikey: SUPABASE_KEY }, cf: { cacheTtl: 300, cacheEverything: true } }).then(r => r.ok ? r.json() : []).catch(() => []);
+    if (Array.isArray(revs) && revs.length) {
+      ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: (revs.reduce((a, r) => a + Number(r.rating), 0) / revs.length).toFixed(1), reviewCount: revs.length, bestRating: 5, worstRating: 1 };
+      ld.review = revs.slice(0, 10).map(r => ({ '@type': 'Review', author: { '@type': 'Person', name: r.name }, datePublished: String(r.created_at).slice(0, 10),
+        reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 }, ...(r.comment ? { reviewBody: r.comment } : {}) }));
+    }
     const prices = (vars.some(v => v.stock > 0) ? vars.filter(v => v.stock > 0) : vars).map(v => vPrice(p, v));
     const priceText = vars.length && Math.min(...prices) !== Math.max(...prices) ? TL(Math.min(...prices)) + "'den başlayan" : TL(vars.length ? Math.min(...prices) : p.price);
     const others = await db('select=id,name,category&is_active=eq.true&id=neq.' + Number(p.id) + '&order=id.asc&limit=40');

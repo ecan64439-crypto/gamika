@@ -127,6 +127,19 @@
   .pv-promo{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#2A1B2E;background:#FDEBF3;border-radius:10px;padding:6px 10px;margin:2px 0 6px}
   .pv-promo span{background:#E0709A;color:#fff;font-weight:700;letter-spacing:.05em;padding:1px 7px;border-radius:6px;font-size:12px}
   .pv-promo b{color:#E0709A}
+  .nl-box{padding:0 16px 56px}
+  .nl-in{max-width:1000px;margin:0 auto;background:linear-gradient(135deg,#F3EAFE,#FDEBF3);border:1.5px dashed #D9C2F7;border-radius:28px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .nl-t span{font-size:12px;font-weight:700;color:#E0709A;letter-spacing:.08em}.nl-t h3{font-size:26px;font-weight:700;margin:4px 0}.nl-t p{font-size:14px;color:#6B5368}
+  .nl-row{display:flex;gap:8px}.nl-row input{flex:1;min-width:0;padding:13px 14px;border-radius:14px;border:1px solid #F3D3E3;background:#fff;font-size:14px}
+  .nl-row button{padding:13px 20px;border-radius:14px;background:#2A1B2E;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em}
+  .nl-c{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#6B5368;margin-top:10px;line-height:1.4}.nl-c input{margin-top:2px;accent-color:#E0709A}.nl-c a{text-decoration:underline}
+  .nl-err{color:#dc2626;font-size:13px;margin-top:6px}.nl-ok{font-size:15px}.nl-ok b{color:#E0709A;letter-spacing:.06em}.nl-ok small{color:#6B5368}
+  @media (max-width:767px){.nl-in{grid-template-columns:1fr;padding:22px}.nl-t h3{font-size:22px}}
+  .pv-revs{margin-top:40px}
+  .pv-revs h2{font-size:24px;font-weight:700;margin-bottom:12px}.pv-revs h2 span{font-family:Inter,sans-serif;font-size:14px;font-weight:500;color:#A67B9B;margin-left:8px}
+  .pv-rev{background:#fff;border:1px solid #F3EAFE;border-radius:16px;padding:14px 16px;margin-bottom:10px;font-size:14px}
+  .pv-rev div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pv-rev .st{color:#F5B301;letter-spacing:1px}.pv-rev small{color:#A67B9B;margin-left:auto}
+  .pv-rev p{margin:6px 0 4px;color:#4A3A4D}.pv-rev em{font-style:normal;font-size:11px;color:#047857;font-weight:600}
   .pv-specs{margin-top:22px;background:#fff;border:1px solid #F3EAFE;border-radius:16px;padding:14px 16px}
   .pv-specs p{font-weight:700;font-size:13px;margin-bottom:8px;color:#2A1B2E}
   .pv-specs dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;margin:0}
@@ -554,6 +567,16 @@
 </section>
 
 <!-- FOOTER -->
+<div id="nl-box" class="nl-box">
+  <div class="nl-in">
+    <div class="nl-t"><span>🎀 %10 indirim</span><h3 class="font-serif">İndirim kodunu mailine gönderelim</h3><p>Yeni seriler ve kampanyalardan ilk sen haberdar ol.</p></div>
+    <form onsubmit="subscribeNl(event)" class="nl-f">
+      <div class="nl-row"><input name="email" type="email" required maxlength="150" placeholder="E-posta adresin" autocomplete="email"><button id="nl-btn">GÖNDER</button></div>
+      <label class="nl-c"><input type="checkbox" name="izin" required> Kampanya ve yeniliklerden e-posta ile haberdar olmak istiyorum. <a href="/gizlilik.html" target="_blank" rel="noopener">Gizlilik</a></label>
+      <p id="nl-msg"></p>
+    </form>
+  </div>
+</div>
 <footer class="bg-ink text-cream pt-16 pb-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
@@ -732,6 +755,12 @@ const TL = n => Number(n).toLocaleString('tr-TR', { minimumFractionDigits: Numbe
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
+function reviewsHTML(p){
+  if(!p.revs || !p.revs.length) return '';
+  const st = n => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+  return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span></h2>
+    ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span><small>${new Date(r.created_at).toLocaleDateString('tr-TR')}</small></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}<em>✓ Doğrulanmış alıcı</em></div>`).join('')}</div>`;
+}
 // Mousepad özellikleri (tüm mousepadler için aynı)
 const MP_SPECS = [['Yüzey','Kumaş'],['Kalınlık','3 mm'],['Taban','Kaymaz kauçuk'],['Kenarlar','Dikişli'],['Bakım','Nemli bir bezle silinmesi tavsiye edilir']];
 function specsHTML(p){
@@ -739,6 +768,19 @@ function specsHTML(p){
   const sizes = hasVars(p) ? [...new Set(p.vars.map(v => v.o1))].map(x => x + ' cm').join(' / ') : '';
   const rows = (sizes ? [['Ölçü', sizes]] : []).concat(MP_SPECS);
   return `<div class="pv-specs"><p>Ürün Özellikleri</p><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>`;
+}
+async function subscribeNl(e){
+  e.preventDefault();
+  const f = e.target, btn = $('nl-btn'), msg = $('nl-msg');
+  btn.disabled = true; btn.innerText = '...'; msg.className = ''; msg.innerText = '';
+  try{
+    const r = await fetch(SUPABASE_URL + '/functions/v1/subscribe', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ email: f.email.value, consent: f.izin.checked, source: 'site' }) });
+    const d = await r.json().catch(() => null);
+    if(!r.ok) throw new Error((d && d.error) || 'Bir hata oluştu');
+    f.innerHTML = `<p class="nl-ok">Teşekkürler 💖 Kodun: <b>${esc(d.code)}</b><br><small>Mailine de gönderdik. Sepette bu kodu girince %${Number(d.pct)} indirim kazanırsın.</small></p>`;
+    if(window.gmkTrack) gmkTrack('sign_up', {});
+  }catch(ex){ msg.className = 'nl-err'; msg.innerText = ex.message; btn.disabled = false; btn.innerText = 'GÖNDER'; }
 }
 // Açılış indirimi (veritabanındaki 'coupons' tablosuyla aynı tutulmalı)
 const PROMO = { code:'GAMIKA10', pct:10 };
@@ -896,6 +938,15 @@ async function loadProducts(){
       desc: typeof r.description === 'string' ? r.description : '',
       ...variantInfo(r, Array.isArray(vrows) ? vrows.filter(v => Number(v.product_id) === Number(r.id)) : [], okUrl)
     }; }));
+    // Gerçek müşteri yorumları (sadece teslim alınmış siparişlerden gelir)
+    try{
+      const rr = await fetch(SUPABASE_URL + '/rest/v1/reviews?select=product_id,name,rating,comment,created_at&order=created_at.desc&limit=500', { headers:{ apikey:SUPABASE_KEY } });
+      const revs = rr.ok ? await rr.json() : [];
+      if(Array.isArray(revs)) PRODUCTS.forEach(p => {
+        const mine = revs.filter(r => Number(r.product_id) === p.id);
+        if(mine.length){ p.revs = mine; p.reviews = mine.length; p.rating = mine.reduce((a, r) => a + Number(r.rating), 0) / mine.length; }
+      });
+    }catch(_){}
     renderProducts();
     productsReady = true; routeFromPath();
   }catch(err){
@@ -1046,6 +1097,7 @@ function showProduct(id){
           </ul>
         </div>
       </div>
+      ${reviewsHTML(p)}
       ${similarHTML(p)}
       ${soldOut(p) ? '' : `<div id="pv-sticky" class="pv-sticky"><div><span id="sticky-price" class="font-serif">${priceHTML(p)}</span><small>Ücretsiz kargo</small></div><button onclick="(document.getElementById('pv-add')||{}).click()">SEPETE EKLE</button></div>`}`;
     applySeo(p.name + ' | Gamika', productDesc(p), url, p.img || SEO_DEFAULT.img);
