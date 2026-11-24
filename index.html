@@ -665,7 +665,7 @@ async function loadProducts(){
     if(!Array.isArray(rows)) throw new Error('Beklenmeyen yanıt');
     const okUrl = u => typeof u === 'string' && u.startsWith('https://');
     PRODUCTS.splice(0, PRODUCTS.length, ...rows.map(r => {
-      const imgs = [...new Set([...(Array.isArray(r.images) ? r.images : []), r.image_url, r.google_image].filter(okUrl))];
+      let imgs = [...new Set([...(Array.isArray(r.images) ? r.images : []), r.image_url].filter(okUrl))]; if(!imgs.length) imgs = [r.google_image].filter(okUrl); // beyaz Google görseli sitede gösterilmez
       return {
       id: Number(r.id), name: r.name, cat: r.category, type: r.type_label,
       price: Number(r.price), stock: Number.isFinite(Number(r.stock)) ? Number(r.stock) : null, icon: r.icon || 'fa-gift',

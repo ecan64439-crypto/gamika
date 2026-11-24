@@ -26,8 +26,8 @@ function slugify(t) {
 const productPath = p => '/urun/' + Number(p.id) + '-' + slugify(p.name);
 const listPath = c => (c ? '/kategori/' + c.slug : '/urunler');
 const okUrl = u => typeof u === 'string' && u.startsWith('https://');
-// Ürünün tüm fotoğrafları (vitrin/seri görselleri önce, beyaz Google görseli en sonda), tekrarsız
-const imgsOf = p => [...new Set([...(Array.isArray(p.images) ? p.images : []), p.image_url, p.google_image].filter(okUrl))];
+// Sitede gösterilen fotoğraflar; beyaz Google görseli sadece başka fotoğraf yoksa gösterilir
+const imgsOf = p => { const a = [...new Set([...(Array.isArray(p.images) ? p.images : []), p.image_url].filter(okUrl))]; return a.length ? a : [p.google_image].filter(okUrl); };
 // Google için: beyaz arka planlı görsel önce gelir (Google Arama, Google Alışveriş)
 const gImgsOf = p => [...new Set([p.google_image, ...imgsOf(p)].filter(okUrl))];
 const imgOf = p => imgsOf(p)[0] || '';
