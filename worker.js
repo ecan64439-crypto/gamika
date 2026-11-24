@@ -120,7 +120,7 @@ function metaDesc(p) {
 function cardHTML(p) {
   const img = imgOf(p);
   return `<a href="${productPath(p)}" class="product-card pcard glass shadow-sm flex flex-col">
-    <div class="pimg rounded-2xl aspect-square imgbg overflow-hidden">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-cover">` : ''}</div>
+    <div class="pimg rounded-2xl aspect-square imgbg overflow-hidden">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-contain">` : ''}</div>
     <span class="ptype text-berry">${esc(p.type_label)}</span>
     <h3 class="font-serif font-bold">${esc(p.name)}</h3>
     <div class="pfoot border-t border-rose/60"><p class="pprice font-serif font-bold">${TL(p.price)}</p></div></a>`;
@@ -161,7 +161,7 @@ async function buildPage(path) {
       status: 200, title: p.name + ' | Gamika', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › <a href="/urunler">Ürünler</a>${c ? ` › <a href="${listPath(c)}">${esc(c.t)}</a>` : ''} › ${esc(p.name)}</p>
         <div style="display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:18px">
-          <div><div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<img src="${esc(imgOf(p))}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover">` : ''}</div>
+          <div><div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<img src="${esc(imgOf(p))}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:contain">` : ''}</div>
             ${imgsOf(p).length > 1 ? `<div class="pv-thumbs">${imgsOf(p).map(u => `<span class="pv-th"><img src="${esc(u)}" alt="${esc(p.name)}" loading="lazy"></span>`).join('')}</div>` : ''}</div>
           <div><span class="text-xs text-berry font-semibold">${esc(p.type_label)}</span>
             <h1 class="font-serif" style="font-size:32px;font-weight:700;margin:6px 0 14px">${esc(p.name)}</h1>
