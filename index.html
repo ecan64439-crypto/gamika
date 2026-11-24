@@ -123,6 +123,8 @@
   .m-cats a{color:#2A1B2E;font-weight:500}
   .m-cats .m-soon{color:#A67B9B}
   .m-cats .m-soon small{font-size:11px;color:#E0709A;font-weight:600;margin-left:4px}
+  .soon-b{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:9999px;background:#FDEBF3;color:#E0709A;font-size:11px;font-weight:700;letter-spacing:.02em}
+  .hz-tile.hz-soon > svg,.hz-tile.hz-soon > span{opacity:.5}
   .nav-soon{display:block;padding:7px 14px;color:#A67B9B;cursor:default;white-space:nowrap}
   .nav-soon small{display:block;font-size:11px;color:#E0709A;font-weight:600;margin-top:1px}
   .nav-pill.on{background:#fff;color:#9B4DE0;box-shadow:0 0 0 1.5px #D9C2F7}
@@ -581,12 +583,32 @@ function loadCart(){
 let cart = loadCart();
 
 /* Kutunun içinde */
-$('content-grid').innerHTML = CONTENTS.map(c => `
+// Ürünü olmayan kategoriler "Çok yakında" olarak gösterilir (veritabanı yüklenene kadar sadece mousepad açık sayılır)
+let dbLoaded = false;
+const isLive = f => dbLoaded ? PRODUCTS.some(p => p.cat === f) : f === 'mousepad';
+const HZ_TILES = {'Figür':'figur','Mousepad':'mousepad','Bilek Desteği':'bilek',"Klavye Switch'i":'switch'};
+function renderContents(){
+  $('content-grid').innerHTML = CONTENTS.map(c => isLive(c.f) ? `
   <a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;" class="group glass rounded-3xl p-7 text-center hover:shadow-xl hover:-translate-y-1 transition">
     <div class="w-16 h-16 mx-auto rounded-2xl imgbg flex items-center justify-center mb-4"><i class="fa-solid ${c.icon} text-2xl text-berry"></i></div>
     <h3 class="font-serif text-xl font-bold mb-1">${c.t}</h3>
     <p class="text-xs text-ink/70">${c.d}</p>
-  </a>`).join('');
+  </a>` : `
+  <div class="glass rounded-3xl p-7 text-center" style="cursor:default">
+    <div class="w-16 h-16 mx-auto rounded-2xl imgbg flex items-center justify-center mb-4" style="opacity:.55"><i class="fa-solid ${c.icon} text-2xl text-berry"></i></div>
+    <h3 class="font-serif text-xl font-bold mb-1" style="opacity:.55">${c.t}</h3>
+    <p class="text-xs text-ink/70" style="opacity:.55">${c.d}</p>
+    <span class="soon-b">Çok yakında</span>
+  </div>`).join('');
+  document.querySelectorAll('.hz-tile').forEach(t => {
+    const sp = t.querySelector('span'), f = sp && HZ_TILES[sp.textContent.trim()]; if(!f) return;
+    let b = t.querySelector('.soon-b'); const live = isLive(f);
+    t.classList.toggle('hz-soon', !live);
+    if(!live && !b){ b = document.createElement('small'); b.className = 'soon-b'; b.textContent = 'Çok yakında'; t.appendChild(b); }
+    if(live && b) b.remove();
+  });
+}
+renderContents();
 
 /* Setler */
 $('set-grid').innerHTML = SETS.map(s => `
@@ -662,7 +684,7 @@ function renderNavCats(){
     + CATS.filter(c => !cs.includes(c)).map(c => `<span class="m-soon">${esc(c.t)} <small>Çok yakında</small></span>`).join('');
 }
 function renderProducts(){
-  renderNavCats();
+  renderNavCats(); renderContents();
   $('product-grid').innerHTML = PRODUCTS.length === 0
     ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
     : PRODUCTS.slice(0, FEATURED_N).map(cardHTML).join('');
@@ -688,6 +710,7 @@ async function loadProducts(){
     const rows = await res.json();
     const vrows = (vres && vres.ok) ? await vres.json() : [];
     if(!Array.isArray(rows)) throw new Error('Beklenmeyen yanıt');
+    dbLoaded = true;
     const okUrl = u => typeof u === 'string' && u.startsWith('https://');
     PRODUCTS.splice(0, PRODUCTS.length, ...rows.map(r => {
       let imgs = [...new Set([...(Array.isArray(r.images) ? r.images : []), r.image_url].filter(okUrl))]; if(!imgs.length) imgs = [r.google_image].filter(okUrl); // beyaz Google görseli sitede gösterilmez
