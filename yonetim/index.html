@@ -221,20 +221,21 @@ async function editP(id){
   const p=D.products.find(x=>x.id===id)||{category:'mousepad',stock:10,is_active:true,price:0,option2_label:'Ölçü'};
   $('#dlg').innerHTML=`<h3 style="margin-top:0">${id?'Ürünü düzenle':'Yeni ürün'}</h3>
   <label>Ad</label><input id="f_name" value="${esc(p.name)}">
-  <label>Kategori</label><select id="f_cat">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
+  <label>Kategori</label><select id="f_cat" onchange="catMode()">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
   <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
   <label>Seri</label><select id="f_series">${[['','Seri yok'],['dark','Dark'],['minimal','Minimal'],['candy','Candy']].map(([v,t])=>`<option value="${v}" ${(p.series||'')===v?'selected':''}>${t}</option>`).join('')}</select>
-  <div class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
+  <div id="f_sizes" class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)"></div>
+  <div id="f_ps" class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
   <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
-  <div class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)">
+  <div id="f_varbox" class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)">
     <div class="b" style="margin-bottom:4px">Seçenekler (renk, ölçü vb.)</div>
     <div class="mu" style="margin-bottom:8px">Seçenek eklersen müşteri ürün sayfasında seçim yapar. Her seçeneğin kendi fiyatı, stoğu ve fotoğrafı olabilir. Fiyatı boş bırakırsan yukarıdaki fiyat kullanılır. Seçenek varsa yukarıdaki stok yerine seçeneklerin stoğu geçerli olur.</div>
     <div class="row" style="gap:8px"><div style="flex:1"><label>1. seçenek adı</label><input id="f_o1" placeholder="Renk" value="${esc(p.option_label||'')}"></div>
       <div style="flex:1"><label>2. seçenek adı (isteğe bağlı)</label><input id="f_o2" placeholder="Ölçü" value="${esc(p.option2_label||'')}" oninput="drawVar()"></div></div>
     <details style="margin:8px 0" ${VARS.length?'':'open'}><summary class="mu" style="cursor:pointer">⚡ Hızlı oluştur: değerleri virgülle yaz, tüm birleşimler eklensin</summary>
-      <div class="mu" style="margin:6px 0 2px">Mousepad ölçüleri hazır yazılı (90x40, 70x40, 48x40); istemediğini silebilirsin.</div>
-      <div class="row" style="gap:8px;margin-top:6px"><input id="g1" placeholder="Pembe, Lila, Mor" style="flex:1"><input id="g2" placeholder="90x40, 70x40, 48x40" value="${p.category==='mousepad'?'90x40, 70x40, 48x40':''}" style="flex:1"><button class="sm" onclick="genVar()">Oluştur</button></div></details>
-    <datalist id="olculer"><option value="90x40"><option value="70x40"><option value="48x40"></datalist>
+      <div class="mu" style="margin:6px 0 2px">Mousepad ölçüleri hazır yazılı (90x40, 70x30); istemediğini silebilirsin.</div>
+      <div class="row" style="gap:8px;margin-top:6px"><input id="g1" placeholder="Pembe, Lila, Mor" style="flex:1"><input id="g2" placeholder="90x40, 70x30" value="${p.category==='mousepad'?'90x40, 70x30':''}" style="flex:1"><button class="sm" onclick="genVar()">Oluştur</button></div></details>
+    <datalist id="olculer"><option value="90x40"><option value="70x30"></datalist>
     <div id="vars"></div>
     <button class="sm" style="margin-top:6px" onclick="VARS.push({name:'',opt2:'',price:'',stock:0,images:[],is_active:true});drawVar()">+ Seçenek ekle</button>
   </div>
@@ -270,6 +271,8 @@ async function editP(id){
   VIDS=(Array.isArray(p.videos)?p.videos:[]).filter(u=>typeof u==='string'&&u.startsWith('https://'));
   drawVids();
   drawVar();
+  if(!id&&p.category==='mousepad'&&!VARS.length)VARS.push({name:SIZES[0],opt2:'',price:'',stock:10,images:[],is_active:true});
+  catMode();
   $('#dlg').showModal();
 }
 let IMGS=[],VIDS=[],VARS=[],VDEL=[],GIMG='';
@@ -284,6 +287,28 @@ function drawVar(){
       <td><label style="cursor:pointer;margin:0" title="Bu seçeneğe özel fotoğraf">📷${(v.images||[]).length||''}<input type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="upVarPics(${i},this.files)"></label>${(v.images||[]).length?` <a href="#" onclick="VARS[${i}].images=[];drawVar();return false" class="mu" title="Fotoğrafları kaldır">✕</a>`:''}</td>
       <td><button class="sm" onclick="rmVar(${i})" title="Seçeneği sil">🗑</button></td></tr>`).join('')+'</table></div>'
     :'<p class="mu" style="margin:4px 0">Seçenek yok, ürün tek seçenekli satılır.</p>';
+}
+// Mousepad ölçüleri: yazmak yerine işaretle, her ölçünün fiyatı ve stoğu ayrı
+const SIZES=['90x40','70x30'];
+function catMode(){
+  const mp=$('#f_cat').value==='mousepad';
+  $('#f_sizes').style.display=mp?'':'none';$('#f_varbox').style.display=mp?'none':'';$('#f_ps').style.display=mp?'none':'';
+  if(mp){$('#f_o1').value='Ölçü';$('#f_o2').value='';drawSizes();}
+}
+function drawSizes(){
+  $('#f_sizes').innerHTML=`<div class="b" style="margin-bottom:4px">Ölçüler</div>
+  <div class="mu" style="margin-bottom:8px">Satacağın ölçüleri işaretle, her birinin fiyatını ve stoğunu yaz. Stok 0 olursa sitede "Tükendi" görünür.</div>
+  <table class="vt" style="border-collapse:collapse;font-size:14px"><tr class="mu"><td></td><td>Ölçü</td><td>Fiyat ₺</td><td>Stok</td></tr>`+
+  SIZES.map(z=>{const i=VARS.findIndex(v=>v.name===z),v=VARS[i];
+    return `<tr><td><input type="checkbox" style="width:auto" ${v?'checked':''} onchange="togSize('${z}',this.checked)"></td><td class="b" style="padding:0 10px">${z} cm</td>
+    <td>${v?`<input type="number" min="0" step="0.01" value="${v.price}" oninput="VARS[${i}].price=this.value" style="width:80px;padding:6px">`:'<span class="mu">—</span>'}</td>
+    <td>${v?`<input type="number" min="0" step="1" value="${v.stock}" oninput="VARS[${i}].stock=this.value" style="width:60px;padding:6px">`:'<span class="mu">—</span>'}</td></tr>`}).join('')+'</table>';
+}
+function togSize(z,on){
+  const i=VARS.findIndex(v=>v.name===z);
+  if(on&&i<0)VARS.push({name:z,opt2:'',price:'',stock:0,images:[],is_active:true});
+  if(!on&&i>=0){if(VARS[i].id)VDEL.push(VARS[i].id);VARS.splice(i,1);}
+  VARS.sort((a,b)=>SIZES.indexOf(a.name)-SIZES.indexOf(b.name));drawSizes();
 }
 function rmVar(i){if(VARS[i].id)VDEL.push(VARS[i].id);VARS.splice(i,1);drawVar();}
 function genVar(){
@@ -376,6 +401,12 @@ async function saveP(id){
   const r={name:$('#f_name').value.trim(),category:$('#f_cat').value,type_label:$('#f_type').value.trim(),
     price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
     description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,google_image:GIMG||null,series:$('#f_series').value||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
+  if(r.category==='mousepad'){
+    if(!VARS.length)return toast('En az bir ölçü işaretle');
+    if(VARS.some(v=>String(v.price).trim()===''||isNaN(parseFloat(v.price))))return toast('Her ölçünün fiyatını yaz');
+    VARS.forEach(v=>v.is_active=true);
+    r.price=Math.min(...VARS.map(v=>parseFloat(v.price)));r.stock=0;
+  }
   if(!r.name||!r.type_label||isNaN(r.price)||isNaN(r.stock))return toast('Ad, tür, fiyat ve stok zorunlu');
   // Seçenekler
   const o1=$('#f_o1').value.trim(),o2=$('#f_o2').value.trim();
