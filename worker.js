@@ -187,7 +187,7 @@ async function buildPage(path) {
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, title: title + ' | Gamika', desc: c ? c.d : 'Gamika tüm ürünler: kadın oyuncular için mousepad, figür, klavye bilek desteği ve switch.',
+      status: 200, title: title + ' | Gamika', desc: c ? c.d : 'Gamika tüm ürünler: kadın oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>

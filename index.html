@@ -4,8 +4,8 @@
 <script>if(/^\/(urun\/|urunler|kategori\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gamika — Kadınlara Özel Gamer Setleri</title>
-<meta name="description" content="Gamika: kadın oyuncular için mousepad, figür, klavye bilek desteği ve klavye switch'leri. Tek tek ya da set halinde.">
+<title>Gamika — Kadınlara Özel Gaming Mousepad</title>
+<meta name="description" content="Gamika: kadın oyunculara özel gaming mousepad modelleri. Dark, Minimal ve Candy serileri, ücretsiz kargo. Figür, bilek desteği ve switch çok yakında.">
 <link rel="icon" href="/logo.png">
 <link rel="canonical" href="https://gamikatr.com/">
 <meta name="google-site-verification" content="WuOoVKOpZaBDW0YusW3PenfH8zQiW4ZYmoAquZrPsTA" />
@@ -14,8 +14,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Gamika">
 <meta property="og:locale" content="tr_TR">
-<meta property="og:title" content="Gamika — Kadınlara Özel Gamer Setleri">
-<meta property="og:description" content="Gamika: kadın oyuncular için mousepad, figür, klavye bilek desteği ve klavye switch'leri. Tek tek ya da set halinde.">
+<meta property="og:title" content="Gamika — Kadınlara Özel Gaming Mousepad">
+<meta property="og:description" content="Gamika: kadın oyunculara özel gaming mousepad modelleri. Dark, Minimal ve Candy serileri, ücretsiz kargo. Figür, bilek desteği ve switch çok yakında.">
 <meta property="og:url" content="https://gamikatr.com/">
 <meta property="og:image" content="https://gamikatr.com/logo.png">
 <meta name="twitter:card" content="summary">
@@ -123,6 +123,7 @@
   .m-cats a{color:#2A1B2E;font-weight:500}
   .m-cats .m-soon{color:#A67B9B}
   .m-cats .m-soon small{font-size:11px;color:#E0709A;font-weight:600;margin-left:4px}
+  .yk-b{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:9999px;background:#FDEBF3;color:#E0709A;font-size:10px;font-weight:700;vertical-align:middle}
   .soon-b{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:9999px;background:#FDEBF3;color:#E0709A;font-size:11px;font-weight:700;letter-spacing:.02em}
   .hz-tile.hz-soon > svg,.hz-tile.hz-soon > span{opacity:.5}
   .nav-soon{display:block;padding:7px 14px;color:#A67B9B;cursor:default;white-space:nowrap}
@@ -256,16 +257,16 @@
     <a href="#hero" class="nav-pill">Ana Sayfa</a>
     <div class="nav-dd"><a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px"></i></a>
       <div class="nav-dd-menu" id="nav-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="nav-soon">Figür<small>Çok yakında</small></span><span class="nav-soon">Bilek Desteği<small>Çok yakında</small></span><span class="nav-soon">Switch<small>Çok yakında</small></span></div></div>
-    <a href="#setler" class="nav-pill">Hazır Setler</a>
-    <a href="#olustur" class="nav-pill">Kendi Setini Yarat</a>
+    <a href="#setler" class="nav-pill">Hazır Setler <span class="yk-b">Yakında</span></a>
+    <a href="#olustur" class="nav-pill">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
     <a href="#yakinda" class="nav-pill">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
     <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
     <a href="/urunler" onclick="openList('all');return false;" class="block text-lg font-medium">Ürünler</a>
     <div id="m-cats" class="m-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="m-soon">Figür <small>Çok yakında</small></span><span class="m-soon">Bilek Desteği <small>Çok yakında</small></span><span class="m-soon">Switch <small>Çok yakında</small></span></div>
-    <a href="#setler" class="block text-lg font-medium">Hazır Setler</a>
-    <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat</a>
+    <a href="#setler" class="block text-lg font-medium">Hazır Setler <span class="yk-b">Yakında</span></a>
+    <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
     <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
     <button id="mobile-account" class="w-full py-2.5 bg-petal rounded-xl font-medium text-sm"><i class="fa-regular fa-user mr-2"></i>Hesabım</button>
   </div>
@@ -283,7 +284,7 @@
     <div class="hz-left">
       <span class="hz-badge"><svg width="14" height="11.2" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#fff"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/></svg>KADIN OYUNCULAR İÇİN</span>
       <h1 class="hz-h1">SENİN KADAR<br><span>TATLI BİR SETUP</span></h1>
-      <p class="hz-sub">Mousepad, Figür, Bilek Desteği ve Klavye Switchleri<br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b></p>
+      <p class="hz-sub">Kadın oyunculara özel gaming mousepadler<br><span style="font-size:.85em;opacity:.8">Figür, bilek desteği ve switch çok yakında</span><br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b></p>
       <div class="hz-btns"><a href="/urunler" onclick="openList('all');return false;" class="hz-b1">ÜRÜNLERİ GÖR →</a><a href="#setler" class="hz-b2">SETLERE BAK</a></div>
       <div class="hz-perks"><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#fff"/><rect x="8" y="2" width="1" height="1" fill="#fff"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="7" width="1" height="1" fill="#9B4DE0"/></svg>Ücretsiz Kargo</span><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="7" width="1" height="1" fill="#9B4DE0"/></svg>14 Gün Kolay İade</span></div>
     </div>
@@ -330,6 +331,7 @@
     <div class="text-center max-w-2xl mx-auto mb-14">
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
       <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">SETLER</h2>
+      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
       <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
     </div>
     <div class="grid md:grid-cols-3 gap-8" id="set-grid"></div>
@@ -343,6 +345,7 @@
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Senin Seçimin</span>
       <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">KENDİ SETİNİ YARAT</h2>
       <p class="text-ink/70 mt-3 font-light">Her parçayı sen seç, setin sana özel hazırlansın.</p>
+      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
       <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
     </div>
     <div class="grid lg:grid-cols-5 gap-8 items-start">
@@ -358,7 +361,7 @@
             <span class="block text-xs text-rose mt-1"><i class="fa-solid fa-truck-fast mr-1"></i>Ücretsiz Kargo</span>
           </div>
         </div>
-        <button onclick="addBuilt()" class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider hover:bg-white transition"><i class="fa-solid fa-bag-shopping mr-2"></i>SETİ SEPETE EKLE</button>
+        <button disabled class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider" style="opacity:.5;cursor:not-allowed">ÇOK YAKINDA</button>
       </div>
     </div>
   </div>
@@ -386,7 +389,7 @@
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Biz Kimiz</span>
       <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">SENİN İÇİN, <span class="italic text-berry font-normal">SENİN GİBİ.</span></h2>
       <p class="text-ink/75 leading-relaxed font-light text-lg">
-        Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik mousepad, figür, klavye bilek desteği ve switch'leri tek tek ya da set halinde sunuyoruz. Yenileri yolda.
+        Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik kadın oyunculara özel gaming mousepadler sunuyoruz. Figür, klavye bilek desteği, switch'ler ve hazır setler çok yakında.
       </p>
       <div class="grid grid-cols-1 gap-6 pt-2">
         <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-gift text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Set Halinde</h4><p class="text-xs text-ink/70">Her şey uyumlu renklerde, tek seferde.</p></div>
@@ -414,8 +417,8 @@
         <h4 class="font-serif font-bold text-lg mb-4 text-rose">Alışveriş</h4>
         <ul class="space-y-2.5 text-xs text-cream/70">
           <li><a href="/urunler" onclick="openList('all');return false;" class="hover:text-white">Ürünler</a></li>
-          <li><a href="#setler" class="hover:text-white">Hazır Setler</a></li>
-          <li><a href="#olustur" class="hover:text-white">Kendi Setini Yarat</a></li>
+          <li><a href="#setler" class="hover:text-white">Hazır Setler <span class="yk-b">Yakında</span></a></li>
+          <li><a href="#olustur" class="hover:text-white">Kendi Setini Yarat <span class="yk-b">Yakında</span></a></li>
         </ul>
       </div>
       <div>
@@ -458,7 +461,7 @@
   <div class="glass w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative">
     <button onclick="closeModal('search-modal')" class="absolute top-6 right-6 text-xl hover:text-berry" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
     <h3 class="font-serif text-2xl font-bold mb-4">Gamika'da Ara</h3>
-    <input id="search-input" aria-label="Ara" oninput="doSearch(this.value)" placeholder="Mousepad, figür, set..." class="w-full px-4 py-3.5 bg-cream rounded-2xl border border-rose text-sm focus:outline-none focus:border-berry">
+    <input id="search-input" aria-label="Ara" oninput="doSearch(this.value)" placeholder="Mousepad, Dark, Candy..." class="w-full px-4 py-3.5 bg-cream rounded-2xl border border-rose text-sm focus:outline-none focus:border-berry">
     <div id="search-results" class="mt-4 max-h-60 overflow-y-auto space-y-2"></div>
   </div>
 </div>
@@ -571,11 +574,13 @@ const TL = n => n.toLocaleString('tr-TR') + ' ₺';
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
+// Setler henüz satışta değil (figür, bilek desteği, switch gelince false yap)
+const SETS_SOON = true;
 function loadCart(){
   try{
     const c = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
     if(!Array.isArray(c)) return [];
-    return c.filter(i => i && typeof i.id === 'string' && Number(i.qty) > 0 && Number.isFinite(Number(i.price)))
+    return c.filter(i => i && typeof i.id === 'string' && Number(i.qty) > 0 && Number.isFinite(Number(i.price)) && !(SETS_SOON && /^(s\d|built)/.test(i.id)))
       .map(i => ({ id:i.id, name:String(i.name || ''), price:Number(i.price), qty:Math.min(20, Math.floor(Number(i.qty))),
         icon:/^fa-[a-z0-9-]+$/.test(String(i.icon)) ? String(i.icon) : 'fa-gift' }));
   }catch(_){ return []; }
@@ -623,7 +628,7 @@ $('set-grid').innerHTML = SETS.map(s => `
       </div>
       <div class="pt-5 mt-5 border-t border-rose/60 flex items-center justify-between">
         <p class="font-serif text-2xl font-bold">${TL(s.price)}</p>
-        <button onclick="addSet(${s.id})" class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider hover:bg-berry transition"><i class="fa-solid fa-bag-shopping mr-1"></i> SEPETE EKLE</button>
+        <button disabled class="px-4 py-2.5 bg-ink text-cream rounded-xl text-xs font-semibold tracking-wider" style="opacity:.45;cursor:not-allowed">ÇOK YAKINDA</button>
       </div>
     </div>
   </div>`).join('');
@@ -1010,6 +1015,7 @@ function renderBuilder(){
 function pick(k,i){ sel[k]=i; renderBuilder(); }
 function builtTotal(){ return Object.keys(BUILD).reduce((s,k)=>s+BUILD[k].opts[sel[k]].p,0); }
 function addBuilt(){
+  if(SETS_SOON){ toast('Kendi setini yaratma çok yakında!'); return; }
   const name = 'Kendi Setim: ' + Object.keys(BUILD).map(k=>BUILD[k].opts[sel[k]].n).join(' • ');
   const key = 'built-' + Object.keys(sel).map(k=>sel[k]).join('');
   addItem({id:key,name,price:SET_PRICE,icon:'fa-gift'});
@@ -1033,7 +1039,7 @@ function addProduct(id){
   if(p.stock != null && ex && ex.qty >= p.stock){ toast('Stokta yalnızca ' + p.stock + ' adet var.'); return; }
   addItem({id:'p'+p.id,name:p.name,price:p.price,icon:p.icon||'fa-gift'});
 }
-function addSet(id){ const s=SETS.find(x=>x.id===id); if(!s) return; addItem({id:'s'+s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
+function addSet(id){ if(SETS_SOON){ toast('Setler çok yakında!'); return; } const s=SETS.find(x=>x.id===id); if(!s) return; addItem({id:'s'+s.id,name:s.name,price:s.price,icon:'fa-gift'}); }
 function qty(i,d){
   const m = /^p(\d+)$/.exec(String(cart[i].id)), p = m && PRODUCTS.find(x=>x.id===Number(m[1]));
   if(d > 0 && p && p.stock != null && cart[i].qty + d > p.stock){ toast('Stokta yalnızca ' + p.stock + ' adet var.'); return; }
