@@ -787,7 +787,7 @@ function reviewsHTML(p){
   if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Henüz yorum yok. Bu ürün hakkındaki düşüncelerini ilk sen yaz 💖</p>${btn}</div></div>`;
   const st = n => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
   return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span>${btn}</h2>
-    ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span><small>${new Date(r.created_at).toLocaleDateString('tr-TR')}</small></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}${r.verified ? '<em>✓ Doğrulanmış alıcı</em>' : ''}</div>`).join('')}</div>`;
+    ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}${r.verified ? '<em>✓ Doğrulanmış alıcı</em>' : ''}</div>`).join('')}</div>`;
 }
 /* Yorum yazma: üye ise kendi teslim edilmiş siparişinden, değilse sipariş no + e-posta ile */
 let revPid = null;
