@@ -54,7 +54,7 @@ async function send(pid){
   try{
     await rpc('submit_review', { p_token: token, p_product_id: pid, p_rating: rating[pid],
       p_name: document.getElementById('n' + pid).value, p_comment: document.getElementById('c' + pid).value || null });
-    document.getElementById('f' + pid).innerHTML = '<p class="ok">Teşekkürler! Yorumun yayınlandı 💖</p>';
+    document.getElementById('f' + pid).innerHTML = '<p class="ok">Teşekkürler! Yorumun onaylandıktan sonra yayınlanacak 💖</p>';
   }catch(e){ er.textContent = e.message; btn.disabled = false; btn.textContent = 'GÖNDER'; }
 }
 (async () => {
