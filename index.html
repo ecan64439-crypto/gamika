@@ -715,6 +715,11 @@
   </div>
 </div>
 
+<!-- ORTA BİLDİRİM -->
+<div id="center-note" style="position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:0 24px;pointer-events:none;opacity:0;transition:opacity .3s">
+  <div style="background:#2A1B2E;color:#FFF9FB;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.35);padding:24px 28px;max-width:380px;width:100%;text-align:center"><p id="center-note-msg" style="margin:0;font-size:15px;font-weight:600;line-height:1.5"></p></div>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="fixed bottom-6 right-6 z-[60] translate-y-24 opacity-0 transition-all duration-300 bg-ink text-cream px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
   <i class="fa-solid fa-check text-emerald-400"></i><span id="toast-msg" class="text-xs font-medium"></span>
@@ -824,7 +829,7 @@ async function sendOpenReview(e){
       body: JSON.stringify({ token: rvToken, product_id: revPid, rating: rvRating, name: f.ad.value, email: f.eposta.value, comment: f.yorum.value || null }) });
     const d = await r.json().catch(() => null);
     if(!r.ok) throw new Error((d && d.error) || 'Bir hata oluştu');
-    f.reset(); closeModal('review-modal'); toast('Teşekkürler! Yorumun onaylandıktan sonra yayınlanacak 💖');
+    f.reset(); closeModal('review-modal'); centerNote('Teşekkürler! Yorumun onaylandıktan sonra yayınlanacak 💖');
   }catch(ex){ fail(ex.message); renderReviewCaptcha(); }
   btn.disabled = false; btn.innerText = 'GÖNDER';
 }
@@ -2091,6 +2096,7 @@ async function loadMyOrders(){
 function openModal(id){ const m=$(id); m.classList.remove('hidden'); m.classList.add('flex'); }
 function closeModal(id){ const m=$(id); m.classList.add('hidden'); m.classList.remove('flex'); }
 function info(t,x,icon){ $('info-title').innerText=t; $('info-text').innerText=x; $('info-icon').className=(icon||'fa-solid fa-circle-info')+' text-xl'; openModal('info-modal'); }
+function centerNote(msg, ms = 2000){ $('center-note-msg').innerText = msg; const n = $('center-note'); n.style.opacity = '1'; clearTimeout(n._t); n._t = setTimeout(() => n.style.opacity = '0', ms); }
 function toast(msg){ $('toast-msg').innerText=msg; const t=$('toast'); t.classList.remove('translate-y-24','opacity-0'); setTimeout(()=>t.classList.add('translate-y-24','opacity-0'),3000); }
 function toggleCart(){ $('cart-drawer').classList.toggle('hidden'); }
 
