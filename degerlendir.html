@@ -67,7 +67,7 @@ async function send(pid){
         <div class="prod">${it.img ? `<img src="${esc(it.img)}" alt="">` : ''}<b>${esc(it.name)}</b></div>
         <div id="f${it.product_id}">${it.done ? '<p class="done">✓ Bu ürünü değerlendirdin, teşekkürler!</p>' : `
           <div class="stars" id="s${it.product_id}">${stars(it.product_id)}</div>
-          <label>Adın (yorumda görünecek)</label><input id="n${it.product_id}" maxlength="40" value="${esc(d.name)}">
+          <label>Adın <span style="font-weight:400;color:#A67B9B">(isteğe bağlı)</span></label><input id="n${it.product_id}" maxlength="40" value="${esc(d.name)}">
           <label>Yorumun <span style="font-weight:400;color:#A67B9B">(isteğe bağlı)</span></label><textarea id="c${it.product_id}" maxlength="600" placeholder="Kalitesi, renkleri, kargo..."></textarea>
           <p class="err" id="e${it.product_id}"></p>
           <button class="btn" id="b${it.product_id}" onclick="send(${it.product_id})">GÖNDER</button>`}</div>
