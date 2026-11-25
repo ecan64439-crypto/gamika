@@ -136,6 +136,7 @@
   .nl-err{color:#dc2626;font-size:13px;margin-top:6px}.nl-ok{font-size:15px}.nl-ok b{color:#E0709A;letter-spacing:.06em}.nl-ok small{color:#6B5368}
   .nl-in>*{min-width:0}
   @media (max-width:767px){.nl-in{grid-template-columns:1fr;padding:20px}.nl-t h3{font-size:21px}.nl-row button{padding:13px 14px}}
+  .rv-stars{display:flex;gap:6px}.rv-stars button{font-size:32px;line-height:1;color:#E5D9E8}.rv-stars button.on{color:#F5B301}
   .pv-revs{margin-top:40px}
   .pv-revbtn{float:right;font-family:Inter,sans-serif;font-size:13px;font-weight:600;background:#2A1B2E;color:#fff;border-radius:12px;padding:9px 16px}
   .pv-rev0{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pv-rev0 p{margin:0}.pv-rev0 .pv-revbtn{float:none}
@@ -682,18 +683,27 @@
 </div>
 
 <!-- BİLGİ -->
-<div id="review-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
+<div id="review-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-start sm:items-center justify-center px-4 py-6 overflow-y-auto">
   <div class="glass w-full max-w-md rounded-3xl p-8 shadow-2xl relative">
     <button onclick="closeModal('review-modal')" class="absolute top-6 right-6 text-xl hover:text-berry" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
     <h3 class="font-serif text-2xl font-bold mb-1">Yorum Yaz</h3>
-    <p class="text-xs text-mauve mb-5">Yorumları sadece ürünü satın alıp teslim alan müşterilerimiz yazabilir. Siparişini bulalım:</p>
-    <form onsubmit="findReview(event)" class="space-y-3">
-      <div><label class="block text-xs font-semibold mb-1">Sipariş numarası</label><input name="no" required maxlength="20" placeholder="GMK-1001" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm uppercase focus:outline-none focus:border-berry"></div>
-      <div><label class="block text-xs font-semibold mb-1">Sipariş verdiğin e-posta</label><input name="eposta" type="email" required maxlength="150" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
-      <p id="rv-err" class="hidden text-xs text-red-600"></p>
-      <button id="rv-btn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">DEVAM ET</button>
-      <p class="text-[11px] text-mauve text-center">Sipariş numaran, sipariş onay mailinde yazıyor. Üyeysen önce <a href="#" onclick="closeModal('review-modal');authMode='login';renderAccount();openModal('account-modal');return false;" class="underline">giriş yap</a>.</p>
+    <p id="rv-pname" class="text-xs text-mauve mb-4"></p>
+    <form id="rv-open" onsubmit="sendOpenReview(event)" class="space-y-3">
+      <div class="rv-stars" id="rv-stars"></div>
+      <div><label class="block text-xs font-semibold mb-1">Adın (yorumda görünecek)</label><input name="ad" required minlength="2" maxlength="40" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">E-posta <span class="font-normal text-mauve">(görünmez)</span></label><input name="eposta" type="email" required maxlength="150" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+      <div><label class="block text-xs font-semibold mb-1">Yorumun <span class="font-normal text-mauve">(isteğe bağlı)</span></label><textarea name="yorum" rows="3" maxlength="600" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry" placeholder="Kalitesi, renkleri, kargo..."></textarea></div>
+      <div id="rv-captcha"></div>
+      <p id="rv-oerr" class="hidden text-xs text-red-600"></p>
+      <button id="rv-obtn" class="w-full py-4 bg-ink text-cream rounded-2xl font-semibold text-xs tracking-wider hover:bg-berry transition disabled:opacity-60">GÖNDER</button>
     </form>
+    <details class="mt-4 text-xs"><summary class="cursor-pointer text-berry font-semibold">Gamika'dan aldıysan: "Doğrulanmış alıcı" etiketiyle yorum yap</summary>
+      <form onsubmit="findReview(event)" class="space-y-3 mt-3">
+        <div><label class="block text-xs font-semibold mb-1">Sipariş numarası</label><input name="no" required maxlength="20" placeholder="GMK-1001" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm uppercase focus:outline-none focus:border-berry"></div>
+        <div><label class="block text-xs font-semibold mb-1">Sipariş verdiğin e-posta</label><input name="eposta" type="email" required maxlength="150" class="w-full px-4 py-3 rounded-xl bg-cream border border-rose text-sm focus:outline-none focus:border-berry"></div>
+        <p id="rv-err" class="hidden text-xs text-red-600"></p>
+        <button id="rv-btn" class="w-full py-3 bg-white border border-rose rounded-2xl font-semibold text-xs tracking-wider hover:bg-petal transition disabled:opacity-60">SİPARİŞİMİ BUL</button>
+      </form></details>
   </div>
 </div>
 <div id="info-modal" class="fixed inset-0 z-50 hidden bg-ink/70 backdrop-blur-md items-center justify-center px-4">
@@ -774,10 +784,10 @@ const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
 function reviewsHTML(p){
   const btn = `<button type="button" onclick="writeReview(${Number(p.id)})" class="pv-revbtn">✍️ Yorum Yaz</button>`;
-  if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Bu ürünü aldın mı? İlk yorumu sen yaz, diğer oyuncu kızlara yol göster 💖</p>${btn}</div></div>`;
+  if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Henüz yorum yok. Bu ürün hakkındaki düşüncelerini ilk sen yaz 💖</p>${btn}</div></div>`;
   const st = n => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
   return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span>${btn}</h2>
-    ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span><small>${new Date(r.created_at).toLocaleDateString('tr-TR')}</small></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}<em>✓ Doğrulanmış alıcı</em></div>`).join('')}</div>`;
+    ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span><small>${new Date(r.created_at).toLocaleDateString('tr-TR')}</small></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}${r.verified ? '<em>✓ Doğrulanmış alıcı</em>' : ''}</div>`).join('')}</div>`;
 }
 /* Yorum yazma: üye ise kendi teslim edilmiş siparişinden, değilse sipariş no + e-posta ile */
 let revPid = null;
@@ -790,7 +800,37 @@ async function writeReview(pid){
       if(data && data.token){ location.href = '/degerlendir.html?t=' + encodeURIComponent(data.token); return; }
     }catch(_){}
   }
-  $('rv-err').classList.add('hidden'); openModal('review-modal');
+  const pr = PRODUCTS.find(x => x.id === pid);
+  $('rv-pname').innerText = pr ? pr.name : '';
+  $('rv-err').classList.add('hidden'); $('rv-oerr').classList.add('hidden');
+  rvRating = 0; drawRvStars(); openModal('review-modal'); renderReviewCaptcha();
+}
+let rvRating = 0, rvToken = '';
+function drawRvStars(){ $('rv-stars').innerHTML = [1,2,3,4,5].map(n => `<button type="button" aria-label="${n} yıldız" onclick="rvRating=${n};drawRvStars()" class="${rvRating >= n ? 'on' : ''}">★</button>`).join(''); }
+async function renderReviewCaptcha(){
+  rvToken = ''; const b = $('rv-captcha'); if(!TURNSTILE_SITE_KEY || !b) return;
+  try{ await loadTurnstile(); b.innerHTML = ''; window.turnstile.render(b, { sitekey:TURNSTILE_SITE_KEY, callback: t => { rvToken = t; }, 'expired-callback': () => { rvToken = ''; } }); }catch(_){}
+}
+async function sendOpenReview(e){
+  e.preventDefault();
+  const f = e.target, err = $('rv-oerr'), btn = $('rv-obtn');
+  err.classList.add('hidden');
+  const fail = m => { err.innerText = m; err.classList.remove('hidden'); };
+  if(!rvRating) return fail('Lütfen yıldız seç.');
+  if(!rvToken) return fail('Lütfen "Ben robot değilim" doğrulamasını tamamla.');
+  btn.disabled = true; btn.innerText = 'Gönderiliyor...';
+  try{
+    const r = await fetch(SUPABASE_URL + '/functions/v1/review-submit', { method:'POST', headers:{ apikey:SUPABASE_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ token: rvToken, product_id: revPid, rating: rvRating, name: f.ad.value, email: f.eposta.value, comment: f.yorum.value || null }) });
+    const d = await r.json().catch(() => null);
+    if(!r.ok) throw new Error((d && d.error) || 'Bir hata oluştu');
+    const pr = PRODUCTS.find(x => x.id === revPid);
+    if(pr){ pr.revs = [{ name: f.ad.value.trim(), rating: rvRating, comment: f.yorum.value.trim() || null, created_at: new Date().toISOString(), verified:false }, ...(pr.revs || [])];
+      pr.reviews = pr.revs.length; pr.rating = pr.revs.reduce((a, x) => a + Number(x.rating), 0) / pr.revs.length; }
+    f.reset(); closeModal('review-modal'); toast('Teşekkürler! Yorumun yayınlandı 💖');
+    if(pr) showProduct(pr.id);
+  }catch(ex){ fail(ex.message); renderReviewCaptcha(); }
+  btn.disabled = false; btn.innerText = 'GÖNDER';
 }
 async function findReview(e){
   e.preventDefault();
@@ -983,7 +1023,7 @@ async function loadProducts(){
     }; }));
     // Gerçek müşteri yorumları (sadece teslim alınmış siparişlerden gelir)
     try{
-      const rr = await fetch(SUPABASE_URL + '/rest/v1/reviews?select=product_id,name,rating,comment,created_at&order=created_at.desc&limit=500', { headers:{ apikey:SUPABASE_KEY } });
+      const rr = await fetch(SUPABASE_URL + '/rest/v1/reviews?select=product_id,name,rating,comment,created_at,verified&order=created_at.desc&limit=500', { headers:{ apikey:SUPABASE_KEY } });
       const revs = rr.ok ? await rr.json() : [];
       if(Array.isArray(revs)) PRODUCTS.forEach(p => {
         const mine = revs.filter(r => Number(r.product_id) === p.id);

@@ -142,15 +142,16 @@ async function boot(){
   await load();
 }
 async function load(){
-  const [o,p,s,r,u]=await Promise.all([
+  const [o,p,s,r,u,m]=await Promise.all([
     sb.from('orders').select('*').order('created_at',{ascending:false}).limit(200),
     sb.from('products').select('*').order('id'),
     sb.from('sets').select('*').order('id'),
     sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(500),
-    sb.from('subscribers').select('*').order('created_at',{ascending:false}).limit(2000)]);
+    sb.from('subscribers').select('*').order('created_at',{ascending:false}).limit(2000),
+    sb.from('review_private').select('review_id,email')]);
   const e=o.error||p.error||s.error;
   if(e)toast('Hata: '+e.message);
-  D.orders=o.data||[];D.products=p.data||[];D.sets=s.data||[];D.reviews=r.data||[];D.subs=u.data||[];
+  D.orders=o.data||[];D.products=p.data||[];D.sets=s.data||[];D.reviews=r.data||[];D.subs=u.data||[];D.revMail=Object.fromEntries((m.data||[]).map(x=>[x.review_id,x.email]));
   render();
 }
 
@@ -455,10 +456,10 @@ async function saveP(id){
 
 function vReviews(){
   const pn=id=>{const p=D.products.find(x=>x.id===id);return p?p.name:'#'+id};
-  $('#view').innerHTML=`<div class="mu" style="margin-bottom:10px">Yorumlar sadece teslim edilmiş siparişlerden, mail ile gönderilen bağlantıyla yazılabilir. Uygunsuz bir yorumu "Gizle" ile siteden kaldırabilirsin.</div>
+  $('#view').innerHTML=`<div class="mu" style="margin-bottom:10px">Herkes ürün sayfasından yorum yazabilir; siparişi teslim edilmiş müşterilerin yorumları "✓ Doğrulanmış alıcı" etiketiyle görünür. Uygunsuz bir yorumu "Gizle" ile siteden kaldırabilirsin.</div>
     <div class="card tbl"><table><tr><th>Ürün</th><th>Puan</th><th>Yorum</th><th>Tarih</th><th>Durum</th></tr>
     ${D.reviews.length?D.reviews.map(r=>`<tr><td>${esc(pn(r.product_id))}</td><td style="color:#F5B301;white-space:nowrap">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</td>
-      <td><span class="b">${esc(r.name)}</span><div class="mu">${esc(r.comment||'')}</div></td><td class="mu">${dt(r.created_at)}</td>
+      <td><span class="b">${esc(r.name)}</span> ${r.verified?'<span class="ok" style="font-size:11px">✓ Doğrulanmış alıcı</span>':`<span class="mu" style="font-size:11px">${esc(D.revMail[r.id]||'')}</span>`}<div class="mu">${esc(r.comment||'')}</div></td><td class="mu">${dt(r.created_at)}</td>
       <td><button class="sm" onclick="togR(${r.id})"><span class="${r.is_approved?'ok':'er'}">${r.is_approved?'Yayında':'Gizli'}</span></button></td></tr>`).join(''):'<tr><td colspan="5" class="mu">Henüz yorum yok. Sipariş "Teslim edildi" yapılınca müşteriye yorum bağlantısı gider.</td></tr>'}</table></div>`;
 }
 async function togR(id){
