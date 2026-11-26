@@ -169,7 +169,7 @@ html.boy-mode .gm-cap{background:repeating-radial-gradient(ellipse at 50% 50%,va
 html.boy-mode .gm-logo{text-shadow:0 1px 0 #7c3aed !important}
 
 /* 2) Elle ayarlanan kısımlar */
-/* GAMİKA – Gamika Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamer-boy).
+/* GAMİKA – Gamer Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamer-boy).
    Bu dosyanın alt kısmı otomatik üretildi: pembe renkler koyu/mor karşılıklarına çevrildi. */
 html.boy-mode{color-scheme:dark}
 html.boy-mode,html.boy-mode body{background:#09090c !important;color:#ececf1}
@@ -217,10 +217,10 @@ html.boy-mode .bg-berry{background-color:#7c3aed !important}
 html.boy-mode footer.bg-ink{background:#050507 !important;border-top:1px solid #1f1f27}
 html.boy-mode footer .bg-petal{background:transparent !important}
 html.boy-mode footer a:hover{color:#a78bfa}
-/* Gamika Boy'da gösterilmeyen bölümler (pembe setler, figürler) */
+/* Gamer Boy'da gösterilmeyen bölümler (pembe setler, figürler) */
 html.boy-mode .girl-only{display:none !important}
 html:not(.boy-mode) .boy-only{display:none !important}
-/* Gamika Girl / Gamika Boy geçiş düğmeleri (iki temada da) */
+/* Gamer Girl / Gamer Boy geçiş düğmeleri (iki temada da) */
 .mode-sw{display:inline-flex;gap:4px;padding:3px;border-radius:9999px;background:rgba(255,255,255,.7);border:1px solid #F3D3E3;margin-right:6px}
 .mode-sw a{padding:4px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.03em;color:#6B5368;transition:all .15s}
 .mode-sw a.on{background:#E0709A;color:#fff}
@@ -234,7 +234,7 @@ html.boy-mode .mode-sw a.on{background:#7c3aed !important;color:#fff !important}
 html.boy-mode .m-mode a{border-color:#2a2a33 !important;color:#ececf1 !important}
 html.boy-mode .m-mode a.on{background:#7c3aed !important;border-color:#7c3aed !important}
 /* Beyaz logo */
-html.boy-mode img.hdr-logo,html.boy-mode footer img[alt="Gamika"]{content:url(/logo-beyaz.webp)}
+html.boy-mode img.hdr-logo,html.boy-mode footer img[alt="Gamika"]{content:url(/logo-boy.webp)}
 @media (min-width:1024px){html.boy-mode #content-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:960px;margin:0 auto}}
 /* Açılan pencerelerin arka perdesi */
 html.boy-mode .bg-ink\/60,html.boy-mode .bg-ink\/70{background-color:rgba(0,0,0,.7) !important}
