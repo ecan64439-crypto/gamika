@@ -253,16 +253,18 @@ html.boy-mode .gsw-k{transform:translateX(20px);background:#f4f4f7 !important;bo
 html.boy-mode .gsw.go .gsw-k{transform:translateX(0)}
 .gsw:hover .gsw-t{filter:brightness(.97)}
 /* Gamika Boy: üst şerit, menü ikonları ve sepet rozeti mor değil, siyah-beyaz */
-html.boy-mode .gm-wrap.tema-a{--gm-tc:#e4e4ea;--gm-th:#3a3a44;--gm-th2:#55555e;--gm-rb:#1f1f27;--gm-base:#141419}
+html.boy-mode .gm-wrap.tema-a{--gm-tc:#0b0b0e;--gm-th:#9a9aa6;--gm-th2:#c9c9d2;--gm-rb:#c9c9d2;--gm-base:#ececf1}
+html.boy-mode .gm-item{font-weight:700 !important}
 html.boy-mode .gm-pad{box-shadow:0 2px 0 #050507,0 4px 6px rgba(0,0,0,.4) !important}
 html.boy-mode .gm-weave{background-image:none !important}
-html.boy-mode .gm-cap{border-color:#55555e !important;background:repeating-radial-gradient(ellipse at 50% 50%,#2a2a33 0 1.5px,#141419 1.5px 2.5px) !important}
+html.boy-mode .gm-cap{border-color:#9a9aa6 !important;background:repeating-radial-gradient(ellipse at 50% 50%,#c9c9d2 0 1.5px,#ececf1 1.5px 2.5px) !important}
 html.boy-mode .gm-rollb{box-shadow:2px 4px 8px rgba(0,0,0,.5) !important}
-html.boy-mode .gm-logo{color:#f4f4f7 !important;text-shadow:0 1px 0 #55555e !important}
-html.boy-mode .gm-wrap .gm-px rect[fill="#9B4DE0"]{fill:#e4e4ea !important}
-html.boy-mode .gm-wrap .gm-px rect[fill="#fff"]{fill:#55555e !important}
+html.boy-mode .gm-logo{color:#0b0b0e !important;text-shadow:none !important}
+html.boy-mode .gm-wrap .gm-px rect[fill="#9B4DE0"]{fill:#0b0b0e !important}
+html.boy-mode .gm-wrap .gm-px rect[fill="#fff"]{fill:#8a8a96 !important}
 html.boy-mode .hdr-ico rect[fill="#9B4DE0"],html.boy-mode #mbar rect[fill="#9B4DE0"]{fill:#e4e4ea !important}
 html.boy-mode .hdr-ico rect[fill="#fff"],html.boy-mode #mbar rect[fill="#fff"]{fill:#09090c !important}
 html.boy-mode .hdr-btn,html.boy-mode #mbar{color:#e4e4ea !important}
 html.boy-mode .hdr-btn:hover{color:#fff !important}
 html.boy-mode #cart-badge,html.boy-mode #mb-badge{background:#f4f4f7 !important;color:#09090c !important}
+html.boy-mode .gm-cap::after{background:#55555e !important}
