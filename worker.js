@@ -50,7 +50,7 @@ const imgsOf = p => { const a = [...new Set([...(Array.isArray(p.images) ? p.ima
 const gImgsOf = p => [...new Set([p.google_image, ...imgsOf(p)].filter(okUrl))];
 const imgOf = p => imgsOf(p)[0] || '';
 const xml = s => esc(s).replace(/&#39;/g, '&apos;');
-const STATIC_PAGES = ['/', '/gamer-girl', '/gamer-boy', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
+const STATIC_PAGES = ['/', '/gamika-girl', '/gamika-boy', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
 
 // Ürünlerin seçenekleri (renk, ölçü): { ürünId: [seçenek, ...] }
 async function variantsBy(ids) {
@@ -245,12 +245,12 @@ export default {
         return env.ASSETS.fetch(request); // yedek: depodaki sabit sitemap.xml
       }
     }
-    // Ana giriş sayfası: Gamer Girl / Gamer Boy seçimi
+    // Ana giriş sayfası: Gamika Girl / Gamika Boy seçimi
     if (path === '/') return env.ASSETS.fetch(new Request(url.origin + '/giris'));
-    // Gamer Girl / Gamer Boy ana sayfaları: mağaza sayfası, kendi başlık ve açıklamasıyla (Google için)
+    // Gamika Girl / Gamika Boy ana sayfaları: mağaza sayfası, kendi başlık ve açıklamasıyla (Google için)
     const SIDE = {
-      '/gamer-girl': { title: 'Gamer Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamer Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
-      '/gamer-boy': { title: 'Gamer Boy – Erkek Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamer Boy: erkek oyunculara özel dark ve sade gaming mousepad modelleri. Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: true }
+      '/gamika-girl': { title: 'Gamika Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamika Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
+      '/gamika-boy': { title: 'Gamika Boy – Erkek Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamika Boy: erkek oyunculara özel dark ve sade gaming mousepad modelleri. Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: true }
     }[path];
     if (SIDE) {
       const shell0 = await env.ASSETS.fetch(new Request(url.origin + '/'));

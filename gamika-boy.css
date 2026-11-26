@@ -1,4 +1,4 @@
-/* GAMİKA – Gamer Boy teması (sadece gamikatr.com/gamer-boy tarafında, <html class="boy-mode"> iken çalışır). */
+/* GAMİKA – Gamika Boy teması (sadece gamikatr.com/gamika-boy tarafında, <html class="boy-mode"> iken çalışır). */
 /* 1) Otomatik renk çevirisi: pembe/lila renkler koyu ve mor karşılıklarına çevrildi. */
 html.boy-mode *,html.boy-mode ::before,html.boy-mode ::after{--tw-ring-offset-color:#2a2a33 !important;--tw-ring-color:rgba(124,58,237,0.5) !important}
 html.boy-mode ::backdrop{--tw-ring-offset-color:#2a2a33 !important;--tw-ring-color:rgba(124,58,237,0.5) !important}
@@ -169,7 +169,7 @@ html.boy-mode .gm-cap{background:repeating-radial-gradient(ellipse at 50% 50%,va
 html.boy-mode .gm-logo{text-shadow:0 1px 0 #7c3aed !important}
 
 /* 2) Elle ayarlanan kısımlar */
-/* GAMİKA – Gamer Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamer-boy).
+/* GAMİKA – Gamika Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamika-boy).
    Bu dosyanın alt kısmı otomatik üretildi: pembe renkler koyu/mor karşılıklarına çevrildi. */
 html.boy-mode{color-scheme:dark}
 html.boy-mode,html.boy-mode body{background:#09090c !important;color:#ececf1}
@@ -217,10 +217,10 @@ html.boy-mode .bg-berry{background-color:#7c3aed !important}
 html.boy-mode footer.bg-ink{background:#050507 !important;border-top:1px solid #1f1f27}
 html.boy-mode footer .bg-petal{background:transparent !important}
 html.boy-mode footer a:hover{color:#a78bfa}
-/* Gamer Boy'da gösterilmeyen bölümler (pembe setler, figürler) */
+/* Gamika Boy'da gösterilmeyen bölümler (pembe setler, figürler) */
 html.boy-mode .girl-only{display:none !important}
 html:not(.boy-mode) .boy-only{display:none !important}
-/* Gamer Girl / Gamer Boy geçiş düğmeleri (iki temada da) */
+/* Gamika Girl / Gamika Boy geçiş düğmeleri (iki temada da) */
 .mode-sw{display:inline-flex;gap:4px;padding:3px;border-radius:9999px;background:rgba(255,255,255,.7);border:1px solid #F3D3E3;margin-right:6px}
 .mode-sw a{padding:4px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.03em;color:#6B5368;transition:all .15s}
 .mode-sw a.on{background:#E0709A;color:#fff}

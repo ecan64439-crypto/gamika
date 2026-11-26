@@ -2,8 +2,8 @@
 <html lang="tr" class="scroll-smooth">
 <head>
 <script>if(/^\/(urun\/|urunler|kategori\/|seri\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');
-/* Gamer Girl / Gamer Boy: adres /gamer-boy ise koyu tema; ürün sayfalarında son seçilen taraf hatırlanır */
-(function(){var p=location.pathname,m=null;if(/^\/gamer-boy\/?$/.test(p))m='boy';else if(/^\/gamer-girl\/?$/.test(p))m='girl';else{try{m=localStorage.getItem('gmode')}catch(e){}}m=m==='boy'?'boy':'girl';try{localStorage.setItem('gmode',m)}catch(e){}window.GMODE=m;if(m==='boy')document.documentElement.classList.add('boy-mode');})();</script>
+/* Gamika Girl / Gamika Boy: adres /gamika-boy ise koyu tema; ürün sayfalarında son seçilen taraf hatırlanır */
+(function(){var p=location.pathname,m=null;if(/^\/gamika-boy\/?$/.test(p))m='boy';else if(/^\/gamika-girl\/?$/.test(p))m='girl';else{try{m=localStorage.getItem('gmode')}catch(e){}}m=m==='boy'?'boy':'girl';try{localStorage.setItem('gmode',m)}catch(e){}window.GMODE=m;if(m==='boy')document.documentElement.classList.add('boy-mode');})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gamika — Kadınlara Özel Gaming Mousepad</title>
@@ -269,7 +269,7 @@
   @keyframes gm-bg-ince{from{background-position:0 0}to{background-position:536px 0}}
 </style>
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/gamer-boy.css">
+<link rel="stylesheet" href="/gamika-boy.css">
 </head>
 <body class="antialiased selection:bg-rose">
 <div id="site-bg" aria-hidden="true">
@@ -319,7 +319,7 @@
     </div>
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
-    <span class="mode-sw"><a href="/gamer-girl" data-m="girl">Gamer Girl</a><a href="/gamer-boy" data-m="boy" class="boy">Gamer Boy</a></span>
+    <span class="mode-sw"><a href="/gamika-girl" data-m="girl">Gamika Girl</a><a href="/gamika-boy" data-m="boy" class="boy">Gamika Boy</a></span>
     <div class="nav-dd"><a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px"></i></a>
       <div class="nav-dd-menu" id="nav-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="nav-soon">Figür<small>Çok yakında</small></span><span class="nav-soon">Bilek Desteği<small>Çok yakında</small></span><span class="nav-soon">Switch<small>Çok yakında</small></span></div></div>
     <a href="#setler" class="nav-pill girl-only">Hazır Setler <span class="yk-b">Yakında</span></a>
@@ -327,7 +327,7 @@
     <a href="#yakinda" class="nav-pill">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
-    <div class="m-mode"><a href="/gamer-girl" data-m="girl">Gamer Girl</a><a href="/gamer-boy" data-m="boy">Gamer Boy</a></div>
+    <div class="m-mode"><a href="/gamika-girl" data-m="girl">Gamika Girl</a><a href="/gamika-boy" data-m="boy">Gamika Boy</a></div>
     <a href="/urunler" onclick="openList('all');return false;" class="block text-lg font-medium">Ürünler</a>
     <div id="m-cats" class="m-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="m-soon">Figür <small>Çok yakında</small></span><span class="m-soon">Bilek Desteği <small>Çok yakında</small></span><span class="m-soon">Switch <small>Çok yakında</small></span></div>
     <a href="#setler" class="block text-lg font-medium girl-only">Hazır Setler <span class="yk-b">Yakında</span></a>
@@ -784,7 +784,7 @@ let cart = loadCart();
 // Ürünü olmayan kategoriler "Çok yakında" olarak gösterilir (veritabanı yüklenene kadar sadece mousepad açık sayılır)
 let dbLoaded = false;
 const BOY = window.GMODE === 'boy';
-// Gamer Boy tarafında gösterilen ürünler: Dark ve Minimal serisi mousepadler + klavye switch'leri
+// Gamika Boy tarafında gösterilen ürünler: Dark ve Minimal serisi mousepadler + klavye switch'leri
 const shown = p => !BOY || (p.cat === 'mousepad' ? ['dark','minimal'].includes(p.series) : p.cat === 'switch');
 const isLive = f => dbLoaded ? PRODUCTS.some(p => p.cat === f && shown(p)) : f === 'mousepad';
 const HZ_TILES = {'Figür':'figur','Mousepad':'mousepad','Bilek Desteği':'bilek',"Klavye Switch'i":'switch'};
@@ -1000,7 +1000,7 @@ function showList(f, sr){
   const ld = $('product-ld'); if(ld) ld.remove();
   pageShow(v);
 }
-function goHome(){ location.href = '/gamer-' + (window.GMODE || 'girl'); }
+function goHome(){ location.href = '/gamika-' + (window.GMODE || 'girl'); }
 const SEO_DEFAULT = {
   title: document.title,
   desc: (document.querySelector('meta[name="description"]') || {}).content || '',
@@ -1215,7 +1215,7 @@ function routeFromPath(){
 window.addEventListener('popstate', routeFromPath);
 document.addEventListener('click', e => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
-  if(a && document.documentElement.classList.contains('page-mode')){ e.preventDefault(); location.href = '/gamer-' + (window.GMODE || 'girl') + a.getAttribute('href'); }
+  if(a && document.documentElement.classList.contains('page-mode')){ e.preventDefault(); location.href = '/gamika-' + (window.GMODE || 'girl') + a.getAttribute('href'); }
 }, true);
 
 renderProducts();
@@ -2097,14 +2097,14 @@ initAuth();
 </script>
 
 <script>
-/* Gamer Girl / Gamer Boy: seçili taraf düğmesi ve Gamer Boy metinleri */
+/* Gamika Girl / Gamika Boy: seçili taraf düğmesi ve Gamika Boy metinleri */
 (function(){
   var M = window.GMODE || 'girl';
   document.querySelectorAll('.mode-sw a, .m-mode a').forEach(function(a){ if(a.dataset.m === M) a.classList.add('on'); });
   if(M !== 'boy') return;
   var tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute('content', '#09090c');
   var q = function(s){ return document.querySelector(s); };
-  var b = q('.hz-badge'); if(b && b.lastChild) b.lastChild.textContent = 'GAMER BOY';
+  var b = q('.hz-badge'); if(b && b.lastChild) b.lastChild.textContent = 'GAMİKA BOY';
   var h = q('.hz-h1'); if(h) h.innerHTML = 'OYUNUN KADAR<br><span>KARANLIK BİR SETUP</span>';
   var s = q('.hz-sub'); if(s) s.innerHTML = 'Erkek oyunculara özel gaming mousepadler <br><span style="font-size:.85em;opacity:.8">Dark ve Minimal seriler</span><br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b>';
   var b2 = q('.hz-b2'); if(b2){ b2.textContent = 'DARK SERİSİ'; b2.setAttribute('href', '/seri/dark'); }
@@ -2117,7 +2117,7 @@ initAuth();
   if(hk){
     var t = hk.querySelector('h2'); if(t) t.innerHTML = 'SADE, KARANLIK, <span class="text-berry">SENİN.</span>';
     var sh = hk.querySelector('.glass'); if(sh && /Set Halinde/.test(sh.textContent)) sh.style.display = 'none';
-    var p = hk.querySelector('p'); if(p) p.textContent = 'Gamer ekipmanları çoğu zaman ya fazla renkli ya da fazla sıradan görünüyor. Gamika\'nın Gamer Boy tarafı, karanlık ve sade bir masa kurmak isteyen oyuncular için: Dark ve Minimal seri gaming mousepadler. Klavye switch\'leri ve daha fazlası çok yakında.';
+    var p = hk.querySelector('p'); if(p) p.textContent = 'Gamer ekipmanları çoğu zaman ya fazla renkli ya da fazla sıradan görünüyor. Gamika\'nın Gamika Boy tarafı, karanlık ve sade bir masa kurmak isteyen oyuncular için: Dark ve Minimal seri gaming mousepadler. Klavye switch\'leri ve daha fazlası çok yakında.';
   }
 })();
 </script>

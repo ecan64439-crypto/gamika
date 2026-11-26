@@ -7,7 +7,7 @@
     "directory": ".",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/", "/gamer-girl", "/gamer-girl/", "/gamer-boy", "/gamer-boy/", "/urun/*", "/urunler", "/urunler/", "/kategori/*", "/seri/*", "/sitemap.xml", "/merchant-feed.xml"]
+    "run_worker_first": ["/", "/gamika-girl", "/gamika-girl/", "/gamika-boy", "/gamika-boy/", "/urun/*", "/urunler", "/urunler/", "/kategori/*", "/seri/*", "/sitemap.xml", "/merchant-feed.xml"]
   },
   "routes": [
     { "pattern": "gamikatr.com", "custom_domain": true },
