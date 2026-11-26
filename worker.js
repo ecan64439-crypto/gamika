@@ -260,7 +260,26 @@ async function handle(request, env) {
       }
     }
     // Ana giriş sayfası: Gamika Girl / Gamika Boy seçimi
-    if (path === '/') return env.ASSETS.fetch(new Request(url.origin + '/giris'));
+    if (path === '/') {
+      const g = await env.ASSETS.fetch(new Request(url.origin + '/giris'));
+      // Öne çıkan ürünler sunucuda yazılır (Google ana sayfada ürünleri görsün)
+      let feat = '';
+      try {
+        const rows = await db('select=id,name,price,image_url,images,google_image,series&is_active=eq.true&category=eq.mousepad&order=id.desc&limit=8');
+        const vmap = await variantsBy(rows.map(p => p.id));
+        const pick = vs => (vs.some(v => v.stock > 0) ? vs.filter(v => v.stock > 0) : vs);
+        const girl = rows.filter(p => p.series === 'candy'), other = rows.filter(p => p.series !== 'candy');
+        const four = [...girl.slice(0, 2), ...other.slice(0, 2), ...rows].filter((p, i, a) => a.indexOf(p) === i && imgOf(p)).slice(0, 4);
+        feat = four.map(p => {
+          const vs = vmap[p.id] || [], price = vs.length ? Math.min(...pick(vs).map(v => vPrice(p, v))) : Number(p.price);
+          return `<a href="${productPath(p)}"><img src="${esc(imgOf(p))}" alt="${esc(p.name)}" loading="lazy" width="400" height="400"><div class="t">${esc(p.name)}<b>${TL(price)}</b></div></a>`;
+        }).join('') + '<a href="/urunler"><div class="t">Tüm mousepadleri gör →</div></a>';
+      } catch (err) { console.log('Öne çıkanlar yüklenemedi:', err && err.message); }
+      if (!feat) return g;
+      const outG = new HTMLRewriter().on('div#one-cikan', { element(el) { el.setInnerContent(feat, { html: true }); } }).transform(g);
+      const hg = new Headers(outG.headers); hg.set('Cache-Control', 'public, max-age=60'); hg.delete('ETag');
+      return new Response(outG.body, { status: 200, headers: hg });
+    }
     // Gamika Girl / Gamika Boy ana sayfaları: mağaza sayfası, kendi başlık ve açıklamasıyla (Google için)
     const SIDE = {
       '/gamika-girl': { title: 'Gamika Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark, Minimal ve Duo seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
@@ -268,15 +287,34 @@ async function handle(request, env) {
     }[path];
     if (SIDE) {
       const shell0 = await env.ASSETS.fetch(new Request(url.origin + '/'));
-      const out0 = new HTMLRewriter()
+      const rw = new HTMLRewriter()
         .on('html', { element(el) { if (SIDE.boy) el.setAttribute('class', ((el.getAttribute('class') || '') + ' boy-mode').trim()); } })
         .on('title', { element(el) { el.setInnerContent(SIDE.title); } })
         .on('meta[name="description"]', new SetAttr('content', SIDE.desc))
         .on('link[rel="canonical"]', new SetAttr('href', SITE + path))
         .on('meta[property="og:title"]', new SetAttr('content', SIDE.title))
         .on('meta[property="og:description"]', new SetAttr('content', SIDE.desc))
-        .on('meta[property="og:url"]', new SetAttr('content', SITE + path))
-        .transform(shell0);
+        .on('meta[property="og:url"]', new SetAttr('content', SITE + path));
+      if (SIDE.boy) {
+        const fc = (cls, img, alt) => {
+          rw.on('a.' + cls, new SetAttr('href', '/seri/dark'))
+            .on('a.' + cls + ' img', { element(el) { el.setAttribute('src', img); el.setAttribute('alt', alt); } })
+            .on('a.' + cls + ' b', { element(el) { el.setInnerContent('Dark'); } });
+        };
+        rw.on('meta[name="theme-color"]', new SetAttr('content', '#09090c'))
+          .on('img.hdr-logo', new SetAttr('src', '/logo-boy.webp'))
+          .on('footer img[alt="Gamika"]', new SetAttr('src', '/logo-boy.webp'))
+          .on('.hz-badge', { text(t) { if (t.text.includes('KADIN OYUNCULAR İÇİN')) t.replace(t.text.replace('KADIN OYUNCULAR İÇİN', 'GAMİKA BOY')); } })
+          .on('h1.hz-h1', { element(el) { el.setInnerContent('OYUNUN KADAR<br><span>KARANLIK BİR SETUP</span>', { html: true }); } })
+          .on('p.hz-sub', { element(el) { el.setInnerContent('Erkek oyunculara özel gaming mousepadler <br><span style="font-size:.85em;opacity:.8">Dark, Minimal ve Duo seriler</span>', { html: true }); } })
+          .on('a.hz-b2', { element(el) { el.setAttribute('href', '/seri/dark'); el.setInnerContent('DARK SERİSİ'); } })
+          .on('.hz-fan-h span', { element(el) { el.setInnerContent('3 seri · 1 tarz'); } })
+          .on('#hikaye h2', { element(el) { el.setInnerContent('SADE, KARANLIK, <span class="text-berry">SENİN.</span>', { html: true }); } })
+          .on('#hikaye p.leading-relaxed', { element(el) { el.setInnerContent("Gamer ekipmanları çoğu zaman ya fazla renkli ya da fazla sıradan görünüyor. Gamika'nın Gamika Boy tarafı, karanlık ve sade bir masa kurmak isteyen oyuncular için: Dark, Minimal ve Duo seri gaming mousepadler. Klavye switch'leri ve daha fazlası çok yakında."); } });
+        fc('hz-fc2', '/img/urun/midnight-oni-vitrin.webp', 'Dark serisi mousepad');
+        fc('hz-fc3', '/img/urun/moonlit-shadow-vitrin.webp', 'Dark serisi mousepad');
+      }
+      const out0 = rw.transform(shell0);
       const h0 = new Headers(out0.headers);
       h0.set('Cache-Control', 'public, max-age=60');
       h0.delete('ETag');

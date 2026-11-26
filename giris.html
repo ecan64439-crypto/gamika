@@ -59,6 +59,24 @@ a{color:inherit;text-decoration:none}
 .logo img{width:100%;height:auto;display:block}
 .perks{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px 32px;padding:12px 16px;min-height:44px}
 .perks b{color:#fff;font-weight:600}
+.seo{background:#111114;color:#cfcfd6;padding:56px 20px 64px}
+.seo-in{max-width:1100px;margin:0 auto}
+.seo h2{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.02em;font-size:30px;color:#f4f4f7;margin-bottom:12px}
+.seo p.lead{max-width:760px;font-size:15px;line-height:1.75;color:#a7a7b2;margin-bottom:28px}
+.seo h3{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8b8b96;margin:34px 0 14px;font-weight:700}
+.series{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.series a{display:block;border-radius:14px;padding:16px;border:1px solid #24242c;background:#16161b;transition:border-color .2s}
+.series a:hover{border-color:#7c3aed}
+.series b{display:block;color:#f4f4f7;font-size:16px;margin-bottom:4px}
+.series span{font-size:12.5px;color:#9a9aa6;line-height:1.5}
+.series a.candy:hover{border-color:#d94f8e}
+.feat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.feat a{display:block;border-radius:14px;overflow:hidden;background:#16161b;border:1px solid #24242c;transition:transform .15s}
+.feat a:hover{transform:translateY(-2px)}
+.feat img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#1c1c23}
+.feat .t{padding:10px 12px 12px;font-size:13px;color:#ececf1;line-height:1.4}
+.feat .t b{display:block;margin-top:4px;color:#c4b5fd}
+@media (max-width:760px){.series,.feat{grid-template-columns:repeat(2,minmax(0,1fr))}.seo h2{font-size:24px}}
 footer{background:#0b0b0e;color:#6b6b76;font-size:11px;padding:14px 16px;text-align:center;line-height:1.9}
 footer a{margin:0 8px;white-space:nowrap}
 footer a:hover{color:#cfcfd6}
@@ -115,6 +133,22 @@ footer a:hover{color:#cfcfd6}
   <span>🏷️ <b>GAMIKA10</b> ile %10 indirim</span>
 </div>
 
+<section class="seo" aria-labelledby="seo-h">
+  <div class="seo-in">
+    <h2 id="seo-h">Kadın ve erkek oyunculara özel gaming mousepad</h2>
+    <p class="lead">Gamika, oyun masanı tarzına göre kurman için tasarlanmış 90x40 cm geniş gaming mousepadler üretir. Kumaş yüzeyli, 3 mm kalınlığında, kaymaz kauçuk tabanlı ve dikişli kenarlı mousepadlerimizi Türkiye'nin her yerine ücretsiz kargoyla, en geç 2 iş gününde gönderiyoruz. Tatlı ve şık tasarımlar için Gamika Girl'e, dark ve sade tasarımlar için Gamika Boy'a göz at.</p>
+    <h3>Seriler</h3>
+    <div class="series">
+      <a href="/seri/dark"><b>Dark</b><span>Siyah-beyaz, Japon ve anime temalı koyu tasarımlar</span></a>
+      <a href="/seri/minimal"><b>Minimal</b><span>Beyaz, mermer desenli, sade masa düzenleri için</span></a>
+      <a href="/seri/candy" class="candy"><b>Candy</b><span>Pastel pembe, sakura ve kawaii temalı tatlı tasarımlar</span></a>
+      <a href="/seri/duo"><b>Duo</b><span>Hem Gamika Girl hem Gamika Boy tarafına yakışanlar</span></a>
+    </div>
+    <h3>Öne çıkan mousepadler</h3>
+    <div class="feat" id="one-cikan"><a href="/urunler"><div class="t">Tüm mousepadleri gör →</div></a></div>
+  </div>
+</section>
+
 <footer>
   <a href="/sss.html">SSS</a>
   <a href="/kargo-iade.html">Kargo ve İade</a>
@@ -123,15 +157,62 @@ footer a:hover{color:#cfcfd6}
   <a href="/iletisim.html">İletişim</a>
 </footer>
 
+<!-- ÇEREZ ONAYI + ÖLÇÜM (Google Analytics 4, Meta Pixel)
+     Kimlikleri aşağıya yaz; boş kalırsa hiçbir takip kodu yüklenmez ve bant sadece bilgi verir.
+     Takip kodları yalnızca ziyaretçi "Kabul et" derse yüklenir (KVKK). -->
+<div id="cookie-note" role="region" aria-label="Çerez bilgilendirmesi" style="display:none;position:fixed;left:16px;bottom:16px;z-index:45;max-width:380px;width:calc(100% - 32px);background:#16161b;color:#f4f4f7;border:1px solid #2a2a33;border-radius:16px;padding:14px 16px;box-shadow:0 10px 25px rgba(0,0,0,.2);font-size:13px;line-height:1.5">
+  <p id="cookie-txt" style="margin:0 0 10px"></p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" id="cookie-ok" style="background:#7c3aed;color:#fff;border-radius:9999px;padding:6px 18px;font-weight:600;font-size:13px">Tamam</button>
+    <button type="button" id="cookie-no" style="display:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9999px;padding:6px 18px;font-weight:600;font-size:13px">Reddet</button>
+  </div>
+</div>
 <script>
-/* Ölçüm: ziyaretçi sitede çerezleri daha önce kabul ettiyse Google Analytics burada da çalışır */
 (function(){
-  var GA_ID = 'G-W90GQ61ZY2', ok = null;
-  try{ ok = localStorage.getItem('gamika_cerez_onay'); }catch(_){}
-  if(ok !== 'evet') return;
-  var g = document.createElement('script'); g.async = true; g.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID; document.head.appendChild(g);
-  window.dataLayer = window.dataLayer || []; window.gtag = function(){ dataLayer.push(arguments); };
-  gtag('js', new Date()); gtag('config', GA_ID);
+  var GA_ID = 'G-W90GQ61ZY2';      // Google Analytics 4 ölçüm kimliği, örn: 'G-ABC123XYZ'
+  var PIXEL_ID = '';   // Meta (Facebook/Instagram) Pixel kimliği, örn: '123456789012345'
+  var K = 'gamika_cerez_onay', el = document.getElementById('cookie-note');
+  var tracking = !!(GA_ID || PIXEL_ID), loaded = false;
+  var FB = { view_item:'ViewContent', add_to_cart:'AddToCart', begin_checkout:'InitiateCheckout', purchase:'Purchase' };
+  function get(){ try{ return localStorage.getItem(K); }catch(_){ return null; } }
+  function set(v){ try{ localStorage.setItem(K, v); }catch(_){} }
+  function load(){
+    if(loaded || !tracking) return; loaded = true;
+    if(GA_ID){
+      var g = document.createElement('script'); g.async = true; g.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_ID); document.head.appendChild(g);
+      window.dataLayer = window.dataLayer || []; window.gtag = function(){ dataLayer.push(arguments); };
+      gtag('js', new Date()); gtag('config', GA_ID);
+    }
+    if(PIXEL_ID){
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', PIXEL_ID); fbq('track', 'PageView');
+    }
+    (window.gmkQueue || []).forEach(function(a){ window.gmkTrack(a[0], a[1]); }); window.gmkQueue = [];
+  }
+  // Satış olaylarını ölç: ürün görüntüleme, sepete ekleme, ödemeye geçme, satın alma
+  window.gmkTrack = function(name, d){
+    if(!tracking || get() !== 'evet') return;
+    if(!loaded){ (window.gmkQueue = window.gmkQueue || []).push([name, d]); return; }
+    d = d || {};
+    if(window.gtag) gtag('event', name, { currency:'TRY', value:d.value, transaction_id:d.order_no,
+      items:(d.items || []).map(function(i){ return { item_id:String(i.id), item_name:i.name, price:i.price, quantity:i.qty || 1 }; }) });
+    if(window.fbq && FB[name]) fbq('track', FB[name], { currency:'TRY', value:d.value,
+      content_ids:(d.items || []).map(function(i){ return String(i.id); }), content_type:'product' });
+  };
+  window.cerezTercih = function(){ show(); };
+  function show(){
+    document.getElementById('cookie-txt').innerHTML = tracking
+      ? '🍪 Siteyi geliştirmek ve sana uygun reklamlar göstermek için Google ve Meta ölçüm çerezlerini kullanmak istiyoruz. Kabul edersen etkinleşir; reddedersen sadece zorunlu çerezler kullanılır. <a href="/gizlilik.html#cerezler" style="color:#c4b5fd;text-decoration:underline">Ayrıntılar</a>'
+      : '🍪 Sitemiz yalnızca çalışması için gerekli çerezleri kullanır (giriş, sepet, güvenlik). Reklam veya takip çerezi kullanmıyoruz. <a href="/gizlilik.html#cerezler" style="color:#c4b5fd;text-decoration:underline">Ayrıntılar</a>';
+    document.getElementById('cookie-ok').textContent = tracking ? 'Kabul et' : 'Tamam';
+    document.getElementById('cookie-no').style.display = tracking ? 'inline-block' : 'none';
+    el.style.display = 'block';
+  }
+  document.getElementById('cookie-ok').onclick = function(){ el.style.display = 'none'; set(tracking ? 'evet' : 'bilgi'); load(); };
+  document.getElementById('cookie-no').onclick = function(){ el.style.display = 'none'; set('hayir'); };
+  var v = get();
+  if(v === 'evet') load();
+  else if(!v || (tracking && v === 'bilgi')) show();
 })();
 </script>
 </body>
