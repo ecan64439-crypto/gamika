@@ -8,7 +8,7 @@ const SITE = 'https://gamikatr.com';
 const DEFAULT_IMG = SITE + '/logo.png';
 
 const CATS = [
-  { f: 'mousepad', slug: 'mousepad', t: 'Mousepad', h: 'Mousepad Modelleri', d: 'Kadın ve erkek oyuncular için Candy, Dark ve Minimal serilerde geniş boy gaming mousepad modelleri.' },
+  { f: 'mousepad', slug: 'mousepad', t: 'Mousepad', h: 'Mousepad Modelleri', d: 'Kadın ve erkek oyuncular için Candy, Dark, Minimal ve Duo serilerinde geniş boy gaming mousepad modelleri.' },
   { f: 'figur', slug: 'figur', t: 'Figür', h: 'Masaüstü Figürler', d: 'Oyun masana sevimli bir dokunuş katan masaüstü figürler.' },
   { f: 'bilek', slug: 'bilek-destegi', t: 'Bilek Desteği', h: 'Klavye Bilek Destekleri', d: 'Yazarken ve oynarken rahat duruş için pastel klavye bilek destekleri.' },
   { f: 'switch', slug: 'klavye-switch', t: 'Switch', h: "Klavye Switch'leri", d: 'Mekanik klavyene yeni bir his katan linear ve tactile switch setleri.' }
@@ -18,7 +18,8 @@ const CATS = [
 const SERIES = [
   { k: 'dark', t: 'Dark', h: 'Dark Serisi – Siyah ve Koyu Gaming Mousepad', d: 'Gamika Dark serisi: siyah, mor ve koyu tonlarda, anime ve Japon temalı 90x40 gaming mousepad modelleri. Ücretsiz kargo, 2 iş gününde kargoda.' },
   { k: 'minimal', t: 'Minimal', h: 'Minimal Serisi – Beyaz ve Sade Gaming Mousepad', d: 'Gamika Minimal serisi: beyaz, mermer desenli ve sade gaming mousepad modelleri; beyaz ve açık renk masa düzenlerine uygun. Ücretsiz kargo.' },
-  { k: 'candy', t: 'Candy', h: 'Candy Serisi – Pastel Pembe Kawaii Mousepad', d: 'Gamika Candy serisi: pastel pembe, sakura ve kawaii temalı tatlı gaming mousepad modelleri. Kadın oyunculara özel, ücretsiz kargo.' }
+  { k: 'candy', t: 'Candy', h: 'Candy Serisi – Pastel Pembe Kawaii Mousepad', d: 'Gamika Candy serisi: pastel pembe, sakura ve kawaii temalı tatlı gaming mousepad modelleri. Kadın oyunculara özel, ücretsiz kargo.' },
+  { k: 'duo', t: 'Duo', h: 'Duo Serisi – Kadın ve Erkek Oyunculara Gaming Mousepad', d: 'Gamika Duo serisi: hem Gamika Girl hem Gamika Boy tarafına yakışan, herkese uygun gaming mousepad modelleri. Ücretsiz kargo, 2 iş gününde kargoda.' }
 ];
 // Google ürün bilgisine kargo (ücretsiz, Türkiye, 0-2 gün hazırlık + 1-3 gün kargo) ve 14 gün iade bilgisi
 const OFFER_EXTRA = {
@@ -133,7 +134,7 @@ async function db(query) {
 
 function metaDesc(p) {
   const d = (p.description || '').trim().replace(/\s+/g, ' ');
-  return d ? d.slice(0, 155) : `${p.name} (${p.type_label}) Gamika'da ${TL(p.price)}. Kadın oyuncular için pastel gamer ekipmanları.`;
+  return d ? d.slice(0, 155) : `${p.name} (${p.type_label}) Gamika'da ${TL(p.price)}. Ücretsiz kargo, 2 iş gününde kargoda.`;
 }
 
 function cardHTML(p) {
@@ -215,7 +216,7 @@ async function buildPage(path) {
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın ve erkek oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
+      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın ve erkek oyunculara özel gaming mousepad modelleri; Dark, Minimal, Candy ve Duo serileri, ücretsiz kargo.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${se ? `<a href="/urunler">Ürünler</a> › <a href="/kategori/mousepad">Mousepad</a> › ${esc(se.t)} Serisi` : c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
@@ -233,6 +234,19 @@ class SetAttr {
 
 export default {
   async fetch(request, env) {
+    const res = await handle(request, env);
+    // Test linkleri (….workers.dev) Google'da çıkmasın; asıl site gamikatr.com
+    if (new URL(request.url).hostname.endsWith('.workers.dev')) {
+      const r2 = new Response(res.body, res);
+      r2.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return r2;
+    }
+    return res;
+  }
+};
+
+async function handle(request, env) {
+  {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, '') || '/';
 
@@ -249,8 +263,8 @@ export default {
     if (path === '/') return env.ASSETS.fetch(new Request(url.origin + '/giris'));
     // Gamika Girl / Gamika Boy ana sayfaları: mağaza sayfası, kendi başlık ve açıklamasıyla (Google için)
     const SIDE = {
-      '/gamika-girl': { title: 'Gamika Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamika Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
-      '/gamika-boy': { title: 'Gamika Boy – Erkek Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamika Boy: erkek oyunculara özel dark ve sade gaming mousepad modelleri. Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: true }
+      '/gamika-girl': { title: 'Gamika Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark, Minimal ve Duo seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
+      '/gamika-boy': { title: 'Gamika Boy – Erkek Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Boy: erkek oyunculara özel dark ve sade gaming mousepad modelleri. Dark, Minimal ve Duo seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: true }
     }[path];
     if (SIDE) {
       const shell0 = await env.ASSETS.fetch(new Request(url.origin + '/'));

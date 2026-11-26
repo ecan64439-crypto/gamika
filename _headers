@@ -8,3 +8,7 @@
 /yonetim/*
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
+
+# Test linkleri (workers.dev) Google'da görünmesin
+https://:sub.ecan64439.workers.dev/*
+  X-Robots-Tag: noindex, nofollow

@@ -229,7 +229,8 @@ async function editP(id){
   <label>Ad</label><input id="f_name" value="${esc(p.name)}">
   <label>Kategori</label><select id="f_cat" onchange="catMode()">${CAT.map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select>
   <label>Tür etiketi</label><input id="f_type" value="${esc(p.type_label)}">
-  <label>Seri</label><select id="f_series">${[['','Seri yok'],['dark','Dark'],['minimal','Minimal'],['candy','Candy']].map(([v,t])=>`<option value="${v}" ${(p.series||'')===v?'selected':''}>${t}</option>`).join('')}</select>
+  <label>Seri</label><select id="f_series">${[['','Seri yok'],['dark','Dark'],['minimal','Minimal'],['candy','Candy'],['duo','Duo (ikisine de uygun)']].map(([v,t])=>`<option value="${v}" ${(p.series||'')===v?'selected':''}>${t}</option>`).join('')}</select>
+  <label>Kimler için (sitede hangi tarafta görünsün)</label><select id="f_aud">${[['both','İkisi de (Gamika Girl + Gamika Boy)'],['girl','Sadece Gamika Girl'],['boy','Sadece Gamika Boy']].map(([v,t])=>`<option value="${v}" ${(p.audience||(p.series==='candy'?'girl':'both'))===v?'selected':''}>${t}</option>`).join('')}</select>
   <div id="f_sizes" class="card" style="padding:12px;margin:12px 0;background:var(--bg,#fafafa)"></div>
   <div id="f_ps" class="row"><div style="flex:1"><label>Fiyat (₺)</label><input id="f_price" type="number" min="0" step="0.01" value="${p.price}"></div>
   <div style="flex:1"><label>Stok</label><input id="f_stock" type="number" min="0" step="1" value="${p.stock}"></div></div>
@@ -420,7 +421,7 @@ async function upPics(files){
 async function saveP(id){
   const r={name:$('#f_name').value.trim(),category:$('#f_cat').value,type_label:$('#f_type').value.trim(),
     price:parseFloat($('#f_price').value),stock:parseInt($('#f_stock').value,10),
-    description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,google_image:GIMG||null,series:$('#f_series').value||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
+    description:$('#f_desc').value.trim()||null,images:IMGS,videos:VIDS,image_url:IMGS[0]||null,google_image:GIMG||null,series:$('#f_series').value||null,audience:$('#f_aud').value||null,icon:$('#f_icon').value.trim()||null,is_active:$('#f_act').checked};
   if(r.category==='mousepad'){
     if(!VARS.length)return toast('En az bir ölçü işaretle');
     if(VARS.some(v=>String(v.price).trim()===''||isNaN(parseFloat(v.price))))return toast('Her ölçünün fiyatını yaz');
