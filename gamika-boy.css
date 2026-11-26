@@ -169,7 +169,7 @@ html.boy-mode .gm-cap{background:repeating-radial-gradient(ellipse at 50% 50%,va
 html.boy-mode .gm-logo{text-shadow:0 1px 0 #7c3aed !important}
 
 /* 2) Elle ayarlanan kısımlar */
-/* GAMİKA – Gamika Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamika-boy).
+/* GAMİKA – Gamika Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamer-boy).
    Bu dosyanın alt kısmı otomatik üretildi: pembe renkler koyu/mor karşılıklarına çevrildi. */
 html.boy-mode{color-scheme:dark}
 html.boy-mode,html.boy-mode body{background:#09090c !important;color:#ececf1}
@@ -238,3 +238,31 @@ html.boy-mode img.hdr-logo,html.boy-mode footer img[alt="Gamika"]{content:url(/l
 @media (min-width:1024px){html.boy-mode #content-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:960px;margin:0 auto}}
 /* Açılan pencerelerin arka perdesi */
 html.boy-mode .bg-ink\/60,html.boy-mode .bg-ink\/70{background-color:rgba(0,0,0,.7) !important}
+/* Gamika Girl / Gamika Boy anahtarı (ışık anahtarı gibi; iki tarafta da aynı yerde) */
+.gsw{display:none;align-items:center;gap:8px;margin-left:8px;font-size:12px;font-weight:700;letter-spacing:.04em;user-select:none}
+@media (min-width:1024px){.gsw{display:inline-flex}}
+.gsw-l{color:#A67B9B;transition:color .2s}
+.gsw-t{position:relative;width:46px;height:26px;border-radius:9999px;background:#F9D5E5;box-shadow:inset 0 0 0 1.5px #F3D3E3;transition:background .23s}
+.gsw-k{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#E0709A;box-shadow:0 2px 5px rgba(42,27,46,.25);transition:transform .23s ease,background .23s}
+html:not(.boy-mode) .gsw-g{color:#E0709A}
+html:not(.boy-mode) .gsw.go .gsw-k{transform:translateX(20px)}
+html.boy-mode .gsw-l{color:#6b6b76 !important}
+html.boy-mode .gsw-b{color:#f4f4f7 !important}
+html.boy-mode .gsw-t{background:#24242c !important;box-shadow:inset 0 0 0 1.5px #3a3a44 !important}
+html.boy-mode .gsw-k{transform:translateX(20px);background:#f4f4f7 !important;box-shadow:0 2px 5px rgba(0,0,0,.5) !important}
+html.boy-mode .gsw.go .gsw-k{transform:translateX(0)}
+.gsw:hover .gsw-t{filter:brightness(.97)}
+/* Gamika Boy: üst şerit, menü ikonları ve sepet rozeti mor değil, siyah-beyaz */
+html.boy-mode .gm-wrap.tema-a{--gm-tc:#e4e4ea;--gm-th:#3a3a44;--gm-th2:#55555e;--gm-rb:#1f1f27;--gm-base:#141419}
+html.boy-mode .gm-pad{box-shadow:0 2px 0 #050507,0 4px 6px rgba(0,0,0,.4) !important}
+html.boy-mode .gm-weave{background-image:none !important}
+html.boy-mode .gm-cap{border-color:#55555e !important;background:repeating-radial-gradient(ellipse at 50% 50%,#2a2a33 0 1.5px,#141419 1.5px 2.5px) !important}
+html.boy-mode .gm-rollb{box-shadow:2px 4px 8px rgba(0,0,0,.5) !important}
+html.boy-mode .gm-logo{color:#f4f4f7 !important;text-shadow:0 1px 0 #55555e !important}
+html.boy-mode .gm-wrap .gm-px rect[fill="#9B4DE0"]{fill:#e4e4ea !important}
+html.boy-mode .gm-wrap .gm-px rect[fill="#fff"]{fill:#55555e !important}
+html.boy-mode .hdr-ico rect[fill="#9B4DE0"],html.boy-mode #mbar rect[fill="#9B4DE0"]{fill:#e4e4ea !important}
+html.boy-mode .hdr-ico rect[fill="#fff"],html.boy-mode #mbar rect[fill="#fff"]{fill:#09090c !important}
+html.boy-mode .hdr-btn,html.boy-mode #mbar{color:#e4e4ea !important}
+html.boy-mode .hdr-btn:hover{color:#fff !important}
+html.boy-mode #cart-badge,html.boy-mode #mb-badge{background:#f4f4f7 !important;color:#09090c !important}

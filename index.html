@@ -297,6 +297,7 @@
     <div class="flex items-center gap-1">
       <button id="menu-btn" class="lg:hidden p-2" aria-label="Menü"><i class="fa-solid fa-bars text-xl"></i></button>
       <button id="search-btn" class="hover:text-berry p-2" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
+      <a id="gsw" class="gsw" href="/gamika-boy" aria-label="Gamika Girl / Gamika Boy arasında geçiş yap"><span class="gsw-l gsw-g">Girl</span><span class="gsw-t"><span class="gsw-k"></span></span><span class="gsw-l gsw-b">Boy</span></a>
     </div>
     <a href="/" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
       <img src="/logo.webp" alt="Gamika" class="hdr-logo block h-9 sm:h-12 w-auto object-contain"
@@ -319,7 +320,7 @@
     </div>
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
-    <span class="mode-sw"><a href="/gamika-girl" data-m="girl">Gamika Girl</a><a href="/gamika-boy" data-m="boy" class="boy">Gamika Boy</a></span>
+    
     <div class="nav-dd"><a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px"></i></a>
       <div class="nav-dd-menu" id="nav-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="nav-soon">Figür<small>Çok yakında</small></span><span class="nav-soon">Bilek Desteği<small>Çok yakında</small></span><span class="nav-soon">Switch<small>Çok yakında</small></span></div></div>
     <a href="#setler" class="nav-pill girl-only">Hazır Setler <span class="yk-b">Yakında</span></a>
@@ -2100,7 +2101,12 @@ initAuth();
 /* Gamika Girl / Gamika Boy: seçili taraf düğmesi ve Gamika Boy metinleri */
 (function(){
   var M = window.GMODE || 'girl';
-  document.querySelectorAll('.mode-sw a, .m-mode a').forEach(function(a){ if(a.dataset.m === M) a.classList.add('on'); });
+  document.querySelectorAll('.m-mode a').forEach(function(a){ if(a.dataset.m === M) a.classList.add('on'); });
+  var sw = document.getElementById('gsw');
+  if(sw){
+    sw.href = M === 'boy' ? '/gamika-girl' : '/gamika-boy';
+    sw.addEventListener('click', function(e){ e.preventDefault(); var to = sw.href; sw.classList.add('go'); setTimeout(function(){ location.href = to; }, 230); });
+  }
   if(M !== 'boy') return;
   var tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute('content', '#09090c');
   var q = function(s){ return document.querySelector(s); };
