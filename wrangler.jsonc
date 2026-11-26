@@ -13,5 +13,7 @@
     { "pattern": "gamikatr.com", "custom_domain": true },
     { "pattern": "www.gamikatr.com", "custom_domain": true }
   ],
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Test dalları için önizleme linki (npx wrangler preview bu bloğu istiyor; boş kalabilir)
+  "previews": {}
 }
