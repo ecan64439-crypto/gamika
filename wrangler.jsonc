@@ -15,5 +15,6 @@
   ],
   "observability": { "enabled": true },
   // Test dalları için önizleme linki (npx wrangler preview bu bloğu istiyor; boş kalabilir)
-  "previews": {}
+  "previews": {},
+  "preview_urls": true
 }
