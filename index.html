@@ -1465,7 +1465,7 @@ async function initAuth(){
     user = data.session ? data.session.user : null;
     if(isRecovery && user){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); try{ history.replaceState(null,'',location.pathname); }catch(_){} }
     if(isSignup && user){
-      info('E-postan onaylandı!' + LV2, 'GAMİKA\'ya hoş geldin! Hesabın hazır ve giriş yapıldı. Keyifli alışverişler.', 'fa-solid fa-heart text-berry');
+      info('E-postan onaylandı!' + LV2, 'GAMİKA\'ya hoş geldin! Hesabın hazır ve giriş yapıldı. Keyifli alışverişler.', BOY ? 'fa-solid fa-circle-check text-berry' : 'fa-solid fa-heart text-berry');
       try{ history.replaceState(null,'',location.pathname); }catch(_){}
     }else if(linkError){
       info('Bağlantı geçersiz', 'Bu bağlantının süresi dolmuş ya da daha önce kullanılmış. Hesabın zaten onaylandıysa giriş yapabilirsin.', 'fa-solid fa-triangle-exclamation');
