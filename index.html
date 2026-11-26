@@ -2,8 +2,9 @@
 <html lang="tr" class="scroll-smooth">
 <head>
 <script>if(/^\/(urun\/|urunler|kategori\/|seri\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');
-/* Gamika Girl / Gamika Boy: adres /gamika-boy ise koyu tema; ürün sayfalarında son seçilen taraf hatırlanır */
-(function(){var p=location.pathname,m=null;if(/^\/gamika-boy\/?$/.test(p))m='boy';else if(/^\/gamika-girl\/?$/.test(p))m='girl';else{try{m=localStorage.getItem('gmode')}catch(e){}}m=m==='boy'?'boy':'girl';try{localStorage.setItem('gmode',m)}catch(e){}window.GMODE=m;if(m==='boy')document.documentElement.classList.add('boy-mode');})();</script>
+/* Gamika Girl / Gamika Boy: adres /gamika-boy ise koyu tema; ürün sayfalarında son seçilen taraf hatırlanır.
+   Hiç seçim yapmamış (ilk kez ürün sayfasından gelen) ziyaretçide tema ürüne göre: sadece Girl ürünleri pembe, diğerleri koyu (data-gm) */
+(function(){var p=location.pathname,m=null;if(/^\/gamika-boy\/?$/.test(p))m='boy';else if(/^\/gamika-girl\/?$/.test(p))m='girl';else{try{m=localStorage.getItem('gmode')}catch(e){}if(!m)m=document.documentElement.getAttribute('data-gm');}m=m==='boy'?'boy':'girl';try{localStorage.setItem('gmode',m)}catch(e){}window.GMODE=m;if(m==='boy')document.documentElement.classList.add('boy-mode');})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gamika — Kadın ve Erkek Oyunculara Özel Gaming Mousepad</title>

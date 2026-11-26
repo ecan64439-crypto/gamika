@@ -149,7 +149,7 @@ function cardHTML(p) {
 async function buildPage(path) {
   const m = /^\/urun\/(\d+)/.exec(path);
   if (m) {
-    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,google_image,series,description,option_label,option2_label&is_active=eq.true&id=eq.' + Number(m[1]));
+    const rows = await db('select=id,name,category,type_label,price,stock,image_url,images,google_image,series,audience,description,option_label,option2_label&is_active=eq.true&id=eq.' + Number(m[1]));
     const p = rows[0];
     const vars = p ? ((await variantsBy([p.id]))[p.id] || []) : [];
     if (!p) return { status: 404, title: 'Ürün bulunamadı | Gamika', desc: 'Bu ürün satıştan kalkmış olabilir.', url: SITE + '/urunler', img: DEFAULT_IMG, noindex: true, body: '<h1 class="font-serif" style="font-size:26px;font-weight:700">Ürün bulunamadı</h1><p><a href="/urunler">Tüm ürünlere göz at</a></p>' };
@@ -186,7 +186,8 @@ async function buildPage(path) {
       { '@type': 'ListItem', position: c ? 4 : 3, name: p.name, item: url }
     ] };
     return {
-      status: 200, title: p.name + ' | Gamika', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
+      status: 200, gm: (p.audience || (p.series === 'candy' ? 'girl' : 'both')) === 'girl' ? 'girl' : 'boy',
+      title: p.name + ' | Gamika', desc: metaDesc(p), url, img, ogType: 'product', price: p.price, ld: [ld, crumbs],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › <a href="/urunler">Ürünler</a>${c ? ` › <a href="${listPath(c)}">${esc(c.t)}</a>` : ''} › ${esc(p.name)}</p>
         <div style="display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:18px">
           <div><div class="rounded-3xl imgbg overflow-hidden" style="aspect-ratio:1/1">${imgOf(p) ? `<div class="fitbox"><img src="${esc(imgOf(p))}" alt="" aria-hidden="true" class="fit-bg"><img src="${esc(imgOf(p))}" alt="${esc(p.name)}" class="fit-fg"></div>` : ''}</div>
@@ -216,7 +217,7 @@ async function buildPage(path) {
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın ve erkek oyunculara özel gaming mousepad modelleri; Dark, Minimal, Candy ve Duo serileri, ücretsiz kargo.',
+      status: 200, gm: se ? (se.k === 'candy' ? 'girl' : 'boy') : '', noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın ve erkek oyunculara özel gaming mousepad modelleri; Dark, Minimal, Candy ve Duo serileri, ücretsiz kargo.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${se ? `<a href="/urunler">Ürünler</a> › <a href="/kategori/mousepad">Mousepad</a> › ${esc(se.t)} Serisi` : c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
@@ -337,7 +338,7 @@ async function handle(request, env) {
       + (page.price != null ? `<meta property="product:price:amount" content="${Number(page.price).toFixed(2)}"><meta property="product:price:currency" content="TRY">` : '');
 
     const out = new HTMLRewriter()
-      .on('html', { element(el) { el.setAttribute('class', ((el.getAttribute('class') || '') + ' page-mode').trim()); } })
+      .on('html', { element(el) { el.setAttribute('class', ((el.getAttribute('class') || '') + ' page-mode').trim()); if (page.gm) el.setAttribute('data-gm', page.gm); } })
       .on('title', { element(el) { el.setInnerContent(page.title); } })
       .on('meta[name="description"]', new SetAttr('content', page.desc))
       .on('link[rel="canonical"]', new SetAttr('href', page.url))
