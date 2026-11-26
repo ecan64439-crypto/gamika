@@ -274,7 +274,7 @@ async function handle(request, env) {
         feat = four.map(p => {
           const vs = vmap[p.id] || [], price = vs.length ? Math.min(...pick(vs).map(v => vPrice(p, v))) : Number(p.price);
           return `<a href="${productPath(p)}"><img src="${esc(imgOf(p))}" alt="${esc(p.name)}" loading="lazy" width="400" height="400"><div class="t">${esc(p.name)}<b>${TL(price)}</b></div></a>`;
-        }).join('') + '<a href="/urunler"><div class="t">Tüm mousepadleri gör →</div></a>';
+        }).join('');
       } catch (err) { console.log('Öne çıkanlar yüklenemedi:', err && err.message); }
       if (!feat) return g;
       const outG = new HTMLRewriter().on('div#one-cikan', { element(el) { el.setInnerContent(feat, { html: true }); } }).transform(g);
