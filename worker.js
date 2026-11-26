@@ -8,7 +8,7 @@ const SITE = 'https://gamikatr.com';
 const DEFAULT_IMG = SITE + '/logo.png';
 
 const CATS = [
-  { f: 'mousepad', slug: 'mousepad', t: 'Mousepad', h: 'Mousepad Modelleri', d: 'Kadın oyuncular için pastel renkli, geniş boy gaming mousepad modelleri.' },
+  { f: 'mousepad', slug: 'mousepad', t: 'Mousepad', h: 'Mousepad Modelleri', d: 'Kadın ve erkek oyuncular için Candy, Dark ve Minimal serilerde geniş boy gaming mousepad modelleri.' },
   { f: 'figur', slug: 'figur', t: 'Figür', h: 'Masaüstü Figürler', d: 'Oyun masana sevimli bir dokunuş katan masaüstü figürler.' },
   { f: 'bilek', slug: 'bilek-destegi', t: 'Bilek Desteği', h: 'Klavye Bilek Destekleri', d: 'Yazarken ve oynarken rahat duruş için pastel klavye bilek destekleri.' },
   { f: 'switch', slug: 'klavye-switch', t: 'Switch', h: "Klavye Switch'leri", d: 'Mekanik klavyene yeni bir his katan linear ve tactile switch setleri.' }
@@ -50,7 +50,7 @@ const imgsOf = p => { const a = [...new Set([...(Array.isArray(p.images) ? p.ima
 const gImgsOf = p => [...new Set([p.google_image, ...imgsOf(p)].filter(okUrl))];
 const imgOf = p => imgsOf(p)[0] || '';
 const xml = s => esc(s).replace(/&#39;/g, '&apos;');
-const STATIC_PAGES = ['/', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
+const STATIC_PAGES = ['/', '/gamer-girl', '/gamer-boy', '/iletisim.html', '/sss.html', '/kargo-iade.html', '/mesafeli-satis.html', '/on-bilgilendirme.html', '/gizlilik.html', '/uyelik-sozlesmesi.html'];
 
 // Ürünlerin seçenekleri (renk, ölçü): { ürünId: [seçenek, ...] }
 async function variantsBy(ids) {
@@ -215,7 +215,7 @@ async function buildPage(path) {
     const ld = { '@context': 'https://schema.org', '@type': 'ItemList', name: title,
       itemListElement: rows.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + productPath(p), name: p.name })) };
     return {
-      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
+      status: 200, noindex: !rows.length, title: title + ' | Gamika', desc: se ? se.d : c ? c.d : 'Gamika tüm ürünler: kadın ve erkek oyunculara özel gaming mousepad modelleri; Dark, Minimal ve Candy serileri, ücretsiz kargo.',
       url, img: (rows.find(imgOf) && imgOf(rows.find(imgOf))) || DEFAULT_IMG, ld: [ld],
       body: `<p class="text-xs text-mauve"><a href="/">Ana Sayfa</a> › ${se ? `<a href="/urunler">Ürünler</a> › <a href="/kategori/mousepad">Mousepad</a> › ${esc(se.t)} Serisi` : c ? `<a href="/urunler">Ürünler</a> › ${esc(c.t)}` : 'Ürünler'}</p>
         <h1 class="font-serif" style="font-size:34px;font-weight:700;margin:8px 0 4px">${esc(title)}</h1>
@@ -245,6 +245,30 @@ export default {
         return env.ASSETS.fetch(request); // yedek: depodaki sabit sitemap.xml
       }
     }
+    // Ana giriş sayfası: Gamer Girl / Gamer Boy seçimi
+    if (path === '/') return env.ASSETS.fetch(new Request(url.origin + '/giris'));
+    // Gamer Girl / Gamer Boy ana sayfaları: mağaza sayfası, kendi başlık ve açıklamasıyla (Google için)
+    const SIDE = {
+      '/gamer-girl': { title: 'Gamer Girl – Kadın Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamer Girl: kadın oyunculara özel tatlı ve şık gaming mousepad modelleri. Candy, Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: false },
+      '/gamer-boy': { title: 'Gamer Boy – Erkek Oyunculara Özel Gaming Mousepad | Gamika', desc: 'Gamika Gamer Boy: erkek oyunculara özel dark ve sade gaming mousepad modelleri. Dark ve Minimal seriler, ücretsiz kargo, 2 iş gününde kargoda.', boy: true }
+    }[path];
+    if (SIDE) {
+      const shell0 = await env.ASSETS.fetch(new Request(url.origin + '/'));
+      const out0 = new HTMLRewriter()
+        .on('html', { element(el) { if (SIDE.boy) el.setAttribute('class', ((el.getAttribute('class') || '') + ' boy-mode').trim()); } })
+        .on('title', { element(el) { el.setInnerContent(SIDE.title); } })
+        .on('meta[name="description"]', new SetAttr('content', SIDE.desc))
+        .on('link[rel="canonical"]', new SetAttr('href', SITE + path))
+        .on('meta[property="og:title"]', new SetAttr('content', SIDE.title))
+        .on('meta[property="og:description"]', new SetAttr('content', SIDE.desc))
+        .on('meta[property="og:url"]', new SetAttr('content', SITE + path))
+        .transform(shell0);
+      const h0 = new Headers(out0.headers);
+      h0.set('Cache-Control', 'public, max-age=60');
+      h0.delete('ETag');
+      return new Response(out0.body, { status: 200, headers: h0 });
+    }
+
     let page = null;
     try { page = await buildPage(decodeURIComponent(path)); }
     catch (err) { console.log('Sayfa hazırlanamadı:', err && err.message); }

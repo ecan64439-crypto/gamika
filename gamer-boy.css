@@ -1,0 +1,240 @@
+/* GAMİKA – Gamer Boy teması (sadece gamikatr.com/gamer-boy tarafında, <html class="boy-mode"> iken çalışır). */
+/* 1) Otomatik renk çevirisi: pembe/lila renkler koyu ve mor karşılıklarına çevrildi. */
+html.boy-mode *,html.boy-mode ::before,html.boy-mode ::after{--tw-ring-offset-color:#2a2a33 !important;--tw-ring-color:rgba(124,58,237,0.5) !important}
+html.boy-mode ::backdrop{--tw-ring-offset-color:#2a2a33 !important;--tw-ring-color:rgba(124,58,237,0.5) !important}
+html.boy-mode *,html.boy-mode ::after,html.boy-mode ::before{border-color:#2a2a33 !important}
+html.boy-mode input::placeholder,html.boy-mode textarea::placeholder{color:#9a9aa6 !important}
+html.boy-mode .border-rose{border-color:rgb(42 42 51 / var(--tw-border-opacity, 1)) !important}
+html.boy-mode .border-rose\/60{border-color:rgba(42,42,51,0.6) !important}
+html.boy-mode .border-white\/10{border-color:rgba(42,42,51,0.1) !important}
+html.boy-mode .border-white\/15{border-color:rgba(42,42,51,0.15) !important}
+html.boy-mode .border-ink{border-color:rgb(58 58 68 / var(--tw-border-opacity, 1)) !important}
+html.boy-mode .border-rose\/40{border-color:rgba(42,42,51,0.4) !important}
+html.boy-mode .border-rose\/50{border-color:rgba(42,42,51,0.5) !important}
+html.boy-mode .bg-berry{background-color:rgb(124 58 237 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-cream{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-ink{background-color:rgb(124 58 237 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-ink\/60{background-color:rgba(124,58,237,0.6) !important}
+html.boy-mode .bg-ink\/70{background-color:rgba(124,58,237,0.7) !important}
+html.boy-mode .bg-lilac\/50{background-color:rgba(24,24,30,0.5) !important}
+html.boy-mode .bg-petal{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-petal\/30{background-color:rgba(24,24,30,0.3) !important}
+html.boy-mode .bg-petal\/50{background-color:rgba(24,24,30,0.5) !important}
+html.boy-mode .bg-rose{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-rose\/40{background-color:rgba(24,24,30,0.4) !important}
+html.boy-mode .bg-white{background-color:rgb(20 20 25 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .bg-white\/10{background-color:rgba(20,20,25,0.1) !important}
+html.boy-mode .bg-petal\/60{background-color:rgba(24,24,30,0.6) !important}
+html.boy-mode .bg-white\/90{background-color:rgba(20,20,25,0.9) !important}
+html.boy-mode .bg-white\/70{background-color:rgba(20,20,25,0.7) !important}
+html.boy-mode .from-petal{--tw-gradient-from:#18181e var(--tw-gradient-from-position) !important;--tw-gradient-to:rgba(24,24,30,0) var(--tw-gradient-to-position) !important}
+html.boy-mode .from-rose{--tw-gradient-from:#18181e var(--tw-gradient-from-position) !important;--tw-gradient-to:rgba(24,24,30,0) var(--tw-gradient-to-position) !important}
+html.boy-mode .from-lilac{--tw-gradient-from:#18181e var(--tw-gradient-from-position) !important;--tw-gradient-to:rgba(24,24,30,0) var(--tw-gradient-to-position) !important}
+html.boy-mode .via-cream{--tw-gradient-to:rgba(24,24,30,0)  var(--tw-gradient-to-position) !important;--tw-gradient-stops:var(--tw-gradient-from), #18181e var(--tw-gradient-via-position), var(--tw-gradient-to) !important}
+html.boy-mode .via-lilac{--tw-gradient-to:rgba(24,24,30,0)  var(--tw-gradient-to-position) !important;--tw-gradient-stops:var(--tw-gradient-from), #18181e var(--tw-gradient-via-position), var(--tw-gradient-to) !important}
+html.boy-mode .to-cream{--tw-gradient-to:#18181e var(--tw-gradient-to-position) !important}
+html.boy-mode .to-petal{--tw-gradient-to:#18181e var(--tw-gradient-to-position) !important}
+html.boy-mode .text-berry{color:rgb(167 139 250 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-cream{color:rgb(244 244 247 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-cream\/50{color:rgba(244,244,247,0.5) !important}
+html.boy-mode .text-cream\/60{color:rgba(244,244,247,0.6) !important}
+html.boy-mode .text-cream\/70{color:rgba(244,244,247,0.7) !important}
+html.boy-mode .text-emerald-400{color:rgb(167 139 250 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-ink{color:rgb(236 236 241 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-ink\/70{color:rgba(236,236,241,0.7) !important}
+html.boy-mode .text-ink\/75{color:rgba(236,236,241,0.75) !important}
+html.boy-mode .text-ink\/80{color:rgba(236,236,241,0.8) !important}
+html.boy-mode .text-mauve{color:rgb(154 154 166 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-rose{color:rgb(167 139 250 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-white{color:rgb(244 244 247 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .text-white\/80{color:rgba(244,244,247,0.8) !important}
+html.boy-mode .text-berry\/80{color:rgba(167,139,250,0.8) !important}
+html.boy-mode .text-cream\/80{color:rgba(244,244,247,0.8) !important}
+html.boy-mode .text-ink\/60{color:rgba(236,236,241,0.6) !important}
+html.boy-mode .accent-berry{accent-color:#a78bfa !important}
+html.boy-mode .selection\:bg-rose *::selection{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .selection\:bg-rose::selection{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:bg-berry:hover{background-color:rgb(124 58 237 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:bg-petal:hover{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:bg-white:hover{background-color:rgb(20 20 25 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:bg-rose:hover{background-color:rgb(24 24 30 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:bg-emerald-600:hover{background-color:rgb(124 58 237 / var(--tw-bg-opacity, 1)) !important}
+html.boy-mode .hover\:text-berry:hover{color:rgb(167 139 250 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .hover\:text-white:hover{color:rgb(244 244 247 / var(--tw-text-opacity, 1)) !important}
+html.boy-mode .focus\:border-berry:focus{border-color:rgb(124 58 237 / var(--tw-border-opacity, 1)) !important}
+html.boy-mode .pv-chip{border:1.5px solid #2a2a33 !important;background:#141419 !important}
+html.boy-mode .pv-chip:hover{border-color:#7c3aed !important}
+html.boy-mode .pv-chip.on{border-color:#3a3a44 !important;background:#7c3aed !important;color:#f4f4f7 !important}
+html.boy-mode .pfrom{color:#9a9aa6 !important}
+html.boy-mode .pvopts{color:#9a9aa6 !important}
+html.boy-mode .pv-nav{background:rgba(20,20,25,0.9) !important}
+html.boy-mode .pv-th.on{border-color:#7c3aed !important}
+html.boy-mode .pv-play{color:#f4f4f7 !important;background:rgba(124,58,237,0.35) !important}
+html.boy-mode .stars span{color:#9a9aa6 !important}
+html.boy-mode{background:#18181e !important}
+html.boy-mode body{color:#ececf1 !important}
+html.boy-mode #site-bg{background:linear-gradient(180deg,#18181e 0%,#18181e 55%,#18181e 100%) !important}
+html.boy-mode .glass{background:rgba(20,20,25,0.9) !important;border:1px solid rgba(42,42,51,0.6) !important}
+html.boy-mode .imgbg{background:linear-gradient(135deg,#18181e,#18181e) !important}
+html.boy-mode ::-webkit-scrollbar-thumb{background:#7c3aed !important}
+html.boy-mode .logo-text{color:#a78bfa !important;text-shadow:0 3px 0 #7c3aed,0 8px 16px rgba(124,58,237,0.35) !important}
+html.boy-mode .logo-i::before{background:radial-gradient(circle at 35% 30%,#18181e,#7c3aed) !important}
+html.boy-mode .gm-pad{box-shadow:0 5px 0 #000000,0 12px 18px rgba(124,58,237,0.22) !important}
+html.boy-mode .gm-strip{box-shadow:inset 0 -3px 6px rgba(124,58,237,0.2) !important}
+html.boy-mode .gm-weave{background-image:repeating-linear-gradient(0deg,rgba(124,58,237,0.06) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(124,58,237,0.06) 0 1px,transparent 1px 3px) !important}
+html.boy-mode .tema-c .gm-px rect[fill="#9B4DE0"]{fill:#a78bfa !important}
+html.boy-mode .tema-a .gm-px rect[fill="#9B4DE0"]{fill:#a78bfa !important}
+html.boy-mode .tema-a .gm-px rect[fill="#fff"]{fill:#a78bfa !important}
+html.boy-mode .gm-rollb{background:linear-gradient(90deg,rgba(0,0,0,.22),rgba(0,0,0,0) 35%,rgba(20,20,25,0.45) 55%,rgba(0,0,0,.2)),var(--gm-rb) !important;box-shadow:4px 8px 14px rgba(124,58,237,0.22) !important}
+html.boy-mode .gm-cap{background:repeating-radial-gradient(ellipse at 50% 50%,var(--gm-rb) 0 2.5px,#7c3aed 2.5px 4px) !important}
+html.boy-mode .gm-cap::after{background:#7c3aed !important}
+html.boy-mode .gm-logo{color:#a78bfa !important;text-shadow:0 2px 0 #7c3aed !important}
+html.boy-mode .hdr-btn:hover{color:#a78bfa !important}
+html.boy-mode .hdr-b{background:linear-gradient(90deg,#18181e,#18181e) !important}
+html.boy-mode .nav-pill:hover{color:#a78bfa !important}
+html.boy-mode .nav-dd-menu{background:#141419 !important;box-shadow:0 12px 30px rgba(0,0,0,0.15) !important;border:1.5px solid #2a2a33 !important}
+html.boy-mode .nav-dd-menu a{color:#ececf1 !important}
+html.boy-mode .nav-dd-menu a:hover{background:#18181e !important;color:#a78bfa !important}
+html.boy-mode .m-cats{border-left:2px solid #2a2a33 !important}
+html.boy-mode .m-cats a{color:#ececf1 !important}
+html.boy-mode .m-cats .m-soon{color:#9a9aa6 !important}
+html.boy-mode .m-cats .m-soon small{color:#a78bfa !important}
+html.boy-mode .yk-b{background:#18181e !important;color:#a78bfa !important}
+html.boy-mode .pv-promo{color:#ececf1 !important;background:#18181e !important}
+html.boy-mode .pv-promo span{background:#7c3aed !important;color:#f4f4f7 !important}
+html.boy-mode .pv-promo b{color:#a78bfa !important}
+html.boy-mode .nl-in{background:linear-gradient(135deg,#18181e,#18181e) !important;border:1.5px dashed #2a2a33 !important}
+html.boy-mode .nl-t span{color:#a78bfa !important}
+html.boy-mode .nl-t p{color:#ececf1 !important}
+html.boy-mode .nl-row input{border:1px solid #2a2a33 !important;background:#141419 !important}
+html.boy-mode .nl-row button{background:#7c3aed !important;color:#f4f4f7 !important}
+html.boy-mode .nl-c{color:#ececf1 !important}
+html.boy-mode .nl-c input{accent-color:#a78bfa !important}
+html.boy-mode .nl-ok b{color:#a78bfa !important}
+html.boy-mode .nl-ok small{color:#ececf1 !important}
+html.boy-mode .rv-stars button{color:#9a9aa6 !important}
+html.boy-mode .pv-revbtn{background:#7c3aed !important;color:#f4f4f7 !important}
+html.boy-mode .pv-revs h2 span{color:#9a9aa6 !important}
+html.boy-mode .pv-rev{background:#141419 !important;border:1px solid #2a2a33 !important}
+html.boy-mode .pv-rev small{color:#9a9aa6 !important}
+html.boy-mode .pv-rev p{color:#ececf1 !important}
+html.boy-mode .pv-specs{background:#141419 !important;border:1px solid #2a2a33 !important}
+html.boy-mode .pv-specs p{color:#ececf1 !important}
+html.boy-mode .pv-specs dt{color:#9a9aa6 !important}
+html.boy-mode .pv-specs dd{color:#ececf1 !important}
+html.boy-mode .pv-trust li{background:#141419 !important;border:1px solid #2a2a33 !important;color:#ececf1 !important}
+html.boy-mode .pv-trust i{color:#a78bfa !important}
+html.boy-mode .pv-trust b{color:#ececf1 !important}
+@media (max-width:1023px){html.boy-mode .pv-sticky{background:#141419 !important;border-top:1px solid #2a2a33 !important;box-shadow:0 -6px 18px rgba(0,0,0,0.1) !important}
+html.boy-mode .pv-sticky small{color:#a78bfa !important}
+html.boy-mode .pv-sticky button{background:#7c3aed !important;color:#f4f4f7 !important}}
+html.boy-mode .soon-b{background:#18181e !important;color:#a78bfa !important}
+html.boy-mode .nav-soon{color:#9a9aa6 !important}
+html.boy-mode .nav-soon small{color:#a78bfa !important}
+html.boy-mode .nav-pill.on{background:#141419 !important;color:#a78bfa !important;box-shadow:0 0 0 1.5px #000000 !important}
+html.boy-mode .hz-grd{background-image:linear-gradient(rgba(124,58,237,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.06) 1px,transparent 1px) !important}
+html.boy-mode .hz-tw{background:#141419 !important;box-shadow:5px 0 #000000,-5px 0 #000000,0 5px #000000,0 -5px #000000 !important}
+html.boy-mode .hz-badge{background:#141419 !important;border:1.5px solid #2a2a33 !important;color:#a78bfa !important}
+html.boy-mode .hz-h1 span{color:#a78bfa !important}
+html.boy-mode .hz-sub{color:rgba(236,236,241,0.75) !important}
+html.boy-mode .hz-sub b{color:#ececf1 !important}
+html.boy-mode .hz-b1{background:#7c3aed !important;color:#f4f4f7 !important;box-shadow:0 5px 0 #7c3aed !important}
+html.boy-mode .hz-b2{background:#141419 !important;color:#a78bfa !important;border:2px solid #2a2a33 !important;box-shadow:0 5px 0 #000000 !important}
+html.boy-mode .hz-b1:hover{box-shadow:0 3px 0 #7c3aed !important}
+html.boy-mode .hz-b2:hover{box-shadow:0 3px 0 #000000 !important}
+html.boy-mode .hz-perks{border-top:2px dashed #2a2a33 !important}
+html.boy-mode .hz-pad{background:#141419 !important;box-shadow:0 14px 40px rgba(124,58,237,0.22) !important}
+html.boy-mode .hz-pad::before{border:2px dashed #2a2a33 !important}
+html.boy-mode .hz-pt{color:#a78bfa !important}
+html.boy-mode .hz-fan-h span{color:#a78bfa !important}
+html.boy-mode .hz-fan-h b{color:#ececf1 !important}
+html.boy-mode .hz-fan-h b i{color:#a78bfa !important}
+html.boy-mode .hz-fc{box-shadow:0 18px 40px rgba(0,0,0,0.28) !important;border:6px solid #2a2a33 !important}
+html.boy-mode .hz-fc b{background:#141419 !important;color:#ececf1 !important}
+html.boy-mode .hz-fc b::after{color:#a78bfa !important}
+html.boy-mode .hz-fc:hover{box-shadow:0 24px 50px rgba(124,58,237,0.4) !important}
+html.boy-mode .hz-promo{background:#7c3aed !important;color:#f4f4f7 !important;box-shadow:0 6px 16px rgba(0,0,0,0.25) !important}
+html.boy-mode .hz-promo b{color:#a78bfa !important}
+html.boy-mode .hz-promo code{background:#7c3aed !important}
+html.boy-mode .hz-sc{background:#18181e !important}
+html.boy-mode .hz-sc:hover{box-shadow:0 10px 24px rgba(124,58,237,0.25) !important}
+html.boy-mode .hz-sl{background:rgba(20,20,25,0.92) !important;color:#ececf1 !important}
+html.boy-mode .hz-sl::after{color:#a78bfa !important}
+html.boy-mode .hz-tile{background:linear-gradient(135deg,#18181e,#18181e) !important}
+@media (max-width:767px){html.boy-mode #mbar{background:#141419 !important;border-top:3px dashed #2a2a33 !important}
+html.boy-mode #mbar button{color:#ececf1 !important}}
+html.boy-mode .gm-pad{box-shadow:0 2px 0 #000000,0 4px 6px rgba(124,58,237,0.18) !important}
+html.boy-mode .gm-rollb{box-shadow:2px 4px 8px rgba(124,58,237,0.2) !important}
+html.boy-mode .gm-cap{background:repeating-radial-gradient(ellipse at 50% 50%,var(--gm-rb) 0 1.5px,#7c3aed 1.5px 2.5px) !important}
+html.boy-mode .gm-logo{text-shadow:0 1px 0 #7c3aed !important}
+
+/* 2) Elle ayarlanan kısımlar */
+/* GAMİKA – Gamer Boy teması. Sadece <html class="boy-mode"> iken çalışır (gamikatr.com/gamer-boy).
+   Bu dosyanın alt kısmı otomatik üretildi: pembe renkler koyu/mor karşılıklarına çevrildi. */
+html.boy-mode{color-scheme:dark}
+html.boy-mode,html.boy-mode body{background:#09090c !important;color:#ececf1}
+html.boy-mode body{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px) !important;background-size:40px 40px !important}
+html.boy-mode #site-bg .hz-blob,html.boy-mode #site-bg .hz-grd,html.boy-mode .hz-fx,html.boy-mode .hz-tw,html.boy-mode .hz-fl{display:none !important}
+html.boy-mode section,html.boy-mode .hz{background:transparent !important}
+/* Üst kısım */
+html.boy-mode .hdr-b{background:rgba(9,9,12,.92) !important;border-bottom:1px solid #1f1f27}
+html.boy-mode .hdr-drip{display:none !important}
+html.boy-mode .hdr-btn:hover,html.boy-mode .nav-pill:hover{color:#a78bfa !important}
+html.boy-mode .nav-pill.on{background:#16161b !important;color:#a78bfa !important;box-shadow:0 0 0 1.5px #7c3aed !important}
+/* Başlık fontu */
+html.boy-mode .font-serif,html.boy-mode .hz-h1,html.boy-mode .hz-fan-h b,html.boy-mode h1,html.boy-mode h2,html.boy-mode h3,html.boy-mode h4{font-family:'Anton',Impact,'Arial Narrow',sans-serif !important;font-weight:400 !important;letter-spacing:.02em}
+html.boy-mode .italic,html.boy-mode .hz-h1 span,html.boy-mode .hz-fan-h b i,html.boy-mode h1 i,html.boy-mode h2 i{font-style:normal !important}
+/* Hero */
+html.boy-mode .hz-badge{background:rgba(124,58,237,.14) !important;border-color:rgba(124,58,237,.55) !important;color:#c4b5fd !important}
+html.boy-mode .hz-h1{color:#f4f4f7 !important}
+html.boy-mode .hz-h1 span{color:#8b5cf6 !important;font-weight:400 !important}
+html.boy-mode .hz-sub{color:#a7a7b2 !important}
+html.boy-mode .hz-sub b{color:#f4f4f7 !important}
+html.boy-mode .hz-b1{background:#7c3aed !important;color:#fff !important;box-shadow:0 5px 0 #4c1d95 !important}
+html.boy-mode .hz-b1:hover{box-shadow:0 3px 0 #4c1d95 !important}
+html.boy-mode .hz-b2{background:transparent !important;color:#ececf1 !important;border:2px solid #7c3aed !important;box-shadow:0 5px 0 #2e1065 !important}
+html.boy-mode .hz-b2:hover{box-shadow:0 3px 0 #2e1065 !important}
+html.boy-mode .hz-perks{border-top-color:#2a2a33 !important}
+html.boy-mode .hz-fan-h span{color:#9a9aa6 !important}
+html.boy-mode .hz-fan-h b{color:#f4f4f7 !important}
+html.boy-mode .hz-fan-h b i{color:#8b5cf6 !important}
+html.boy-mode .hz-promo{background:#16161b !important;border:1px solid #2a2a33;box-shadow:none !important}
+html.boy-mode .hz-promo b{color:#c4b5fd !important}
+html.boy-mode .hz-promo code{background:#7c3aed !important;color:#fff !important}
+html.boy-mode .hz-fan{position:relative}
+html.boy-mode .hz-fan::before{content:"";position:absolute;left:50%;top:50%;width:620px;height:460px;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(124,58,237,.35),transparent);pointer-events:none;z-index:0}
+html.boy-mode .hz-fc{border-color:#1f1f27 !important;box-shadow:0 18px 40px rgba(0,0,0,.6) !important}
+html.boy-mode .hz-fc:hover{box-shadow:0 24px 50px rgba(124,58,237,.45) !important}
+html.boy-mode .hz-fc b{background:#09090c !important;color:#ececf1 !important}
+html.boy-mode .hz-fc b::after,html.boy-mode .hz-sl::after{color:#a78bfa !important}
+/* Etiketler ve kartlar */
+html.boy-mode .yk-b,html.boy-mode .soon-b{background:rgba(124,58,237,.2) !important;color:#c4b5fd !important}
+html.boy-mode .glass{background:rgba(22,22,27,.92) !important;border-color:#24242c !important}
+html.boy-mode .imgbg{background:linear-gradient(135deg,#1c1c23,#121217) !important}
+html.boy-mode .text-berry{color:#a78bfa !important}
+html.boy-mode .bg-berry{background-color:#7c3aed !important}
+/* Alt bilgi */
+html.boy-mode footer.bg-ink{background:#050507 !important;border-top:1px solid #1f1f27}
+html.boy-mode footer .bg-petal{background:transparent !important}
+html.boy-mode footer a:hover{color:#a78bfa}
+/* Gamer Boy'da gösterilmeyen bölümler (pembe setler, figürler) */
+html.boy-mode .girl-only{display:none !important}
+html:not(.boy-mode) .boy-only{display:none !important}
+/* Gamer Girl / Gamer Boy geçiş düğmeleri (iki temada da) */
+.mode-sw{display:inline-flex;gap:4px;padding:3px;border-radius:9999px;background:rgba(255,255,255,.7);border:1px solid #F3D3E3;margin-right:6px}
+.mode-sw a{padding:4px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.03em;color:#6B5368;transition:all .15s}
+.mode-sw a.on{background:#E0709A;color:#fff}
+.mode-sw a.on.boy{background:#2A1B2E}
+html.boy-mode .mode-sw{background:#16161b !important;border-color:#2a2a33 !important}
+html.boy-mode .mode-sw a{color:#9a9aa6 !important}
+html.boy-mode .mode-sw a.on{background:#7c3aed !important;color:#fff !important}
+.m-mode{display:flex;gap:8px}
+.m-mode a{flex:1;text-align:center;padding:10px;border-radius:12px;font-weight:700;font-size:14px;border:1px solid #F3D3E3}
+.m-mode a.on{background:#E0709A;color:#fff;border-color:#E0709A}
+html.boy-mode .m-mode a{border-color:#2a2a33 !important;color:#ececf1 !important}
+html.boy-mode .m-mode a.on{background:#7c3aed !important;border-color:#7c3aed !important}
+/* Beyaz logo */
+html.boy-mode img.hdr-logo,html.boy-mode footer img[alt="Gamika"]{content:url(/logo-beyaz.webp)}
+@media (min-width:1024px){html.boy-mode #content-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:960px;margin:0 auto}}
+/* Açılan pencerelerin arka perdesi */
+html.boy-mode .bg-ink\/60,html.boy-mode .bg-ink\/70{background-color:rgba(0,0,0,.7) !important}

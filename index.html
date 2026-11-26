@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="tr" class="scroll-smooth">
 <head>
-<script>if(/^\/(urun\/|urunler|kategori\/|seri\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');</script>
+<script>if(/^\/(urun\/|urunler|kategori\/|seri\/)/.test(location.pathname))document.documentElement.classList.add('page-mode');
+/* Gamer Girl / Gamer Boy: adres /gamer-boy ise koyu tema; ürün sayfalarında son seçilen taraf hatırlanır */
+(function(){var p=location.pathname,m=null;if(/^\/gamer-boy\/?$/.test(p))m='boy';else if(/^\/gamer-girl\/?$/.test(p))m='girl';else{try{m=localStorage.getItem('gmode')}catch(e){}}m=m==='boy'?'boy':'girl';try{localStorage.setItem('gmode',m)}catch(e){}window.GMODE=m;if(m==='boy')document.documentElement.classList.add('boy-mode');})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gamika — Kadınlara Özel Gaming Mousepad</title>
@@ -24,7 +26,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Tiny5&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@600;700&family=Tiny5&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   .pv-chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -267,6 +269,7 @@
   @keyframes gm-bg-ince{from{background-position:0 0}to{background-position:536px 0}}
 </style>
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/gamer-boy.css">
 </head>
 <body class="antialiased selection:bg-rose">
 <div id="site-bg" aria-hidden="true">
@@ -295,7 +298,7 @@
       <button id="menu-btn" class="lg:hidden p-2" aria-label="Menü"><i class="fa-solid fa-bars text-xl"></i></button>
       <button id="search-btn" class="hover:text-berry p-2" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
     </div>
-    <a href="#" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
+    <a href="/" class="justify-self-center flex items-center justify-center" aria-label="Gamika">
       <img src="/logo.webp" alt="Gamika" class="hdr-logo block h-9 sm:h-12 w-auto object-contain"
            onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
       <span class="logo-text text-4xl sm:text-5xl" style="display:none">GAM<span class="logo-i">I</span>KA</span>
@@ -316,19 +319,19 @@
     </div>
   </div>
   <nav id="main-nav" class="hidden lg:flex justify-center gap-2 text-sm font-medium pb-3">
-    <a href="#hero" class="nav-pill">Ana Sayfa</a>
+    <span class="mode-sw"><a href="/gamer-girl" data-m="girl">Gamer Girl</a><a href="/gamer-boy" data-m="boy" class="boy">Gamer Boy</a></span>
     <div class="nav-dd"><a href="/urunler" onclick="openList('all');return false;" class="nav-pill">Ürünler <i class="fa-solid fa-chevron-down" style="font-size:10px;margin-left:2px"></i></a>
       <div class="nav-dd-menu" id="nav-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="nav-soon">Figür<small>Çok yakında</small></span><span class="nav-soon">Bilek Desteği<small>Çok yakında</small></span><span class="nav-soon">Switch<small>Çok yakında</small></span></div></div>
-    <a href="#setler" class="nav-pill">Hazır Setler <span class="yk-b">Yakında</span></a>
-    <a href="#olustur" class="nav-pill">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
+    <a href="#setler" class="nav-pill girl-only">Hazır Setler <span class="yk-b">Yakında</span></a>
+    <a href="#olustur" class="nav-pill girl-only">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
     <a href="#yakinda" class="nav-pill">Çok Yakında</a>
   </nav>
   <div id="mobile-menu" class="hidden lg:hidden glass border-t border-rose px-6 py-5 space-y-3">
-    <a href="#hero" class="block text-lg font-medium">Ana Sayfa</a>
+    <div class="m-mode"><a href="/gamer-girl" data-m="girl">Gamer Girl</a><a href="/gamer-boy" data-m="boy">Gamer Boy</a></div>
     <a href="/urunler" onclick="openList('all');return false;" class="block text-lg font-medium">Ürünler</a>
     <div id="m-cats" class="m-cats"><a href="/kategori/mousepad" onclick="openList('mousepad');return false;">Mousepad</a><span class="m-soon">Figür <small>Çok yakında</small></span><span class="m-soon">Bilek Desteği <small>Çok yakında</small></span><span class="m-soon">Switch <small>Çok yakında</small></span></div>
-    <a href="#setler" class="block text-lg font-medium">Hazır Setler <span class="yk-b">Yakında</span></a>
-    <a href="#olustur" class="block text-lg font-medium">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
+    <a href="#setler" class="block text-lg font-medium girl-only">Hazır Setler <span class="yk-b">Yakında</span></a>
+    <a href="#olustur" class="block text-lg font-medium girl-only">Kendi Setini Yarat <span class="yk-b">Yakında</span></a>
     <a href="#yakinda" class="block text-lg font-medium">Çok Yakında</a>
     <button id="mobile-account" class="w-full py-2.5 bg-petal rounded-xl font-medium text-sm"><i class="fa-regular fa-user mr-2"></i>Hesabım</button>
   </div>
@@ -346,7 +349,7 @@
     <div class="hz-left">
       <span class="hz-badge"><svg width="14" height="11.2" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#fff"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#fff"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/></svg>KADIN OYUNCULAR İÇİN</span>
       <h1 class="hz-h1">SENİN KADAR<br><span>TATLI BİR SETUP</span></h1>
-      <p class="hz-sub">Kadın oyunculara özel gaming mousepadler<br><span style="font-size:.85em;opacity:.8">Figür, bilek desteği ve switch çok yakında</span><br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b></p>
+      <p class="hz-sub">Kadın oyunculara özel gaming mousepadler <br><span style="font-size:.85em;opacity:.8">Figür, bilek desteği ve switch çok yakında</span><br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b></p>
       <div class="hz-btns"><a href="/urunler" onclick="openList('all');return false;" class="hz-b1">ÜRÜNLERİ GÖR →</a><a href="#setler" class="hz-b2">SETLERE BAK</a></div>
       <div class="hz-perks"><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#fff"/><rect x="8" y="2" width="1" height="1" fill="#fff"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="7" width="1" height="1" fill="#9B4DE0"/></svg>Ücretsiz Kargo</span><span><svg width="18" height="14.4" viewBox="0 0 10 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="0" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="1" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="2" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="3" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="9" y="4" width="1" height="1" fill="#9B4DE0"/><rect x="0" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="6" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="8" y="5" width="1" height="1" fill="#9B4DE0"/><rect x="1" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="7" y="6" width="1" height="1" fill="#9B4DE0"/><rect x="2" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="3" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="4" y="7" width="1" height="1" fill="#9B4DE0"/><rect x="5" y="7" width="1" height="1" fill="#9B4DE0"/></svg>14 Gün Kolay İade</span></div>
     </div>
@@ -392,7 +395,7 @@
 </section>
 
 <!-- HAZIR SETLER -->
-<section id="setler" class="py-20">
+<section id="setler" class="py-20 girl-only">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-2xl mx-auto mb-14">
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
@@ -405,7 +408,7 @@
 </section>
 
 <!-- KENDİ SETİNİ YARAT -->
-<section id="olustur" class="py-20">
+<section id="olustur" class="py-20 girl-only">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center max-w-2xl mx-auto mb-14">
       <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Senin Seçimin</span>
@@ -464,111 +467,6 @@
   </div>
 </section>
 
-
-<!-- KUTUNUN İÇİNDE -->
-<section id="icerik" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="text-center max-w-2xl mx-auto mb-14">
-      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Gamika'da</span>
-      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">NELER VAR?</h2>
-      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
-    </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="content-grid"></div>
-  </div>
-</section>
-
-<!-- TEK TEK ÜRÜNLER -->
-<section id="urunler" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-      <div>
-        <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Tek Tek Almak İstersen</span>
-        <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÜRÜNLER</h2>
-      </div>
-      <div class="flex flex-wrap gap-2" id="filters"></div>
-    </div>
-    <div id="product-grid" class="pgrid"></div>
-    <div class="text-center mt-12">
-      <a href="/urunler" onclick="openList('all');return false;" class="inline-block px-8 py-4 bg-ink text-cream rounded-2xl text-xs font-semibold tracking-wider hover:bg-berry transition">TÜM ÜRÜNLERİ GÖR <i class="fa-solid fa-arrow-right ml-1"></i></a>
-    </div>
-  </div>
-</section>
-
-<!-- HAZIR SETLER -->
-<section id="setler" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="text-center max-w-2xl mx-auto mb-14">
-      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Hazır Setler</span>
-      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">SETLER</h2>
-      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
-      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
-    </div>
-    <div class="grid md:grid-cols-3 gap-8" id="set-grid"></div>
-  </div>
-</section>
-
-<!-- KENDİ SETİNİ YARAT -->
-<section id="olustur" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="text-center max-w-2xl mx-auto mb-14">
-      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Senin Seçimin</span>
-      <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">KENDİ SETİNİ YARAT</h2>
-      <p class="text-ink/70 mt-3 font-light">Her parçayı sen seç, setin sana özel hazırlansın.</p>
-      <p class="mt-3"><span class="soon-b" style="font-size:13px;padding:5px 14px">Çok yakında</span></p>
-      <div class="w-16 h-0.5 bg-berry mx-auto mt-4"></div>
-    </div>
-    <div class="grid lg:grid-cols-5 gap-8 items-start">
-      <div id="builder-opts" class="lg:col-span-3 glass rounded-3xl p-6 sm:p-8 space-y-7"></div>
-      <div class="lg:col-span-2 lg:sticky lg:top-40 rounded-3xl p-6 sm:p-8 bg-ink text-cream shadow-2xl">
-        <h3 class="font-serif text-2xl font-bold mb-4"><i class="fa-solid fa-gift text-rose mr-2"></i>Senin Setin</h3>
-        <div id="builder-summary" class="space-y-3 text-sm"></div>
-        <div class="mt-6 pt-5 border-t border-white/15 flex items-center justify-between gap-3">
-          <span class="text-cream/70 text-sm">Toplam</span>
-          <div class="text-right">
-            <span id="builder-old" class="block text-sm text-cream/50 line-through"></span>
-            <span id="builder-total" class="font-serif text-3xl font-bold"></span>
-            <span class="block text-xs text-rose mt-1"><i class="fa-solid fa-truck-fast mr-1"></i>Ücretsiz Kargo</span>
-          </div>
-        </div>
-        <button disabled class="mt-5 w-full py-4 bg-rose text-ink rounded-2xl font-semibold text-xs tracking-wider" style="opacity:.5;cursor:not-allowed">ÇOK YAKINDA</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ÇOK YAKINDA -->
-<section id="yakinda" class="py-20">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-    <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Yolda</span>
-    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-2">ÇOK YAKINDA</h2>
-    <div class="w-16 h-0.5 bg-berry mx-auto mt-4 mb-12"></div>
-    <div class="grid sm:grid-cols-3 gap-6">
-      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-computer-mouse text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Gaming Mouse</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
-      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-keyboard text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Mekanik Klavye</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
-      <div class="glass rounded-3xl p-8 opacity-90"><i class="fa-solid fa-headphones text-4xl text-mauve mb-3"></i><h3 class="font-serif text-xl font-bold">Kulaklık</h3><span class="inline-block mt-3 text-[10px] font-bold tracking-wider bg-ink text-cream px-3 py-1 rounded-full">ÇOK YAKINDA</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- HAKKIMIZDA -->
-<section id="hikaye" class="py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
-    <div class="space-y-6">
-      <span class="text-xs font-semibold tracking-[.2em] text-berry uppercase">Biz Kimiz</span>
-      <h2 class="font-serif text-4xl sm:text-5xl font-bold leading-tight">SENİN İÇİN, <span class="italic text-berry font-normal">SENİN GİBİ.</span></h2>
-      <p class="text-ink/75 leading-relaxed font-light text-lg">
-        Gamer ekipmanları çoğu zaman ya çocuksu ya da fazla sert görünüyor. Gamika, kadın oyuncuların masasına hem şıklık hem rahatlık getirmek için çıktı. Şimdilik kadın oyunculara özel gaming mousepadler sunuyoruz. Figür, klavye bilek desteği, switch'ler ve hazır setler çok yakında.
-      </p>
-      <div class="grid grid-cols-1 gap-6 pt-2">
-        <div class="glass p-5 rounded-2xl"><i class="fa-solid fa-gift text-2xl text-berry mb-2"></i><h4 class="font-serif font-bold text-lg">Set Halinde</h4><p class="text-xs text-ink/70">Her şey uyumlu renklerde, tek seferde.</p></div>
-      </div>
-    </div>
-    <div class="aspect-[4/3] rounded-3xl imgbg shadow-2xl flex items-center justify-center">
-      <i class="fa-solid fa-heart text-8xl text-white/80"></i>
-    </div>
-  </div>
-</section>
 
 <!-- FOOTER -->
 <div id="nl-box" class="nl-box">
@@ -586,7 +484,7 @@
     <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
       <div class="md:col-span-2 space-y-4">
         <a href="#" class="inline-block bg-petal rounded-2xl px-4 py-3" aria-label="Gamika"><img src="/logo.webp" alt="Gamika" class="block h-10 w-auto"></a>
-        <p class="text-xs text-cream/70 max-w-sm leading-relaxed">Kadın oyuncular için gamer ürünleri.</p>
+        <p class="text-xs text-cream/70 max-w-sm leading-relaxed">Kadın ve erkek oyuncular için gamer ürünleri.</p>
         <div class="flex gap-3 pt-2">
           <a href="https://www.instagram.com/gamikatr" target="_blank" rel="noopener" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-berry transition"><i class="fa-brands fa-instagram text-sm"></i></a>
           
@@ -885,10 +783,13 @@ let cart = loadCart();
 /* Kutunun içinde */
 // Ürünü olmayan kategoriler "Çok yakında" olarak gösterilir (veritabanı yüklenene kadar sadece mousepad açık sayılır)
 let dbLoaded = false;
-const isLive = f => dbLoaded ? PRODUCTS.some(p => p.cat === f) : f === 'mousepad';
+const BOY = window.GMODE === 'boy';
+// Gamer Boy tarafında gösterilen ürünler: Dark ve Minimal serisi mousepadler + klavye switch'leri
+const shown = p => !BOY || (p.cat === 'mousepad' ? ['dark','minimal'].includes(p.series) : p.cat === 'switch');
+const isLive = f => dbLoaded ? PRODUCTS.some(p => p.cat === f && shown(p)) : f === 'mousepad';
 const HZ_TILES = {'Figür':'figur','Mousepad':'mousepad','Bilek Desteği':'bilek',"Klavye Switch'i":'switch'};
 function renderContents(){
-  $('content-grid').innerHTML = CONTENTS.map(c => isLive(c.f) ? `
+  $('content-grid').innerHTML = CONTENTS.filter(c => !BOY || c.f !== 'figur').map(c => isLive(c.f) ? `
   <a href="${listUrl(c.f)}" onclick="openList('${c.f}');return false;" class="group glass rounded-3xl p-7 text-center hover:shadow-xl hover:-translate-y-1 transition">
     <div class="w-16 h-16 mx-auto rounded-2xl imgbg flex items-center justify-center mb-4"><i class="fa-solid ${c.icon} text-2xl text-berry"></i></div>
     <h3 class="font-serif text-xl font-bold mb-1">${c.t}</h3>
@@ -988,7 +889,7 @@ function renderProducts(){
   renderNavCats(); renderContents();
   $('product-grid').innerHTML = PRODUCTS.length === 0
     ? `<p class="col-span-full text-center text-sm text-mauve py-10">Şu an listelenen ürün yok.</p>`
-    : PRODUCTS.slice(0, FEATURED_N).map(cardHTML).join('');
+    : PRODUCTS.filter(shown).slice(0, FEATURED_N).map(cardHTML).join('');
   $('filters').innerHTML = liveCats().length < 2 ? '' : [['all','Tümü'], ...liveCats().map(c => [c.f, c.t])].map(([f, t]) =>
     `<a href="${listUrl(f)}" onclick="openList('${f}');return false;" class="px-5 py-2 rounded-xl text-sm font-medium ${f === 'all' ? 'bg-ink text-cream' : 'glass'}">${t}</a>`).join('');
 }
@@ -1076,7 +977,7 @@ const SERIES_INFO = {
 };
 function showList(f, sr){
   const v = $('product-view'), box = $('pv-body'), c = CATS.find(x => x.f === f), si = sr && SERIES_INFO[sr];
-  const catItems = c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS;
+  const catItems = (c ? PRODUCTS.filter(p => p.cat === f) : PRODUCTS).filter(shown);
   const items = si ? catItems.filter(p => p.series === sr) : catItems;
   const sName = si ? SERIES.find(([k]) => k === sr)[1] : '';
   const title = si ? si.h : c ? c.h : 'Tüm Ürünler';
@@ -1099,7 +1000,7 @@ function showList(f, sr){
   const ld = $('product-ld'); if(ld) ld.remove();
   pageShow(v);
 }
-function goHome(){ location.href = '/'; }
+function goHome(){ location.href = '/gamer-' + (window.GMODE || 'girl'); }
 const SEO_DEFAULT = {
   title: document.title,
   desc: (document.querySelector('meta[name="description"]') || {}).content || '',
@@ -1314,7 +1215,7 @@ function routeFromPath(){
 window.addEventListener('popstate', routeFromPath);
 document.addEventListener('click', e => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
-  if(a && document.documentElement.classList.contains('page-mode')){ e.preventDefault(); location.href = '/' + a.getAttribute('href'); }
+  if(a && document.documentElement.classList.contains('page-mode')){ e.preventDefault(); location.href = '/gamer-' + (window.GMODE || 'girl') + a.getAttribute('href'); }
 }, true);
 
 renderProducts();
@@ -2192,6 +2093,32 @@ initAuth();
   var v = get();
   if(v === 'evet') load();
   else if(!v || (tracking && v === 'bilgi')) show();
+})();
+</script>
+
+<script>
+/* Gamer Girl / Gamer Boy: seçili taraf düğmesi ve Gamer Boy metinleri */
+(function(){
+  var M = window.GMODE || 'girl';
+  document.querySelectorAll('.mode-sw a, .m-mode a').forEach(function(a){ if(a.dataset.m === M) a.classList.add('on'); });
+  if(M !== 'boy') return;
+  var tc = document.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute('content', '#09090c');
+  var q = function(s){ return document.querySelector(s); };
+  var b = q('.hz-badge'); if(b && b.lastChild) b.lastChild.textContent = 'GAMER BOY';
+  var h = q('.hz-h1'); if(h) h.innerHTML = 'OYUNUN KADAR<br><span>KARANLIK BİR SETUP</span>';
+  var s = q('.hz-sub'); if(s) s.innerHTML = 'Erkek oyunculara özel gaming mousepadler <br><span style="font-size:.85em;opacity:.8">Dark ve Minimal seriler</span><br><b>Kendi Tarzını Kendi Seçimlerinle Yarat</b>';
+  var b2 = q('.hz-b2'); if(b2){ b2.textContent = 'DARK SERİSİ'; b2.setAttribute('href', '/seri/dark'); }
+  var fh = q('.hz-fan-h span'); if(fh) fh.textContent = '2 seri · 1 tarz';
+  var c2 = q('.hz-fc2'), c3 = q('.hz-fc3');
+  if(c2){ c2.href = '/seri/dark'; c2.querySelector('img').src = '/img/urun/midnight-oni-vitrin.webp'; c2.querySelector('img').alt = 'Dark serisi mousepad'; c2.querySelector('b').textContent = 'Dark'; }
+  if(c3){ c3.href = '/seri/dark'; c3.querySelector('img').src = '/img/urun/moonlit-shadow-vitrin.webp'; c3.querySelector('img').alt = 'Dark serisi mousepad'; c3.querySelector('b').textContent = 'Dark'; }
+  document.querySelectorAll('img.hdr-logo, footer img[alt="Gamika"]').forEach(function(i){ i.src = '/logo-beyaz.webp'; });
+  var hk = document.getElementById('hikaye');
+  if(hk){
+    var t = hk.querySelector('h2'); if(t) t.innerHTML = 'SADE, KARANLIK, <span class="text-berry">SENİN.</span>';
+    var sh = hk.querySelector('.glass'); if(sh && /Set Halinde/.test(sh.textContent)) sh.style.display = 'none';
+    var p = hk.querySelector('p'); if(p) p.textContent = 'Gamer ekipmanları çoğu zaman ya fazla renkli ya da fazla sıradan görünüyor. Gamika\'nın Gamer Boy tarafı, karanlık ve sade bir masa kurmak isteyen oyuncular için: Dark ve Minimal seri gaming mousepadler. Klavye switch\'leri ve daha fazlası çok yakında.';
+  }
 })();
 </script>
 </body>
