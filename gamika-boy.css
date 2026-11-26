@@ -269,3 +269,7 @@ html.boy-mode .hdr-btn,html.boy-mode #mbar{color:#e4e4ea !important}
 html.boy-mode .hdr-btn:hover{color:#fff !important}
 html.boy-mode #cart-badge,html.boy-mode #mb-badge{background:#f4f4f7 !important;color:#09090c !important}
 html.boy-mode .gm-cap::after{background:#55555e !important}
+/* Gamika Boy: sayfanın içine gömülü renkler (çerez bandı, bilgi pencereleri) */
+html.boy-mode #cookie-note,html.boy-mode #center-note>div{background:#16161b !important;border:1px solid #2a2a33 !important}
+html.boy-mode #cookie-ok{background:#7c3aed !important}
+html.boy-mode #cookie-note a{color:#c4b5fd !important}

@@ -689,7 +689,7 @@ const favIds = new Set();   // giriş yapmış üyenin favori ürün id'leri
 const CART_KEY = 'gamika_cart';
 function reviewsHTML(p){
   const btn = `<button type="button" onclick="writeReview(${Number(p.id)})" class="pv-revbtn">✍️ Yorum Yaz</button>`;
-  if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Henüz yorum yok. Bu ürün hakkındaki düşüncelerini ilk sen yaz 💖</p>${btn}</div></div>`;
+  if(!p.revs || !p.revs.length) return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları</h2><div class="pv-rev pv-rev0"><p>Henüz yorum yok. Bu ürün hakkındaki düşüncelerini ilk sen yaz${LV}</p>${btn}</div></div>`;
   const st = n => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
   return `<div class="pv-revs"><h2 class="font-serif">Müşteri Yorumları <span>${p.rating.toFixed(1)} ★ · ${p.reviews} değerlendirme</span>${btn}</h2>
     ${p.revs.map(r => `<div class="pv-rev"><div><b>${esc(r.name)}</b><span class="st">${st(Number(r.rating))}</span></div>${r.comment ? `<p>${esc(r.comment)}</p>` : ''}${r.verified ? '<em>✓ Doğrulanmış alıcı</em>' : ''}</div>`).join('')}</div>`;
@@ -701,7 +701,7 @@ async function writeReview(pid){
   if(user && sb){
     try{
       const { data } = await sb.rpc('my_review_token', { p_product_id: pid });
-      if(data && data.done){ toast('Bu ürünü zaten değerlendirdin, teşekkürler 💖'); return; }
+      if(data && data.done){ toast('Bu ürünü zaten değerlendirdin, teşekkürler' + LV); return; }
       if(data && data.token){ location.href = '/degerlendir.html?t=' + encodeURIComponent(data.token); return; }
     }catch(_){}
   }
@@ -729,7 +729,7 @@ async function sendOpenReview(e){
       body: JSON.stringify({ token: rvToken, product_id: revPid, rating: rvRating, name: f.ad.value, email: f.eposta.value, comment: f.yorum.value || null }) });
     const d = await r.json().catch(() => null);
     if(!r.ok) throw new Error((d && d.error) || 'Bir hata oluştu');
-    f.reset(); closeModal('review-modal'); centerNote('Teşekkürler! Yorumun onaylandıktan sonra yayınlanacak 💖');
+    f.reset(); closeModal('review-modal'); centerNote('Teşekkürler! Yorumun onaylandıktan sonra yayınlanacak' + LV);
   }catch(ex){ fail(ex.message); renderReviewCaptcha(); }
   btn.disabled = false; btn.innerText = 'GÖNDER';
 }
@@ -762,7 +762,7 @@ async function subscribeNl(e){
       body: JSON.stringify({ email: f.email.value, consent: f.izin.checked, source: 'site' }) });
     const d = await r.json().catch(() => null);
     if(!r.ok) throw new Error((d && d.error) || 'Bir hata oluştu');
-    f.innerHTML = `<p class="nl-ok">Teşekkürler 💖 Kodun: <b>${esc(d.code)}</b><br><small>Mailine de gönderdik. Sepette bu kodu girince %${Number(d.pct)} indirim kazanırsın.</small></p>`;
+    f.innerHTML = `<p class="nl-ok">Teşekkürler${LV} Kodun: <b>${esc(d.code)}</b><br><small>Mailine de gönderdik. Sepette bu kodu girince %${Number(d.pct)} indirim kazanırsın.</small></p>`;
     if(window.gmkTrack) gmkTrack('sign_up', {});
   }catch(ex){ msg.className = 'nl-err'; msg.innerText = ex.message; btn.disabled = false; btn.innerText = 'GÖNDER'; }
 }
@@ -786,6 +786,7 @@ let cart = loadCart();
 // Ürünü olmayan kategoriler "Çok yakında" olarak gösterilir (veritabanı yüklenene kadar sadece mousepad açık sayılır)
 let dbLoaded = false;
 const BOY = window.GMODE === 'boy';
+const LV = BOY ? '' : ' 💖', LV2 = BOY ? '' : ' 💗'; // Gamika Boy'da kalp yok
 // Ürün hangi tarafta görünür: yönetim panelindeki "Kimler için" seçimi (girl / boy / both). Boşsa Candy = Girl, diğerleri = ikisi.
 const audOf = p => p.aud || (p.series === 'candy' ? 'girl' : 'both');
 const shown = p => BOY ? audOf(p) !== 'girl' : audOf(p) !== 'boy';
@@ -1464,7 +1465,7 @@ async function initAuth(){
     user = data.session ? data.session.user : null;
     if(isRecovery && user){ accountView = 'recovery'; afterAuth = null; openModal('account-modal'); try{ history.replaceState(null,'',location.pathname); }catch(_){} }
     if(isSignup && user){
-      info('E-postan onaylandı! 💗', 'GAMİKA\'ya hoş geldin! Hesabın hazır ve giriş yapıldı. Keyifli alışverişler.', 'fa-solid fa-heart text-berry');
+      info('E-postan onaylandı!' + LV2, 'GAMİKA\'ya hoş geldin! Hesabın hazır ve giriş yapıldı. Keyifli alışverişler.', 'fa-solid fa-heart text-berry');
       try{ history.replaceState(null,'',location.pathname); }catch(_){}
     }else if(linkError){
       info('Bağlantı geçersiz', 'Bu bağlantının süresi dolmuş ya da daha önce kullanılmış. Hesabın zaten onaylandıysa giriş yapabilirsin.', 'fa-solid fa-triangle-exclamation');
@@ -1955,7 +1956,7 @@ async function authSubmit(e){
     if(!res.data.session){
       if(reg){
         closeModal('account-modal');
-        info('Üyeliğin oluşturuldu! 💗', email + ' adresine bir onay e-postası gönderdik. Üyeliğini tamamlamak için e-postadaki "E-POSTAMI ONAYLA" butonuna tıkla. E-posta birkaç dakika içinde gelmezse Spam/Gereksiz klasörüne de bak.', 'fa-solid fa-envelope-circle-check text-berry');
+        info('Üyeliğin oluşturuldu!' + LV2, email + ' adresine bir onay e-postası gönderdik. Üyeliğini tamamlamak için e-postadaki "E-POSTAMI ONAYLA" butonuna tıkla. E-posta birkaç dakika içinde gelmezse Spam/Gereksiz klasörüne de bak.', 'fa-solid fa-envelope-circle-check text-berry');
       }else{
         authMsg('E-postanı doğrulaman gerekiyor. Gelen kutunu ve Spam klasörünü kontrol et.', false);
       }
